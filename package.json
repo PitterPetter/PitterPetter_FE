@@ -10,12 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "clsx": "^2.1.1",
     "dotenv": "^17.2.2",
     "mapbox-gl": "^3.15.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
     "react-map-gl": "^8.0.4",
-    "react-router-dom": "^7.9.1"
+    "react-router-dom": "^7.9.1",
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.33.0",
