@@ -1,0 +1,59 @@
+{
+  "meta": { "count": 3, "generated_at": "2025-09-16T02:45:00Z" },
+  "items": [
+    {
+      "route_id": "r_001",
+      "score": 0.82,
+      "stops": [
+        {
+          "seq": 1,
+          "id": "rest_001",
+          "name": "잠실 스시",
+          "category": "restaurant",
+          "lat": 37.5115,
+          "lng": 127.1010,
+          "stay_min": 60,
+          "reason": "데이트 시작은 든든한 식사로, 리뷰 평점이 높고 가격대가 적당"
+        },
+        {
+          "seq": 2,
+          "id": "exh_001",
+          "name": "롯데월드 아트센터",
+          "category": "exhibit",
+          "lat": 37.5095,
+          "lng": 127.1060,
+          "stay_min": 50,
+          "reason": "정적인 전시 감상을 통해 분위기 전환, 커플 취향(문화) 반영"
+        },
+        {
+          "seq": 3,
+          "id": "cafe_001",
+          "name": "스타벅스 석촌호수점",
+          "category": "cafe",
+          "lat": 37.5108,
+          "lng": 127.1035,
+          "stay_min": 45,
+          "reason": "야경을 보며 차분히 마무리할 수 있는 카페"
+        }
+      ],
+      "geometry": {
+        "type": "FeatureCollection",
+        "features": [
+          {
+            "type": "Feature",
+            "geometry": {
+              "type": "LineString",
+              "coordinates": [
+                [127.1010, 37.5115],
+                [127.1060, 37.5095],
+                [127.1035, 37.5108]
+              ]
+            },
+            "properties": { "segment": "A→B→C" }
+          }
+        ]
+      },
+      "explanation": "활동성은 balanced, 예산 3~4에 맞춰 밥→전시→카페 순서로 구성했습니다."
+    }
+	  ]
+}
