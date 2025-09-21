@@ -21,10 +21,25 @@ export interface MapRefs {
   map: MapboxMap | null;
 }
 
-export interface RecommendCourseSidebarProps {
-  setIsPlace: (isPlace: boolean) => void;
+export interface RouteSegment {
+  from: string;
+  to: string;
+  distance: number;
+  duration: number;
 }
 
-export interface RecommendPlaceSidebarProps {
-  setIsPlace: (isPlace: boolean) => void;
+export interface Course {
+  id: string;
+  name: string;
+  score: number;
+}
+
+export interface Stop {
+  id: string | number;
+  name: string;
+  lat: number;
+  lng: number;
+  stay_min: number;
+  reason: string;
+  seq: number;
 }

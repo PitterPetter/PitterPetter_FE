@@ -1,5 +1,5 @@
 import MapboxMainPage from "./MapboxMainPage";
-import { useMarkerStore } from "../../shared/store/useAuthStore";
+import { useMarkerStore } from "../../shared/store/mapbox.store";
 import { Button } from "../../shared/ui/button";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -17,7 +17,7 @@ export const MainPage = () => {
     <div className="relative">
       <MapboxMainPage />
       {isMarkers ?
-        <Button className="absolute bottom-28 right-1/2 translate-x-1/2" onClick={() => {setIsClick(true)}}>코스 추천받기</Button>
+        <Button className="absolute bottom-16 right-1/2 translate-x-1/2" onClick={() => {setIsClick(true)}}>코스 추천받기</Button>
         :
         <Button className="absolute bottom-28 right-1/2 translate-x-1/2 bg-gray-400 hover:bg-gray-400 cursor-not-allowed">시작점을 클릭해주세요</Button>
       }

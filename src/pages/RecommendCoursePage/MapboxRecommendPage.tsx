@@ -1,282 +1,198 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { useMarkerStore } from '../../shared/store/useAuthStore';
-import { MapboxProps, MapRefs } from './type';
+import { useQueries } from '@tanstack/react-query';
+import { useUIStore } from '../../shared/store/ui.store';
+import { fetchRoute, routeQueryKey } from '../../shared/api/routes.api';
+import { MapboxProps, MapRefs, Stop } from './type'; // RouteSegment 제거
 import course from '../../features/Course/mocks/course.json';
 
-interface RouteSegment {
-  from: string;
-  to: string;
-  distance: number; // meters
-  duration: number; // seconds
-}
-
 const MapboxRecommendPage: React.FC<MapboxProps> = ({
-  center = [course.items[0].stops[0].lng, course.items[0].stops[0].lat],
+  center = (() => {
+    const allStops: Stop[] = course.items.flatMap(item => item.stops);
+    const avgLng = allStops.reduce((s, v) => s + v.lng, 0) / allStops.length;
+    const avgLat = allStops.reduce((s, v) => s + v.lat, 0) / allStops.length;
+    return [avgLng, avgLat] as [number, number];
+  })(),
   zoom = 15,
   pitch = 0
 }) => {
   const mapContainerRef = useRef<MapRefs['container']>(null);
   const mapRef = useRef<MapRefs['map']>(null);
-  const { isMarkers, setIsMarkers } = useMarkerStore();
-  const [routeSegments, setRouteSegments] = useState<RouteSegment[]>([]);
-  const [totalDistance, setTotalDistance] = useState(0);
-  const [totalDuration, setTotalDuration] = useState(0);
 
+  const { isMapReady, setMapReady } = useUIStore();
+
+  // 1) 맵 초기화 + 마커/임시 점선(직선)
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
     mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
-    mapRef.current = new mapboxgl.Map({
+    const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/standard',
       center,
       zoom,
       pitch
     });
+    mapRef.current = map;
 
-    mapRef.current.once('style.load', () => {
-      const map = mapRef.current!;
+    map.once('style.load', () => {
       map.setConfigProperty('basemap', 'showPointOfInterestLabels', false);
       map.setConfigProperty('basemap', 'showPlaceLabels', false);
       map.setConfigProperty('basemap', 'showRoadLabels', false);
       map.setConfigProperty('basemap', 'showTransitLabels', false);
     });
 
-    mapRef.current.once('load', () => {
-      const map = mapRef.current!;
-      
-      course.items.forEach((item) => {
-        // seq 순서대로 정렬
-        const sortedStops = [...item.stops].sort((a, b) => a.seq - b.seq);
-        
-        // 마커 추가 (seq 번호 표시)
-        sortedStops.forEach((stop, index) => {
-          const markerElement = document.createElement('div');
-          markerElement.className = 'custom-marker';
-          markerElement.style.cssText = `
-            background-color: #ff4444;
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            border: 3px solid white;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            font-size: 14px;
-          `;
-          markerElement.textContent = stop.seq.toString();
+    map.on('load', () => {
+      // 마커 + 임시 점선 먼저
+      course.items.forEach(item => {
+        const sorted: Stop[] = [...item.stops].sort((a, b) => a.seq - b.seq);
 
-          new mapboxgl.Marker(markerElement)
-            .setLngLat([stop.lng, stop.lat])
-            .addTo(map);
-        });
+        sorted.forEach(stop => addSeqMarker(map, stop));
 
-        // 도보 루트 생성
-        createWalkingRoute(sortedStops, map);
+        for (let i = 0; i < sorted.length - 1; i++) {
+          const s = sorted[i], e = sorted[i + 1];
+          upsertLine(map, segId(s.id, e.id), lineString([s.lng, s.lat], [e.lng, e.lat]), false);
+        }
       });
+
+      setMapReady(true);
     });
 
-    // 도보 루트 생성 함수
-    const createWalkingRoute = async (stops: any[], map: mapboxgl.Map) => {
-      const segments: RouteSegment[] = [];
-      let accumulatedDistance = 0;
-      let accumulatedDuration = 0;
-
-      for (let i = 0; i < stops.length - 1; i++) {
-        const start = stops[i];
-        const end = stops[i + 1];
-        
-        try {
-          const response = await fetch(
-            `https://api.mapbox.com/directions/v5/mapbox/walking/${start.lng},${start.lat};${end.lng},${end.lat}?` +
-            `geometries=geojson&access_token=${mapboxgl.accessToken}`
-          );
-          
-          const data = await response.json();
-          
-          if (data.routes && data.routes.length > 0) {
-            const route = data.routes[0];
-            const distance = route.distance; // meters
-            const duration = route.duration; // seconds
-            
-            // 세그먼트 정보 저장
-            segments.push({
-              from: start.name,
-              to: end.name,
-              distance,
-              duration
-            });
-            
-            accumulatedDistance += distance;
-            accumulatedDuration += duration;
-            
-            // 루트 라인 추가
-            map.addSource(`route-${start.seq}-${end.seq}`, {
-              type: 'geojson',
-              data: {
-                type: 'Feature',
-                properties: {},
-                geometry: route.geometry
-              }
-            });
-
-            map.addLayer({
-              id: `route-${start.seq}-${end.seq}`,
-              type: 'line',
-              source: `route-${start.seq}-${end.seq}`,
-              layout: {
-                'line-join': 'round',
-                'line-cap': 'round'
-              },
-              paint: {
-                'line-color': '#3b82f6',
-                'line-width': 4,
-                'line-opacity': 0.8
-              }
-            });
-          }
-        } catch (error) {
-          console.error('루트 생성 실패:', error);
-          
-          // API 실패 시 직선으로 대체하고 추정 거리/시간 계산
-          const estimatedDistance = calculateDistance(start.lat, start.lng, end.lat, end.lng);
-          const estimatedDuration = estimatedDistance / 1.4; // 도보 속도 1.4m/s 가정
-          
-          segments.push({
-            from: start.name,
-            to: end.name,
-            distance: estimatedDistance,
-            duration: estimatedDuration
-          });
-          
-          accumulatedDistance += estimatedDistance;
-          accumulatedDuration += estimatedDuration;
-          
-          map.addSource(`fallback-route-${start.seq}-${end.seq}`, {
-            type: 'geojson',
-            data: {
-              type: 'Feature',
-              properties: {},
-              geometry: {
-                type: 'LineString',
-                coordinates: [[start.lng, start.lat], [end.lng, end.lat]]
-              }
-            }
-          });
-
-          map.addLayer({
-            id: `fallback-route-${start.seq}-${end.seq}`,
-            type: 'line',
-            source: `fallback-route-${start.seq}-${end.seq}`,
-            layout: {
-              'line-join': 'round',
-              'line-cap': 'round'
-            },
-            paint: {
-              'line-color': '#94a3b8',
-              'line-width': 3,
-              'line-dasharray': [2, 2]
-            }
-          });
-        }
-      }
-      
-      // 상태 업데이트
-      setRouteSegments(segments);
-      setTotalDistance(accumulatedDistance);
-      setTotalDuration(accumulatedDuration);
-    };
-
-    // 두 지점 간 거리 계산 (하버사인 공식)
-    const calculateDistance = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
-      const R = 6371e3; // 지구 반지름 (미터)
-      const φ1 = lat1 * Math.PI/180;
-      const φ2 = lat2 * Math.PI/180;
-      const Δφ = (lat2-lat1) * Math.PI/180;
-      const Δλ = (lng2-lng1) * Math.PI/180;
-
-      const a = Math.sin(Δφ/2) * Math.sin(Δφ/2) +
-                Math.cos(φ1) * Math.cos(φ2) *
-                Math.sin(Δλ/2) * Math.sin(Δλ/2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-
-      return R * c;
-    };
-
     return () => {
-      mapRef.current?.remove();
+      map.remove();
       mapRef.current = null;
+      setMapReady(false);
     };
+  }, [center.toString(), zoom, pitch, setMapReady]);
+
+  // 2) 세그먼트 목록
+  const segments = useMemo(() => {
+    const arr: {
+      id: string;
+      start: [number, number];
+      end: [number, number];
+      fromName: string;
+      toName: string;
+    }[] = [];
+
+    course.items.forEach(item => {
+      const stops: Stop[] = [...item.stops].sort((a, b) => a.seq - b.seq);
+      for (let i = 0; i < stops.length - 1; i++) {
+        const s = stops[i], e = stops[i + 1];
+        arr.push({
+          id: segId(s.id, e.id),
+          start: [s.lng, s.lat],
+          end: [e.lng, e.lat],
+          fromName: s.name,
+          toName: e.name
+        });
+      }
+    });
+    return arr;
   }, []);
 
-  // 시간 포맷팅 함수
-  const formatDuration = (seconds: number): string => {
-    const minutes = Math.round(seconds / 60);
-    return `${minutes}분`;
-  };
+  // 3) TanStack Query – 경로 호출/캐싱/상태
+  const results = useQueries({
+    queries: segments.map(seg => ({
+      queryKey: routeQueryKey({ start: seg.start, end: seg.end }),
+      queryFn: ({ signal }: { signal?: AbortSignal }) => fetchRoute({ start: seg.start, end: seg.end }, signal),
+      enabled: isMapReady,
+      staleTime: 10 * 60 * 1000,
+      gcTime: 60 * 60 * 1000,
+      retry: 1
+    }))
+  });
 
-  // 거리 포맷팅 함수
-  const formatDistance = (meters: number): string => {
-    if (meters >= 1000) {
-      return `${(meters / 1000).toFixed(1)}km`;
-    }
-    return `${Math.round(meters)}m`;
-  };
+  // 4) 성공 시 실선으로 교체
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    results.forEach((r, i) => {
+      if (!r.isSuccess) return;
+      const seg = segments[i];
+      upsertLine(map, seg.id, r.data.geometry as GeoJSON.LineString, true);
+    });
+  }, [results, segments]);
+
+  // 5) 패널 데이터: 성공한 것만 집계
+  const ok = results
+    .map((r, i) => (r.isSuccess ? { seg: segments[i], ...r.data } : null))
+    .filter(Boolean) as Array<{ seg: (typeof segments)[number]; distance: number; duration: number }>;
+
+  const totalDistance = ok.reduce((s, x) => s + x.distance, 0);
+  const totalDuration = ok.reduce((s, x) => s + x.duration, 0);
+
+  const isAnyPending = results.some(r => r.isPending);
+  const isAnyFetching = results.some(r => r.isFetching);
 
   return (
-    <div style={{ position: 'relative', height: '100vh', width: '100vw' }}>
-      <div
-        ref={mapContainerRef}
-        id="map"
-        style={{ height: '100vh' }}
-      />
-      
+    <div style={{ position: 'relative', height: 'calc(100vh - 64px)', width: '100%' }}>
+      <div ref={mapContainerRef} id="map" style={{ height: '100%', width: '100%' }} />
+
+      {/* 전역 오버레이 */}
+      {(!isMapReady || isAnyPending) && (
+        <div className="pointer-events-none absolute inset-0 bg-white/40 backdrop-blur-sm z-20 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-300 border-t-transparent" />
+          <span className="ml-3 text-gray-700 font-medium">경로 계산 중…</span>
+        </div>
+      )}
+
       {/* 루트 정보 패널 */}
-      {routeSegments.length > 0 && (
-        <div 
-          className="absolute top-4 left-4 bg-white rounded-lg shadow-lg p-4 max-w-sm z-10"
-          style={{ minWidth: '280px' }}
-        >
-          <h3 className="font-bold text-lg mb-3 text-gray-800">코스 정보</h3>
-          
-          {/* 개별 구간 정보 */}
-          <div className="space-y-2 mb-4">
-            {routeSegments.map((segment, index) => (
-              <div key={index} className="flex justify-between items-center text-sm">
-                <div className="flex-1">
-                  <span className="text-gray-600">{segment.from} → {segment.to}</span>
-                </div>
-                <div className="text-right ml-2">
-                  <div className="font-medium text-blue-600">
-                    {formatDistance(segment.distance)}
+      {(ok.length > 0 || isAnyPending || isAnyFetching) && (
+        <div className="absolute top-4 left-4 bg-white rounded-lg shadow-lg p-4 max-w-sm z-30 min-w-[280px]">
+          <h3 className="font-bold text-lg mb-3 text-gray-800 flex items-center">
+            코스 정보
+            {isAnyFetching && (
+              <span className="ml-2 text-xs px-2 py-0.5 rounded bg-blue-50 text-blue-600">갱신 중</span>
+            )}
+          </h3>
+
+          {/* 스켈레톤 */}
+          {ok.length === 0 && (isAnyPending || isAnyFetching) && (
+            <div className="space-y-2 mb-4">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="flex justify-between items-center text-sm">
+                  <div className="flex-1">
+                    <div className="h-4 w-40 bg-gray-200 rounded animate-pulse" />
                   </div>
-                  <div className="text-xs text-gray-500">
-                    {formatDuration(segment.duration)}
+                  <div className="text-right ml-2">
+                    <div className="h-4 w-16 bg-gray-200 rounded mb-1 animate-pulse" />
+                    <div className="h-3 w-12 bg-gray-200 rounded animate-pulse" />
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
-          
-          {/* 총 거리 및 시간 */}
+              ))}
+            </div>
+          )}
+
+          {/* 세그먼트 리스트 */}
+          {ok.length > 0 && (
+            <div className="space-y-2 mb-4">
+              {ok.map((s, idx) => (
+                <div key={idx} className="flex justify-between items-center text-sm">
+                  <div className="flex-1 text-gray-600">
+                    {s.seg.fromName} → {s.seg.toName}
+                  </div>
+                  <div className="text-right ml-2">
+                    <div className="font-medium text-blue-600">{formatDistance(s.distance)}</div>
+                    <div className="text-xs text-gray-500">{formatDuration(s.duration)}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* 총합 */}
           <div className="border-t pt-3">
             <div className="flex justify-between items-center">
               <span className="font-semibold text-gray-800">총 거리:</span>
-              <span className="font-bold text-lg text-blue-600">
-                {formatDistance(totalDistance)}
-              </span>
+              <span className="font-bold text-lg text-blue-600">{formatDistance(totalDistance)}</span>
             </div>
             <div className="flex justify-between items-center mt-1">
               <span className="font-semibold text-gray-800">총 시간:</span>
-              <span className="font-bold text-lg text-green-600">
-                {formatDuration(totalDuration)}
-              </span>
+              <span className="font-bold text-lg text-green-600">{formatDuration(totalDuration)}</span>
             </div>
           </div>
         </div>
@@ -286,3 +202,67 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
 };
 
 export default MapboxRecommendPage;
+
+/* ==================== Helpers ==================== */
+
+function segId(sid: string | number, eid: string | number) {
+  return `route-${sid}-${eid}`;
+}
+function lineString(a: [number, number], b: [number, number]): GeoJSON.LineString {
+  return { type: 'LineString', coordinates: [a, b] };
+}
+function addSeqMarker(map: mapboxgl.Map, stop: Stop) {
+  const el = document.createElement('div');
+  el.style.cssText = `
+    background-color: #ff4444;
+    color: white;
+    width: 30px; height: 30px;
+    border-radius: 50%; border: 3px solid white;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: bold; font-size: 14px;
+  `;
+  el.textContent = String(stop.seq);
+  new mapboxgl.Marker(el).setLngLat([stop.lng, stop.lat]).addTo(map);
+}
+function upsertLine(
+  map: mapboxgl.Map,
+  id: string,
+  geometry: GeoJSON.LineString,
+  solid: boolean
+) {
+  const src = map.getSource(id) as mapboxgl.GeoJSONSource | undefined;
+  const data: GeoJSON.Feature<GeoJSON.LineString> = { type: 'Feature', properties: {}, geometry };
+
+  if (!src) {
+    map.addSource(id, { type: 'geojson', data });
+    map.addLayer({
+      id,
+      type: 'line',
+      source: id,
+      layout: { 'line-join': 'round', 'line-cap': 'round' },
+      paint: solid
+        ? { 'line-color': '#3b82f6', 'line-width': 4, 'line-opacity': 0.9 }
+        : { 'line-color': '#94a3b8', 'line-width': 3, 'line-dasharray': [2, 2], 'line-opacity': 0.8 }
+    });
+  } else {
+    src.setData(data);
+    if (solid) {
+      map.setPaintProperty(id, 'line-color', '#3b82f6');
+      map.setPaintProperty(id, 'line-width', 4);
+      map.setPaintProperty(id, 'line-dasharray', undefined as any);
+      map.setPaintProperty(id, 'line-opacity', 0.9);
+    } else {
+      map.setPaintProperty(id, 'line-color', '#94a3b8');
+      map.setPaintProperty(id, 'line-width', 3);
+      map.setPaintProperty(id, 'line-dasharray', [2, 2]);
+      map.setPaintProperty(id, 'line-opacity', 0.8);
+    }
+  }
+}
+function formatDistance(m: number) {
+  return m >= 1000 ? `${(m / 1000).toFixed(1)}km` : `${Math.round(m)}m`;
+}
+function formatDuration(sec: number) {
+  return `${Math.round(sec / 60)}분`;
+}

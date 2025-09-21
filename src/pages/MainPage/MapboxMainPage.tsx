@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { useMarkerStore } from '../../shared/store/useAuthStore';
+import { useMarkerStore } from '../../shared/store/mapbox.store';
 
 import { MapboxProps, MapRefs } from './type';
 
@@ -58,7 +58,7 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
         map.easeTo({
           pitch: 0,
           center: [e.lngLat.lng, e.lngLat.lat],
-          duration: 1000 // 1초 동안 애니메이션
+          duration: 1000
         });
       });
     });
@@ -73,7 +73,7 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
     <div
       ref={mapContainerRef}
       id="map"
-      style={{ height: '100vh', width: '100vw' }}
+      style={{ height: 'calc(100vh - 64px)', width: '100vw' }}
     />
   );
 };

@@ -1,6 +1,7 @@
-import { RecommendCourseSidebarProps } from "./type";
+import { usePlaceStore } from "../../shared/store/mapbox.store";
 
-export const RecommendCourseSidebar = ({ setIsPlace }: RecommendCourseSidebarProps) => {
+export const RecommendCourseSidebar = () => {
+  const { setIsPlace } = usePlaceStore();
   return (
     <div>
       <h1>RecommendCourseSidebar</h1>

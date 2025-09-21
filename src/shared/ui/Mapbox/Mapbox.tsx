@@ -1,84 +1,75 @@
 import React, { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-
+import { useUIStore } from '../../store/ui.store';
 import { MapboxProps, MapRefs } from './types';
 
 const Mapbox: React.FC<MapboxProps> = ({
-  center = [127.1, 37.5133],
-  zoom = 15,
+  center = [127.1, 37.505],
+  zoom = 15.5,
   pitch = 60
 }) => {
   const mapContainerRef = useRef<MapRefs['container']>(null);
   const mapRef = useRef<MapRefs['map']>(null);
+  const { setMapReady } = useUIStore();
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
+    if (mapRef.current) return;
 
     mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
-    mapRef.current = new mapboxgl.Map({
+    const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/standard',
       center,
       zoom,
-      pitch
+      pitch,
+      interactive: false // 클릭 및 상호작용 비활성화
     });
+    mapRef.current = map;
 
-    mapRef.current.once('style.load', () => {
-      const map = mapRef.current!;
+    map.once('style.load', () => {
       map.setConfigProperty('basemap', 'showPointOfInterestLabels', false);
       map.setConfigProperty('basemap', 'showPlaceLabels', false);
       map.setConfigProperty('basemap', 'showRoadLabels', false);
       map.setConfigProperty('basemap', 'showTransitLabels', false);
     });
+    
+    let moveInterval: ReturnType<typeof setInterval> | null = null;
 
-    mapRef.current.once('load', () => {
-      const map = mapRef.current!;
-      map.loadImage(
-        'https://docs.mapbox.com/mapbox-gl-js/assets/cat.png',
-        (error, image) => {
-          if (error || !image) return;
+    map.once('load', () => {
+      setMapReady(true);
 
-          if (!map.hasImage('cat')) {
-            map.addImage('cat', image);
-          }
+      let dir = 1;
+      let currentCenter = [...center] as [number, number];
 
-          if (!map.getSource('buildings')) {
-            map.addSource('buildings', {
-              type: 'geojson',
-              data: {
-                type: 'FeatureCollection',
-                features: [
-                  {
-                    type: 'Feature',
-                    geometry: {
-                      type: 'Point',
-                      coordinates: [127.1, 37.5133]
-                    },
-                    properties: {
-                      name: '서울 시청'
-                    }
-                  }
-                ]
-              }
-            });
-          }
-        }
-      );
-    });
+      moveInterval = setInterval(() => {
+        const offset = 0.00003;
+        if (currentCenter[1] > 37.521) dir = -1;
+        if (currentCenter[1] < 37.505) dir = 1;
+        currentCenter = [currentCenter[0], currentCenter[1] + dir * offset];
+
+        map.easeTo({
+          center: currentCenter,
+          duration: 100
+        });
+      }, 100);
+    })
 
     return () => {
-      mapRef.current?.remove();
+      if (moveInterval) clearInterval(moveInterval);
+      setMapReady(false);
+      map.remove();
       mapRef.current = null;
     };
-  }, [center, zoom, pitch]);
+  }, [center.toString(), zoom, pitch, setMapReady]);
 
   return (
     <div
       ref={mapContainerRef}
       id="map"
-      style={{ height: '100vh', width: '100vw' }}
+      style={{ height: 'calc(100vh - 64px)', width: '100vw' }}
     />
   );
 };
