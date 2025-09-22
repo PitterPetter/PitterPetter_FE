@@ -6,9 +6,9 @@ export const HeaderLayout = () => {
       <div className="flex gap-8">
         <a href="/">홈</a>
         <a href="/">코스 추천</a>
-        <a href="/">추억 블로그</a>
-        <a href="/">추억 다이어리</a>
-        <a href="/">마이페이지</a>
+        <a href="/course">추억 블로그</a>
+        <a href="/diary">추억 다이어리</a>
+        <a href="/mypage">마이페이지</a>
       </div>
     </div>
   );
