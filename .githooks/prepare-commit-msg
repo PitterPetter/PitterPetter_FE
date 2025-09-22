@@ -1,0 +1,33 @@
+ #!/bin/sh
+#
+# Git prepare-commit-msg hook
+# 브랜치명에서 대문자 PIT-123 패턴을 추출해
+# 커밋 메시지 첫 줄 끝에 " - PIT-123" 붙여줌
+
+BRANCH_NAME=$(git rev-parse --abbrev-ref HEAD)
+
+# merge, rebase, detached HEAD 등 특수 상황은 스킵
+case "$BRANCH_NAME" in
+  HEAD|"" )
+    exit 0
+    ;;
+esac
+
+COMMIT_MSG_FILE=$1
+
+# 브랜치명에서 대문자 PIT-숫자 패턴 찾기
+if [[ "$BRANCH_NAME" =~ (PIT-[0-9]+) ]]; then
+  ISSUE_KEY="${BASH_REMATCH[1]}"
+
+  # 커밋 메시지 첫 줄 읽기
+  FIRST_LINE=$(head -n1 "$COMMIT_MSG_FILE")
+
+  # 이미 붙어있으면 중복 방지
+  if echo "$FIRST_LINE" | grep -q "$ISSUE_KEY"; then
+    exit 0
+  fi
+
+  # 첫 줄 끝에 " - ISSUE_KEY" 추가
+  sed -i.bak "1s/$/ - ${ISSUE_KEY}/" "$COMMIT_MSG_FILE"
+  rm -f "${COMMIT_MSG_FILE}.bak"
+fi
