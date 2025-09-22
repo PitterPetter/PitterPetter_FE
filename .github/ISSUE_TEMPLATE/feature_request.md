@@ -1,13 +1,4 @@
 
----
-name: Feature request
-about: Suggest an idea for this project
-title: ''
-labels: ''
-assignees: ''
-
----
-
 ## 📝 목적/배경
 
 - 왜 이 변경이 필요한가? 어떤 문제를 해결하는가?
