@@ -10,22 +10,26 @@ import { DiaryPage } from './pages/DiaryPage';
 import { CourseListPage } from './pages/CourseListPage';
 import { CourseDetailPage } from './pages/CourseDetailPage';
 import { DiaryDetailPage } from './pages/DiaryDetailPage';
+import { SidebarLayout } from './app/layouts/SidebarLayout';
 
 function App() {
 
   return (
     <BrowserRouter>
-      <HeaderLayout />
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/" element={<MainPage />} />
-        <Route path="/options" element={<OptionsPage />} />
-        <Route path="/recommend" element={<RecommendCoursePage />} />
-        <Route path="/mypage" element={<MyPage />} />
-        <Route path="/diary" element={<DiaryPage />} />
-        <Route path="/course" element={<CourseListPage />} />
-        <Route path="/course/:id" element={<CourseDetailPage />} />
-        <Route path="/diary/:id" element={<DiaryDetailPage />} />
+        <Route element={<HeaderLayout />}>
+          <Route path="/" element={<MainPage />} />
+          <Route path="/options" element={<OptionsPage />} />
+          <Route path="/recommend" element={<RecommendCoursePage />} />
+          <Route element={<SidebarLayout />}>
+            <Route path="/mypage" element={<MyPage />} />
+            <Route path="/diary" element={<DiaryPage />} />
+            <Route path="/course" element={<CourseListPage />} />
+            <Route path="/course/:id" element={<CourseDetailPage />} />
+            <Route path="/diary/:id" element={<DiaryDetailPage />} />
+          </Route>
+        </Route>
       </Routes>
     </BrowserRouter>
   )

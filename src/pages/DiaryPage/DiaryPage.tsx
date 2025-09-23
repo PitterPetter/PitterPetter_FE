@@ -1,7 +1,6 @@
 export const DiaryPage = () => {
   return (
-    <div>
-      <h1>DiaryPage</h1>
+    <div className="flex h-[calc(100vh-64px)] w-full bg-blue-300">
     </div>
   );
 };

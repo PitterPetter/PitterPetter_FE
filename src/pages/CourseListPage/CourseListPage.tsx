@@ -1,7 +1,6 @@
 export const CourseListPage = () => {
   return (
-    <div>
-      <h1>CourseListPage</h1>
+    <div className="flex h-[calc(100vh-64px)] w-full bg-red-300">
     </div>
   );
 };

@@ -1,4 +1,15 @@
+import { Outlet } from "react-router-dom";
+
 export const HeaderLayout = () => {
+  return (
+    <div>
+      <Header />
+      <Outlet />
+    </div>
+  );
+};
+
+export const Header = () => {
 
   return (
     <div className="flex justify-between items-center w-full h-16 px-8">
