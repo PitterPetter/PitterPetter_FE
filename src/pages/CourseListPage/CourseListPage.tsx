@@ -1,8 +1,10 @@
 import { Button } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComment } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 
 export const CourseListPage = () => {
+  const navigate = useNavigate();
   return (
     <div className="w-[800px] h-[calc(100vh-64px)]">
       <div className="flex flex-col gap-4 p-4 pt-0">
@@ -11,7 +13,7 @@ export const CourseListPage = () => {
             <div className="w-full font-bold">
               저장된 코스 목록
             </div>
-            <Button variant="outlined" className="w-[170px]">새 다이어리 만들기</Button>
+            <Button variant="outlined" className="w-[170px]" onClick={() => {navigate("/diary")}}>새 다이어리 만들기</Button>
           </div>
           <div className="grid grid-cols-3 grid-rows-3 gap-4">
             {
