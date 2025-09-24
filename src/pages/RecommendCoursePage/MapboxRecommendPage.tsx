@@ -108,14 +108,14 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
   // 4) 성공 시 실선으로 교체
   useEffect(() => {
     const map = mapRef.current;
-    if (!map) return;
+    if (!map || !isMapReady) return;
 
     results.forEach((r, i) => {
       if (!r.isSuccess) return;
       const seg = segments[i];
       upsertLine(map, seg.id, r.data.geometry as GeoJSON.LineString, true);
     });
-  }, [results, segments]);
+  }, [results, segments, isMapReady]);
 
   // 5) 패널 데이터: 성공한 것만 집계
   const ok = results
