@@ -1,0 +1,1 @@
+export { CoupleRoomPage } from "./CoupleRoomPage";
