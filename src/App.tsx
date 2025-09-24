@@ -6,7 +6,7 @@ import { HeaderLayout } from './app/layouts';
 import { OptionsPage } from './pages/OptionsPage';
 import { RecommendCoursePage } from './pages/RecommendCoursePage';
 import { MyPage } from './pages/MyPage';
-import { DiaryPage } from './pages/DiaryPage';
+import { DiaryListPage } from './pages/DiaryPage';
 import { CourseListPage } from './pages/CourseListPage';
 import { CourseDetailPage } from './pages/CourseDetailPage';
 import { DiaryDetailPage } from './pages/DiaryDetailPage';
@@ -24,7 +24,7 @@ function App() {
           <Route path="/recommend" element={<RecommendCoursePage />} />
           <Route element={<SidebarLayout />}>
             <Route path="/mypage" element={<MyPage />} />
-            <Route path="/diary" element={<DiaryPage />} />
+            <Route path="/diary" element={<DiaryListPage />} />
             <Route path="/course" element={<CourseListPage />} />
             <Route path="/course/:id" element={<CourseDetailPage />} />
             <Route path="/diary/:id" element={<DiaryDetailPage />} />
