@@ -1,31 +1,37 @@
 import axios from "axios";
+const BACKEND_URL = import.meta.env.VITE_API_BASE_URL;
 
-export const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE_URL,
-  withCredentials: true, // 필요시 쿠키 포함
+// axios instance 생성
+const api = axios.create({
+  baseURL: BACKEND_URL,
   headers: {
     "Content-Type": "application/json",
+    authorization: `Bearer ${sessionStorage.getItem("token")}`,
   },
 });
 
-// 요청 인터셉터
+// request interceptor
 api.interceptors.request.use(
-  (config) => {
-    // 토큰 추가
-    const token = localStorage.getItem("access_token");
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
+  (request) => {
+    console.log("Starting Request", request);
+    request.headers.authorization = `Bearer ${sessionStorage.getItem("token")}`;
+    return request;
   },
-  (error) => Promise.reject(error)
+  function (error) {
+    console.log("REQUEST ERROR", error);
+  }
 );
 
-// 응답 인터셉터
+// response interceptor
 api.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    console.error("API Error:", error);
+  (response) => {
+    return response;
+  },
+  function (error) {
+    error = error.response.data;
+    console.log("RESPONSE ERROR", error);
     return Promise.reject(error);
   }
 );
+
+export default api;
