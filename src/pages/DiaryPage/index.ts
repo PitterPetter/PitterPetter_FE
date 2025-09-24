@@ -1,1 +1,1 @@
-export { DiaryPage } from "./DiaryPage";
+export { DiaryListPage } from "./DiaryListPage";
