@@ -2,10 +2,12 @@ import { useState } from "react";
 import { Button } from "@mui/material";
 import { TextField } from '@mui/material';
 import { Slider } from '@mui/material';
+import { useNavigate } from "react-router-dom";
 
 
 export const OnboardingPage = () => {
   const foodList = ['한식', '중식', '양식', '일식', '분식']; // food category
+  const navigate = useNavigate();
   const [cost, setCost] = useState<string>('');
   const [food, setFood] = useState<string[]>([]);
   return (
@@ -73,7 +75,10 @@ export const OnboardingPage = () => {
             </div>
           </div>
           <div className="flex justify-end mt-12 pr-4">
-            <Button variant="contained">저장</Button>
+            <Button variant="contained" onClick={() => {
+              sessionStorage.setItem("onboarding", "true");
+              navigate("/");
+            }}>저장</Button>
           </div>
         </div>
       </div>
