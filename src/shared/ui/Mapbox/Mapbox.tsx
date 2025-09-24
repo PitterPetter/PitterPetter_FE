@@ -35,6 +35,7 @@ const Mapbox: React.FC<MapboxProps> = ({
       map.setConfigProperty('basemap', 'showRoadLabels', false);
       map.setConfigProperty('basemap', 'showTransitLabels', false);
     });
+    console.log('sources:', map.getStyle().sources); // source 확인
     
     let moveInterval: ReturnType<typeof setInterval> | null = null;
 
