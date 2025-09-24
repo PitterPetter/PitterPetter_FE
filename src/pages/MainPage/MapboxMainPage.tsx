@@ -2,8 +2,9 @@ import React, { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useMarkerStore } from '../../shared/store/mapbox.store';
-
 import { MapboxProps, MapRefs } from './type';
+import mockData from '../../features/Diary/mocks/diary.json';
+
 
 const MapboxMainPage: React.FC<MapboxProps> = ({
   center = [127.1, 37.5133],
@@ -19,7 +20,7 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
 
     mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
-    mapRef.current = new mapboxgl.Map({
+    mapRef.current = new mapboxgl.Map({ 
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/standard',
       center,
@@ -27,12 +28,47 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
       pitch
     });
 
-    mapRef.current.once('style.load', () => {
+    mapRef.current.on('style.load', () => {
       const map = mapRef.current!;
       map.setConfigProperty('basemap', 'showPointOfInterestLabels', false);
       map.setConfigProperty('basemap', 'showPlaceLabels', false);
       map.setConfigProperty('basemap', 'showRoadLabels', false);
       map.setConfigProperty('basemap', 'showTransitLabels', false);
+
+      mockData.data.content.forEach((item) => {
+        const postPopup = new mapboxgl.Popup({
+          offset: 0,
+          closeButton: false,
+          closeOnClick: false,
+          className: 'no-tail-popup'
+        })
+          .setLngLat([item.lng, item.lat])
+          .setHTML(`
+            <style>
+              .no-tail-popup .mapboxgl-popup-tip { display: none !important; }
+              .excerpt-text {
+                display: -webkit-box;
+                -webkit-line-clamp: 3;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                text-overflow: ellipsis;
+              }
+            </style>
+            <div class="group flex flex-col gap-2 h-[40px] hover:h-[100px] transition-all duration-300 w-[180px]">
+              <div class="w-full">
+                <p class="text-md font-bold">${item.title}</p>
+              </div>
+              <p class="excerpt-text text-xs opacity-0 max-h-0 overflow-hidden 
+                group-hover:opacity-100 group-hover:max-h-40
+                transition-all duration-300">
+                ${item.excerpt}
+              </p>
+              <p class="absolute bottom-2 text-xs">${item.updatedAt.split('T')[0]}</p>
+            </div>
+          `)
+          .addTo(map);
+      })
+
     });
 
     mapRef.current.once('load', () => {
@@ -79,3 +115,4 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
 };
 
 export default MapboxMainPage;
+
