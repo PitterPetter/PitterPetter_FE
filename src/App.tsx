@@ -11,6 +11,7 @@ import { CourseListPage } from './pages/CourseListPage';
 import { CourseDetailPage } from './pages/CourseDetailPage';
 import { DiaryDetailPage } from './pages/DiaryDetailPage';
 import { SidebarLayout } from './app/layouts/SidebarLayout';
+import { OnboardingPage } from './pages/OnboardingPage';
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
       <Routes>
         <Route path="/login" element={<LoginPage />} />
         <Route element={<HeaderLayout />}>
+          <Route path="/onboarding" element={<OnboardingPage />} />
           <Route path="/" element={<MainPage />} />
           <Route path="/options" element={<OptionsPage />} />
           <Route path="/recommend" element={<RecommendCoursePage />} />

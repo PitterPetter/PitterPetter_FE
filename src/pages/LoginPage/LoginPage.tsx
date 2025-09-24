@@ -9,7 +9,11 @@ export const LoginPage = () => {
   useEffect(() => {
     if (isClick) {
       sessionStorage.setItem("token", "hi");
-      navigation("/");
+      if (sessionStorage.getItem("token") !== "firstLogin") {
+        navigation("/");
+      } else {
+        navigation("/onboarding");
+      }
     }
   }, [isClick]);
   return (
