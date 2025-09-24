@@ -10,6 +10,9 @@ export const OnboardingPage = () => {
   const navigate = useNavigate();
   const [cost, setCost] = useState<string>('');
   const [food, setFood] = useState<string[]>([]);
+
+  // API 연결 후에 호출 코드 추가 예정
+
   return (
     <div className="w-full flex justify-center">
       <div className="flex flex-col gap-4 p-4 pt-0 w-[800px]">
@@ -74,9 +77,9 @@ export const OnboardingPage = () => {
               </div>
             </div>
           </div>
+          {/* Button - API 연결 후 Post하고 메인 페이지로 이동 추가 예정 */}
           <div className="flex justify-end mt-12 pr-4">
             <Button variant="contained" onClick={() => {
-              sessionStorage.setItem("onboarding", "true");
               navigate("/");
             }}>저장</Button>
           </div>
