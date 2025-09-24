@@ -4,6 +4,7 @@ import { faComment } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 
 export const CourseListPage = () => {
+  
   const navigate = useNavigate();
   return (
     <div className="w-[800px] h-[calc(100vh-64px)]">
@@ -18,7 +19,9 @@ export const CourseListPage = () => {
           <div className="grid grid-cols-3 grid-rows-3 gap-4">
             {
               [1, 2, 3, 4, 5].map((item) => (
-                <div className="flex flex-col gap-2 h-[320px] border-gray-300 border rounded-2xl pb-6 cursor-pointer">
+                <div className="flex flex-col gap-2 h-[320px] border-gray-300 border rounded-2xl pb-6 cursor-pointer"
+                  onClick={() => {navigate(`/course/${item}`)}} // 코스 상세 페이지로 이동
+                >
                   <div className="flex gap-2">
                     <div className="w-full h-[165px] bg-gray-200 rounded-t-2xl"></div>
                   </div>
