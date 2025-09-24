@@ -35,9 +35,16 @@ const Mapbox: React.FC<MapboxProps> = ({
       map.setConfigProperty('basemap', 'showRoadLabels', false);
       map.setConfigProperty('basemap', 'showTransitLabels', false);
     });
-    console.log('sources:', map.getStyle().sources); // source 확인
     
     let moveInterval: ReturnType<typeof setInterval> | null = null;
+
+    // Mapbox 버전 확인
+    mapRef.current.once('style.load', () => {
+      const s = mapRef.current!.getStyle();
+      console.log('mapbox-gl version:', mapboxgl.version);
+      console.log('style name:', s.name);
+      console.log('sources:', s.sources);    // 여기서 lite / unexpected source가 있는지 확인
+    });
 
     map.once('load', () => {
       setMapReady(true);
