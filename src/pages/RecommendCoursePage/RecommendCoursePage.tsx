@@ -1,16 +1,13 @@
+import { Outlet } from "react-router-dom";
 import MapboxRecommendPage from "./MapboxRecommendPage";
-import { RecommendCourseSidebar } from "./RecommendCourseSidebar";
-import { RecommendPlaceSidebar } from "./RecommendPlaceSidebar";
-import { usePlaceStore } from "../../shared/store/mapbox.store";
 
 export const RecommendCoursePage = () => {
-  const { isPlace } = usePlaceStore();
-
   return (
     <div className="flex">
       <MapboxRecommendPage />
+      {/* url에 따라 컴포넌트 변경 */}
       <div className="min-w-[420px] z-10">
-        {isPlace ? <RecommendPlaceSidebar /> : <RecommendCourseSidebar />}
+        <Outlet />
       </div>
     </div>  
   );

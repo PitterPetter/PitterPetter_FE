@@ -15,10 +15,10 @@ export const RecommendCourseSidebar = () => {
         <h1 className="text-2xl font-bold">추천 코스</h1>
         <p className="text-gray-500 text-sm">{course.items[0].route_id}</p>
       </div>
-      <div className="flex flex-col gap-8 items-start">
+      <div className="flex flex-col w-full gap-2 items-start">
         {
           sortedStops.map((item) => (
-            <div key={item.id} className="flex items-center gap-4">
+            <div key={item.id} className="flex w-full items-center gap-4 cursor-pointer hover:bg-gray-100 p-2" onClick={() => {navigate(`/recommend/course/${item.id}`)}}>
               <div className="flex items-center gap-2">
                 <div className="w-[32px] h-[32px] bg-black text-white rounded-full flex items-center justify-center">{item.seq}</div>
               </div>
