@@ -1,0 +1,41 @@
+{
+  "status": "success",
+  "data": {
+    "content": [
+      {
+        "diaryId": "d_123",
+        "title": "제주도 첫 여행",
+        "excerpt": "드디어 함께 떠난 첫 여행 너무 즐거운 시간이었으면서도 한편으로는 아쉬운 시간이었어요. 좋은 기억을 만들어 드리고 싶었는데 아쉬웠어요. 그래도 너무 즐거웠어요. 다음에 또 함께 떠나요.",
+        "updatedAt": "2025-09-05T00:00:00Z",
+        "likeCount": 8,
+        "lat": 37.514,
+        "lng": 127.106,
+        "isLiked": true
+      },
+      {
+        "diaryId": "d_123",
+        "title": "서울 여행",
+        "excerpt": "드디어 함께 떠난 첫 여행",
+        "updatedAt": "2025-09-04T00:00:00Z",
+        "likeCount": 8,
+        "lat": 37.52,
+        "lng": 127.106,
+        "isLiked": true
+      },
+      {
+        "diaryId": "d_123",
+        "title": "부산 여행",
+        "excerpt": "이번에는 부산 맛집을 많이 찾아봤어요. 맛있는 음식을 많이 먹었어요. 다음에 또 함께 떠나요.",
+        "updatedAt": "2025-09-06T00:00:00Z",
+        "likeCount": 8,
+        "lat": 37.514,
+        "lng": 127.096,
+        "isLiked": true
+      }
+    ],
+    "page": 0,
+    "size": 12,
+    "totalElements": 34,
+    "totalPages": 3
+  }
+}
