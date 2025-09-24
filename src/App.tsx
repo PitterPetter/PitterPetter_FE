@@ -25,7 +25,10 @@ function App() {
           <Route path="/" element={<MainPage />} />
           <Route path="/options" element={<OptionsPage />} />
           <Route path="/recommend" element={<RecommendCoursePage />} />
-          <Route path="/coupleroom" element={<CoupleRoomPage />} />
+          <Route path="/coupleroom" element={<CoupleRoomPage />}>
+            <Route path="/coupleroom/create" element={<CoupleRoomPage />} />
+            <Route path="/coupleroom/enter" element={<CoupleRoomPage />} />
+          </Route>
           <Route element={<SidebarLayout />}>
             <Route path="/mypage" element={<MyPage />} />
             <Route path="/diary" element={<DiaryListPage />} />
