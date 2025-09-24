@@ -31,14 +31,6 @@ export const RecommendCourseSidebar = () => {
           ))
         }
       </div>
-      <div className="absolute bottom-20 left-0 w-full flex flex-col gap-2 p-4">
-        <div className="flex gap-2 w-full h-[50px] justify-between">
-          <Button variant="outlined" className="w-full" onClick={() => {navigate("/options")}}>Back to Options</Button>
-          <Button variant="outlined" className="w-full">Rerecommend</Button> {/* 추후 추가 예정 */}
-        </div>
-        <Button variant="contained" className="w-full h-[50px]" onClick={() => {navigate("/course")}}>Save this course</Button>
-
-      </div>
     </div>
   );
 };
