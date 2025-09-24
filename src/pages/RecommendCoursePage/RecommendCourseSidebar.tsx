@@ -1,11 +1,44 @@
-import { usePlaceStore } from "../../shared/store/mapbox.store";
+// import { usePlaceStore } from "../../shared/store/mapbox.store";
+import { Button } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import course from "../../features/Course/mocks/course.json";
 
 export const RecommendCourseSidebar = () => {
-  const { setIsPlace } = usePlaceStore();
+  // const { setIsPlace } = usePlaceStore();
+  const navigate = useNavigate();
+  // 정렬 후 출력
+  const sortedStops = [...course.items[0].stops].sort((a, b) => a.seq - b.seq);
+
   return (
-    <div>
-      <h1>RecommendCourseSidebar</h1>
-      <button onClick={() => setIsPlace(true)}>장소 추천받기</button>
+    <div className="flex flex-col items-start gap-8 p-4 h-full relative">
+      <div className="flex justify-between w-full">
+        <h1 className="text-2xl font-bold">추천 코스</h1>
+        <p className="text-gray-500 text-sm">{course.items[0].route_id}</p>
+      </div>
+      <div className="flex flex-col gap-8 items-start">
+        {
+          sortedStops.map((item) => (
+            <div key={item.id} className="flex items-center gap-4">
+              <div className="flex items-center gap-2">
+                <div className="w-[32px] h-[32px] bg-black text-white rounded-full flex items-center justify-center">{item.seq}</div>
+              </div>
+              <div>
+                <h2>{item.name}</h2>
+                <p className="text-gray-500 text-sm">{item.reason}</p>
+                <p className="text-gray-500 text-sm">예상 시간: {item.stay_min}분</p>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+      <div className="absolute bottom-20 left-0 w-full flex flex-col gap-2 p-4">
+        <div className="flex gap-2 w-full h-[50px] justify-between">
+          <Button variant="outlined" className="w-full" onClick={() => {navigate("/options")}}>Back to Options</Button>
+          <Button variant="outlined" className="w-full">Rerecommend</Button> {/* 추후 추가 예정 */}
+        </div>
+        <Button variant="contained" className="w-full h-[50px]" onClick={() => {navigate("/course")}}>Save this course</Button>
+
+      </div>
     </div>
   );
 };
