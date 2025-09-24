@@ -12,6 +12,7 @@ import { CourseDetailPage } from './pages/CourseDetailPage';
 import { DiaryDetailPage } from './pages/DiaryDetailPage';
 import { SidebarLayout } from './app/layouts/SidebarLayout';
 import { OnboardingPage } from './pages/OnboardingPage';
+import { RecommendCourseSidebar, RecommendPlaceSidebar } from './pages/RecommendCoursePage';
 
 function App() {
 
@@ -23,7 +24,10 @@ function App() {
           <Route path="/onboarding" element={<OnboardingPage />} />
           <Route path="/" element={<MainPage />} />
           <Route path="/options" element={<OptionsPage />} />
-          <Route path="/recommend" element={<RecommendCoursePage />} />
+          <Route path="/recommend" element={<RecommendCoursePage />}>
+            <Route index element={<RecommendCourseSidebar />} />
+            <Route path="course/:id" element={<RecommendPlaceSidebar />} />
+          </Route>
           <Route element={<SidebarLayout />}>
             <Route path="/mypage" element={<MyPage />} />
             <Route path="/diary" element={<DiaryListPage />} />
