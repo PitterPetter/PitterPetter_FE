@@ -12,7 +12,7 @@ import { CourseDetailPage } from './pages/CourseDetailPage';
 import { DiaryDetailPage } from './pages/DiaryDetailPage';
 import { SidebarLayout } from './app/layouts/SidebarLayout';
 import { OnboardingPage } from './pages/OnboardingPage';
-import { CoupleRoomPage } from './pages/CoupleRoomPage';
+import { CoupleRoomPage, EnterCoupleRoom, CreateCoupleRoom } from './pages/CoupleRoomPage';
 
 function App() {
 
@@ -25,10 +25,9 @@ function App() {
           <Route path="/" element={<MainPage />} />
           <Route path="/options" element={<OptionsPage />} />
           <Route path="/recommend" element={<RecommendCoursePage />} />
-          <Route path="/coupleroom" element={<CoupleRoomPage />}>
-            <Route path="/coupleroom/create" element={<CoupleRoomPage />} />
-            <Route path="/coupleroom/enter" element={<CoupleRoomPage />} />
-          </Route>
+          <Route path="/coupleroom" element={<CoupleRoomPage />} />
+          <Route path="/coupleroom/create" element={<CreateCoupleRoom />} />
+          <Route path="/coupleroom/enter" element={<EnterCoupleRoom />} />
           <Route element={<SidebarLayout />}>
             <Route path="/mypage" element={<MyPage />} />
             <Route path="/diary" element={<DiaryListPage />} />
