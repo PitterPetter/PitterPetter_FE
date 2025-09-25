@@ -4,7 +4,7 @@
     "created_count": 2,
     "reviews": [
       {
-        "id": 901,
+        "id": "901",
         "poi_id": 12345,
         "user_id": 42,
         "rating": 5,
@@ -13,7 +13,7 @@
         "updated_at": "2025-09-19T07:22:10Z"
       },
       {
-        "id": 902,
+        "id": "902",
         "poi_id": 56789,
         "user_id": 42,
         "rating": 4,

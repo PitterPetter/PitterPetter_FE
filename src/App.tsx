@@ -8,7 +8,7 @@ import { RecommendCoursePage } from './pages/RecommendCoursePage';
 import { MyPage } from './pages/MyPage';
 import { DiaryListPage } from './pages/DiaryPage';
 import { CourseListPage } from './pages/CourseListPage';
-import { CourseDetailPage } from './pages/CourseDetailPage';
+import { CourseDetailPage, CourseDetailSidebar, PlaceDetailSidebar } from './pages/CourseDetailPage';
 import { DiaryDetailPage } from './pages/DiaryDetailPage';
 import { SidebarLayout } from './app/layouts/SidebarLayout';
 import { OnboardingPage } from './pages/OnboardingPage';
@@ -32,11 +32,15 @@ function App() {
             <Route index element={<RecommendCourseSidebar />} />
             <Route path="course/:id" element={<RecommendPlaceSidebar />} />
           </Route>
+
+          <Route path="/course/:id" element={<CourseDetailPage />}>
+            <Route index element={<CourseDetailSidebar />} />
+            <Route path="place/:id" element={<PlaceDetailSidebar />} />
+          </Route>
           <Route element={<SidebarLayout />}>
+            <Route path="/course" element={<CourseListPage />} />
             <Route path="/mypage" element={<MyPage />} />
             <Route path="/diary" element={<DiaryListPage />} />
-            <Route path="/course" element={<CourseListPage />} />
-            <Route path="/course/:id" element={<CourseDetailPage />} />
             <Route path="/diary/:id" element={<DiaryDetailPage />} />
           </Route>
         </Route>
