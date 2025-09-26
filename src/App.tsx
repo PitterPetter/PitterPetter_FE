@@ -14,18 +14,20 @@ import { SidebarLayout } from './app/layouts/SidebarLayout';
 import { OnboardingPage } from './pages/OnboardingPage';
 import { CoupleRoomPage, EnterCoupleRoom, CreateCoupleRoom } from './pages/CoupleRoomPage';
 import { RecommendCourseSidebar, RecommendPlaceSidebar } from './pages/RecommendCoursePage';
+import AuthBootstrap from './app/providers/AuthBootstrap';
 
 function App() {
 
   return (
     <BrowserRouter>
+      <AuthBootstrap />
       <Routes>
         {/* 로그인 페이지 */}
         <Route path="/login" element={<LoginPage />} />
 
         {/* 헤더 레이아웃 */}
         <Route element={<HeaderLayout />}>
-          <Route path="/" element={<MainPage />} />
+          <Route path="/home" element={<MainPage />} />
           <Route path="/onboarding" element={<OnboardingPage />} />
           <Route path="/options" element={<OptionsPage />} />
 
