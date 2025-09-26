@@ -14,11 +14,13 @@ import { SidebarLayout } from './app/layouts/SidebarLayout';
 import { OnboardingPage } from './pages/OnboardingPage';
 import { CoupleRoomPage, EnterCoupleRoom, CreateCoupleRoom } from './pages/CoupleRoomPage';
 import { RecommendCourseSidebar, RecommendPlaceSidebar } from './pages/RecommendCoursePage';
+import AuthBootstrap from './app/providers/AuthBootstrap';
 
 function App() {
 
   return (
     <BrowserRouter>
+      <AuthBootstrap />
       <Routes>
         {/* 로그인 페이지 */}
         <Route path="/login" element={<LoginPage />} />
