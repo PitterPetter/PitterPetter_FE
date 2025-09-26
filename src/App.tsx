@@ -25,7 +25,7 @@ function App() {
 
         {/* 헤더 레이아웃 */}
         <Route element={<HeaderLayout />}>
-          <Route path="/" element={<MainPage />} />
+          <Route path="/home" element={<MainPage />} />
           <Route path="/onboarding" element={<OnboardingPage />} />
           <Route path="/options" element={<OptionsPage />} />
 
