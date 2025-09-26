@@ -46,6 +46,21 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
       map.setConfigProperty('basemap', 'showTransitLabels', false);
     });
 
+      // 3D 건물과 랜드마크 활성화 명시
+      map.setConfigProperty('basemap', 'show3dObjects', true);
+      map.setConfigProperty('basemap', 'showLandmarks', true);
+      if (map.getLayer('building-3d')) {
+        map.setLayoutProperty('building-3d', 'visibility', 'visible');
+      }
+      
+      // 랜드마크 레이어 활성화
+      const landmarkLayers = ['poi-scalerank1', 'poi-scalerank2', 'poi-scalerank3', 'poi-scalerank4-l1', 'poi-scalerank4-l15'];
+      landmarkLayers.forEach(layerId => {
+        if (map.getLayer(layerId)) {
+          map.setLayoutProperty(layerId, 'visibility', 'none'); // POI 라벨은 숨기고 3D 건물만 표시
+        }
+      });
+
     map.on('load', () => {
       // 마커 + 임시 점선 먼저
       course.items.forEach(item => {
