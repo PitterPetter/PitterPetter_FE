@@ -1,4 +1,4 @@
-export { default as LoginMapbox } from "./components/LoginMapbox";
-export { default as RecommendMapbox } from "./components/RecommendMapbox";
-export { default as MainMapbox } from "./components/MainMapbox";
+export { default as LoginMapbox } from "./Components/LoginMapbox";
+export { default as RecommendMapbox } from "./Components/RecommendMapbox";
+export { default as MainMapbox } from "./Components/MainMapbox";
 export * from "./types";

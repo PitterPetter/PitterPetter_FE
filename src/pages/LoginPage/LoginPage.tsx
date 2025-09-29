@@ -1,5 +1,5 @@
 import { LoginMapbox } from "../../features/Mapbox";
-import { GoogleLoginButton } from "../../features/auth";
+import { GoogleLoginButton } from "../../features/Auth";
 
 export const LoginPage = () => {
 

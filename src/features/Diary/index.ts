@@ -1,1 +1,1 @@
-export { DiaryListItem } from "./components/DiaryListItem";
+export { DiaryListItem } from "./Components/DiaryListItem";

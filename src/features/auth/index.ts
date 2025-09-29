@@ -1,1 +1,1 @@
-export { GoogleLoginButton } from "./components/GoogleLoginButton";
+export { GoogleLoginButton } from "./Components/GoogleLoginButton";

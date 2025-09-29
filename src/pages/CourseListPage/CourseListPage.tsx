@@ -2,8 +2,8 @@ import { Button } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComment } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import courseList from "../../features/course/mocks/courseList.json";
-import { CourseListItem } from "../../features/course";
+import courseList from "../../features/Course/mocks/courseList.json";
+import { CourseListItem } from "../../features/Course";
 
 export const CourseListPage = () => {
   const navigate = useNavigate();

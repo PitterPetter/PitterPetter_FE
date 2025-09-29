@@ -2,7 +2,7 @@ import { Button } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComment, faHeart } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
-import { DiaryListItem } from "../../features/diary";
+import { DiaryListItem } from "../../features/Diary";
 
 const mockData = [
   {

@@ -5,7 +5,7 @@ import { RecommendMapbox } from "../../features/Mapbox";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import courseList from "../../features/course/mocks/courseList.json";
+import courseList from "../../features/Course/mocks/courseList.json";
 
 export const CourseDetailPage = () => {
   const navigate = useNavigate();
