@@ -1,4 +1,4 @@
-import { MainMapbox } from "../../features/Mapbox";
+import { MainMapbox } from "../../features/mapbox";
 import { useMarkerStore } from "../../shared/store/mapbox.store";
 import { Button } from "../../shared/ui/button";
 import { useCallback, useEffect, useState } from "react";

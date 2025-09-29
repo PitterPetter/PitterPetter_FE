@@ -1,11 +1,11 @@
 // 코스 상세 페이지 (Mapbox 페이지 + 코스 & 장소 목록 페이지)
 
 import { Outlet } from "react-router-dom";
-import { RecommendMapbox } from "../../features/Mapbox";
+import { RecommendMapbox } from "../../features/mapbox";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
-import courseList from "../../features/Course/mocks/courseList.json";
+import courseList from "../../features/course/mocks/courseList.json";
 
 export const CourseDetailPage = () => {
   const navigate = useNavigate();

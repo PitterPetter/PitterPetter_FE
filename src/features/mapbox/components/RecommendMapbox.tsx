@@ -7,7 +7,7 @@ import { useQueries } from '@tanstack/react-query';
 import { useUIStore } from '../../../shared/store/ui.store';
 import { fetchRoute, routeQueryKey } from '../../../shared/api/routes.api';
 import { MapboxProps, MapRefs, Stop } from '../types'; // RouteSegment 제거
-import course from '../../Course/mocks/course.json';
+import course from '../../course/mocks/course.json';
 
 const MapboxRecommendPage: React.FC<MapboxProps> = ({
   center = (() => {

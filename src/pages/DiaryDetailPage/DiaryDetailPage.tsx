@@ -1,7 +1,7 @@
 // 다이어리 상세 페이지
 
 import { useParams } from "react-router-dom";
-import diary from "../../features/Diary/mocks/diaryDetail.json";
+import diary from "../../features/diary/mocks/diaryDetail.json";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 

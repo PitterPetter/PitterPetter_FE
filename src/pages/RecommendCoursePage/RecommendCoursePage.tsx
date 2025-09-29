@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import { RecommendMapbox } from "../../features/Mapbox";
+import { RecommendMapbox } from "../../features/mapbox";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 

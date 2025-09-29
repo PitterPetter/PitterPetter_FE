@@ -1,5 +1,5 @@
-import { Profile } from "../../features/Mypage/Components/Profile";
-import { CoupleHome } from "../../features/Mypage/Components/CoupleHome";
+import { Profile } from "../../features/mypage/components/Profile";
+import { CoupleHome } from "../../features/mypage/components/CoupleHome";
 
 export const MyPage = () => {
   return (

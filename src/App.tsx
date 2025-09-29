@@ -9,7 +9,7 @@ import { MyPage } from './pages/MyPage';
 import { DiaryListPage } from './pages/DiaryPage';
 import { CourseListPage } from './pages/CourseListPage';
 import { CourseDetailPage } from './pages/CourseDetailPage';
-import { CourseDetailSidebar, PlaceDetailSidebar } from './features/Course';
+import { CourseDetailSidebar, PlaceDetailSidebar } from './features/course';
 import { DiaryDetailPage } from './pages/DiaryDetailPage';
 import { SidebarLayout } from './app/layouts/SidebarLayout';
 import { OnboardingPage } from './pages/OnboardingPage';
