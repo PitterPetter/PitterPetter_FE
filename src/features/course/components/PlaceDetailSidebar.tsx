@@ -1,7 +1,9 @@
-import { useParams } from "react-router-dom";
-import course from "../../features/Course/mocks/course.json";
+// 장소 조회 가능한 사이드바
 
-export const RecommendPlaceSidebar = () => {
+import { useParams } from "react-router-dom";
+import course from "../mocks/course.json";
+
+export const PlaceDetailSidebar = () => {
   // ID를 기반으로 데이터 조회?
   const { id } = useParams();
   const stop = course.items[0].stops.find((stop) => stop.id === id);

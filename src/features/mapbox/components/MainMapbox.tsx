@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { useMarkerStore } from '../../shared/store/mapbox.store';
-import { MapboxProps, MapRefs } from './type';
-import mockData from '../../features/Diary/mocks/diary.json';
+import { useMarkerStore } from '../../../shared/store/mapbox.store';
+import { MapboxProps, MapRefs } from '../types';
+import mockData from '../../diary/mocks/diary.json';
 
 
 const MapboxMainPage: React.FC<MapboxProps> = ({

@@ -1,4 +1,4 @@
-import MapboxMainPage from "./MapboxMainPage";
+import { MainMapbox } from "../../features/mapbox";
 import { useMarkerStore } from "../../shared/store/mapbox.store";
 import { Button } from "../../shared/ui/button";
 import { useCallback, useEffect, useState } from "react";
@@ -30,7 +30,7 @@ export const MainPage = () => {
 
   return (
     <div className="relative">
-      <MapboxMainPage />
+      <MainMapbox />
       
       <div className="absolute bottom-16 right-1/2 translate-x-1/2">
         <Button

@@ -1,11 +1,25 @@
-// import { usePlaceStore } from "../../shared/store/mapbox.store";
-import { Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
-import course from "../../features/Course/mocks/course.json";
+// 코스 조회 가능한 사이드바
 
-export const RecommendCourseSidebar = () => {
+// import { usePlaceStore } from "../../shared/store/mapbox.store";
+import { useNavigate } from "react-router-dom";
+import course from "../mocks/course.json";
+import { useParams, useLocation } from "react-router-dom";
+
+export const CourseDetailSidebar = () => {
   // const { setIsPlace } = usePlaceStore();
   const navigate = useNavigate();
+  let { id } = useParams();
+  const { pathname } = useLocation();
+  let pathType = "";
+  let path = "";
+
+  if (pathname.includes("recommend")) {
+    pathType = "recommend";
+    path = `${pathType}/course`;
+  } else {
+    pathType = "course";
+    path = `${pathType}/${id}/place`;
+  };
   // 정렬 후 출력
   const sortedStops = [...course.items[0].stops].sort((a, b) => a.seq - b.seq);
 
@@ -18,7 +32,7 @@ export const RecommendCourseSidebar = () => {
       <div className="flex flex-col w-full gap-2 items-start">
         {
           sortedStops.map((item) => (
-            <div key={item.id} className="flex w-full items-center gap-4 cursor-pointer hover:bg-gray-100 p-2" onClick={() => {navigate(`/recommend/course/${item.id}`)}}>
+            <div key={item.id} className="flex w-full items-center gap-4 cursor-pointer hover:bg-gray-100 p-2" onClick={() => {navigate(`/${path}/${item.id}`)}}>
               <div className="flex items-center gap-2">
                 <div className="w-[32px] h-[32px] bg-black text-white rounded-full flex items-center justify-center">{item.seq}</div>
               </div>

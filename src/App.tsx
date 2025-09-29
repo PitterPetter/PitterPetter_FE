@@ -8,12 +8,12 @@ import { RecommendCoursePage } from './pages/RecommendCoursePage';
 import { MyPage } from './pages/MyPage';
 import { DiaryListPage } from './pages/DiaryPage';
 import { CourseListPage } from './pages/CourseListPage';
-import { CourseDetailPage, CourseDetailSidebar, PlaceDetailSidebar } from './pages/CourseDetailPage';
+import { CourseDetailPage } from './pages/CourseDetailPage';
+import { CourseDetailSidebar, PlaceDetailSidebar } from './features/course';
 import { DiaryDetailPage } from './pages/DiaryDetailPage';
 import { SidebarLayout } from './app/layouts/SidebarLayout';
 import { OnboardingPage } from './pages/OnboardingPage';
 import { CoupleRoomPage, EnterCoupleRoom, CreateCoupleRoom } from './pages/CoupleRoomPage';
-import { RecommendCourseSidebar, RecommendPlaceSidebar } from './pages/RecommendCoursePage';
 import AuthBootstrap from './app/providers/AuthBootstrap';
 
 function App() {
@@ -38,8 +38,8 @@ function App() {
 
           {/* 코스 추천 페이지 */}
           <Route path="/recommend" element={<RecommendCoursePage />}>
-            <Route index element={<RecommendCourseSidebar />} />
-            <Route path="course/:id" element={<RecommendPlaceSidebar />} />
+            <Route index element={<CourseDetailSidebar />} />
+            <Route path="course/:id" element={<PlaceDetailSidebar />} />
           </Route>
 
           {/* 코스 상세 페이지 */}

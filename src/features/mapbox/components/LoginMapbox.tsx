@@ -1,8 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
-import { useUIStore } from '../../store/ui.store';
-import { MapboxProps, MapRefs } from './types';
+import { useUIStore } from '../../../shared/store/ui.store';
+import { MapboxProps, MapRefs } from '../types';
 
 const Mapbox: React.FC<MapboxProps> = ({
   center = [127.1, 37.505],
