@@ -1,5 +1,5 @@
-import { Mapbox } from "../../shared/ui/Mapbox";
-import { GoogleLoginButton } from "../../features/auth/components/GoogleLoginButton";
+import { LoginMapbox } from "../../features/Mapbox";
+import { GoogleLoginButton } from "../../features/auth";
 
 export const LoginPage = () => {
 
@@ -10,7 +10,7 @@ export const LoginPage = () => {
         <div className="text-2xl font-bold">로그인</div>
         <GoogleLoginButton />
       </div>
-      <Mapbox />
+      <LoginMapbox />
     </div>
   );
 };

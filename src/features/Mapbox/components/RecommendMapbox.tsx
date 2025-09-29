@@ -1,11 +1,13 @@
+// 코스 상세 페이지에서 사용하는 Mapbox 페이지
+
 import React, { useEffect, useMemo, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useQueries } from '@tanstack/react-query';
-import { useUIStore } from '../../shared/store/ui.store';
-import { fetchRoute, routeQueryKey } from '../../shared/api/routes.api';
-import { MapboxProps, MapRefs, Stop } from './type'; // RouteSegment 제거
-import course from '../../features/course/mocks/course.json';
+import { useUIStore } from '../../../shared/store/ui.store';
+import { fetchRoute, routeQueryKey } from '../../../shared/api/routes.api';
+import { MapboxProps, MapRefs, Stop } from '../types'; // RouteSegment 제거
+import course from '../../../features/course/mocks/course.json';
 
 const MapboxRecommendPage: React.FC<MapboxProps> = ({
   center = (() => {

@@ -1,7 +1,7 @@
 // 코스 상세 페이지 (Mapbox 페이지 + 코스 & 장소 목록 페이지)
 
 import { Outlet } from "react-router-dom";
-import MapboxRecommendPage from "./MapboxRecommendPage";
+import { RecommendMapbox } from "../../features/Mapbox";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
@@ -14,7 +14,7 @@ export const CourseDetailPage = () => {
 
   return (
     <div className="flex">
-      <MapboxRecommendPage courseData={courseData} />
+      <RecommendMapbox courseData={courseData} />
       {/* url에 따라 컴포넌트 변경 */}
       <div className="min-w-[420px] z-10 relative">
         <Outlet />

@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import MapboxRecommendPage from "./MapboxRecommendPage";
+import { RecommendMapbox } from "../../features/Mapbox";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
@@ -7,7 +7,7 @@ export const RecommendCoursePage = () => {
   const navigate = useNavigate();
   return (
     <div className="flex">
-      <MapboxRecommendPage />
+      <RecommendMapbox />
       {/* url에 따라 컴포넌트 변경 */}
       <div className="min-w-[420px] z-10 relative">
         <Outlet />
