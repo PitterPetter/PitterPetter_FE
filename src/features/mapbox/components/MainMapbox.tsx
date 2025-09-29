@@ -3,7 +3,7 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useMarkerStore } from '../../../shared/store/mapbox.store';
 import { MapboxProps, MapRefs } from '../types';
-import mockData from '../../Diary/mocks/diary.json';
+import mockData from '../../diary/mocks/diary.json';
 
 
 const MapboxMainPage: React.FC<MapboxProps> = ({
