@@ -1,7 +1,7 @@
 // 장소 조회 가능한 사이드바
 
 import { useParams } from "react-router-dom";
-import course from "../../features/Course/mocks/course.json";
+import course from "../../features/course/mocks/course.json";
 
 export const PlaceDetailSidebar = () => {
   // ID를 기반으로 데이터 조회?

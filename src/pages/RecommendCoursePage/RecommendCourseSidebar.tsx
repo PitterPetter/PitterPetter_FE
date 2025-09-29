@@ -1,7 +1,7 @@
 // import { usePlaceStore } from "../../shared/store/mapbox.store";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import course from "../../features/Course/mocks/course.json";
+import course from "../../features/course/mocks/course.json";
 
 export const RecommendCourseSidebar = () => {
   // const { setIsPlace } = usePlaceStore();

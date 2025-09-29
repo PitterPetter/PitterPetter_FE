@@ -2,7 +2,7 @@
 
 // import { usePlaceStore } from "../../shared/store/mapbox.store";
 import { useNavigate } from "react-router-dom";
-import course from "../../features/Course/mocks/course.json";
+import course from "../../features/course/mocks/course.json";
 import { useParams } from "react-router-dom";
 
 export const CourseDetailSidebar = () => {
