@@ -29,13 +29,13 @@ export type Place = {
   indoor: boolean;
   price_level?: number;
   open_hours?: {
-    mon?: string;
-    tue?: string;
-    wed?: string;
-    thu?: string;
-    fri?: string;
-    sat?: string;
-    sun?: string;
+    mon: string;
+    tue: string;
+    wed: string;
+    thu: string;
+    fri: string;
+    sat: string;
+    sun: string;
   };
   alcohol?: number;
   mood_tag: number;
