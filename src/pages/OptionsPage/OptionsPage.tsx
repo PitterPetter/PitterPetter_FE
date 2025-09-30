@@ -3,12 +3,28 @@ import { useNavigate } from "react-router-dom";
 import { Slider } from "@mui/material";
 import { Button } from "@mui/material";
 import { TextField } from "@mui/material";
+import { useMutation } from "@tanstack/react-query";
+import { postOption } from "../../features/option/api";
+import { Option } from "./type";
 
 export const OptionsPage = () => {
   const navigation = useNavigate();
-  const [condition, setCondition] = useState(5);
-  const [drinking, setDrinking] = useState(false);
-  // API 연결 후에 호출 코드 추가 예정
+  const [condition, setCondition] = useState<Option['condition']>(5);
+  const [drinking, setDrinking] = useState<Option['drinking']>(false);
+  const [food, setFood] = useState<Option['food']>("");
+  const mutation = useMutation({
+    mutationFn: postOption,
+    onSuccess: (data) => {
+      console.log("data", data);
+    },
+    onError: (error) => {
+      console.error(error);
+      alert("옵션 전송 실패");
+    }
+  });
+  const handleSubmit = () => {
+    mutation.mutate({ condition, drinking, food });
+  };
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-center px-80">
@@ -20,7 +36,7 @@ export const OptionsPage = () => {
           <h1 className="text-gray-500">Condition</h1>
           <div className="flex gap-2">
             <p className="text-gray-500 px-2">Bad</p>
-            <Slider defaultValue={5} aria-label="Temperature" valueLabelDisplay="auto" min={0} max={10} value={condition} onChange={(e, value) => setCondition(value as number)} />
+            <Slider defaultValue={5} aria-label="Temperature" valueLabelDisplay="auto" min={0} max={10} value={condition} onChange={(e, value) => setCondition(value as Option['condition'])} />
             <p className="text-gray-500 px-2">Good</p>
           </div>
         </div>
@@ -35,12 +51,12 @@ export const OptionsPage = () => {
         {/* Food */}
         <div className="flex flex-col gap-2 w-full pb-4">
           <h1 className="text-gray-500">불호음식 (optional)</h1>
-          <TextField id="outlined-basic" variant="outlined" placeholder="입력해주세요" />
+          <TextField id="outlined-basic" variant="outlined" placeholder="입력해주세요" value={food} onChange={(e) => setFood(e.target.value)} />
         </div>
         {/* Button */}
         <div className="flex flex-col gap-4 justify-center items-center w-full pt-8">
           {/* API 연결 후에 Post 후 /recommend로 리다이렉트 */}
-          <Button variant="contained" className="w-[180px] h-[60px] bg-blue-600" onClick={() => {navigation("/recommend")}}>추천받기</Button>
+          <Button variant="contained" className="w-[180px] h-[60px] bg-blue-600" onClick={handleSubmit}>추천받기</Button>
           <p className="text-gray-500">옵션을 비워도 추천이 가능합니다</p>
         </div>
       </div>
