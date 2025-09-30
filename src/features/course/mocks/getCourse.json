@@ -1,0 +1,87 @@
+
+  [
+    {
+    "course_id": 2,
+    "couple_id": 1,
+    "title": "cafe 나들이",
+    "info": "오늘 무드에 맞는 코스입니다~ ",
+    "score": 0,
+    "poi_list": [
+      {
+        "poi_set_id": 4,
+        "order": 1,
+        "rating": 4.5,
+        "poi": {
+          "poi_id": 3,
+          "name": "aaaaa",
+          "category": "CAFE",
+          "lat": 37.56231,
+          "lng": 126.92501,
+          "indoor": true,
+          "price_level": 2,
+          "open_hours": {
+            "mon": "09:00-18:00"
+          },
+          "alcohol": 0,
+          "mood_tag": 1001,
+          "food_tag": ["COFFEE", "DESSERT"],
+          "rating_avg": 4.3,
+          "link": "https://example.com/aaaaa"
+        }
+      },
+      {
+        "poi_set_id": 5,
+        "order": 2,
+        "rating": 4.8,
+        "poi": {
+          "poi_id": 2,
+          "name": "asdfasdm",
+          "category": "CAFE",
+          "lat": 37.56231,
+          "lng": 126.92501,
+          "indoor": true,
+          "price_level": 2,
+          "open_hours": {
+            "mon": "09:00-18:00",
+            "tue": "09:00-18:00"
+          },
+          "alcohol": 0,
+          "mood_tag": 1001,
+          "food_tag": ["COFFEE", "DESSERT"],
+          "rating_avg": 4.3,
+          "link": "https://example.com/asdfasdm"
+        }
+      }
+    ]
+  },
+  {
+    "course_id": 1,
+    "couple_id": 1,
+    "title": "옵셔널 없는 코스",
+    "score": 0,
+    "poi_list": [
+      {
+        "poi_set_id": 1,
+        "order": 1,
+        "poi": {
+          "poi_id": 1,
+          "name": "Blue Bottle Yeonnam",
+          "category": "CAFE",
+          "lat": 37.56231,
+          "lng": 126.92501
+        }
+      },
+      {
+        "poi_set_id": 2,
+        "order": 2,
+        "poi": {
+          "poi_id": 4,
+          "name": "Han River Walk",
+          "category": "PARK",
+          "lat": 37.5285,
+          "lng": 126.9326
+        }
+      }
+    ]
+  }
+]
