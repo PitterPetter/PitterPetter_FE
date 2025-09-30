@@ -6,15 +6,19 @@ import { TextField } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import { postOption } from "../../features/option/api";
 import { Option } from "./type";
+import { useRecommendStore } from "../../shared/store/recommend.store";
+import { useStartStore } from "../../shared/store/recommend.store";
 
 export const OptionsPage = () => {
   const navigation = useNavigate();
-  const [condition, setCondition] = useState<Option['condition']>(5);
-  const [drinking, setDrinking] = useState<Option['drinking']>(false);
-  const [food, setFood] = useState<Option['food']>("");
+  const [condition, setCondition] = useState<Option['user_choice']['condition']>(5);
+  const [drink_intent, setDrinking] = useState<Option['user_choice']['drink_intent']>(false);
+  const [food, setFood] = useState<Option['user_choice']['food']>("");
+  const start = useStartStore.getState();
   const mutation = useMutation({
     mutationFn: postOption,
     onSuccess: (data) => {
+      useRecommendStore.setState({ data: data });
       navigation("/recommend");
     },
     onError: (error) => {
@@ -23,7 +27,8 @@ export const OptionsPage = () => {
     }
   });
   const handleSubmit = () => {
-    mutation.mutate({ condition, drinking, food });
+    console.log({ user_choice: { start: [start.lat, start.lng], condition, drink_intent, food } });
+    mutation.mutate({ user_choice: { start: [start.lat, start.lng], condition, drink_intent, food } });
   };
 
   return (
@@ -36,7 +41,7 @@ export const OptionsPage = () => {
           <h1 className="text-gray-500">Condition</h1>
           <div className="flex gap-2">
             <p className="text-gray-500 px-2">Bad</p>
-            <Slider defaultValue={5} aria-label="Temperature" valueLabelDisplay="auto" min={0} max={10} value={condition} onChange={(e, value) => setCondition(value as Option['condition'])} />
+            <Slider defaultValue={5} aria-label="Temperature" valueLabelDisplay="auto" min={0} max={10} value={condition} onChange={(e, value) => setCondition(value as Option['user_choice']['condition'])} />
             <p className="text-gray-500 px-2">Good</p>
           </div>
         </div>
@@ -44,8 +49,8 @@ export const OptionsPage = () => {
         <div className="flex flex-col gap-2 w-full pb-4">
           <h1 className="text-gray-500">Drinking</h1>
           <div className="flex gap-4">
-          <Button variant={drinking ? "contained" : "outlined"} onClick={() => setDrinking(true)}>Yes</Button>
-          <Button variant={!drinking ? "contained" : "outlined"} onClick={() => setDrinking(false)}>No</Button>
+          <Button variant={drink_intent ? "contained" : "outlined"} onClick={() => setDrinking(true)}>Yes</Button>
+          <Button variant={!drink_intent ? "contained" : "outlined"} onClick={() => setDrinking(false)}>No</Button>
           </div>
         </div>
         {/* Food */}

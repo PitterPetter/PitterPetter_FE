@@ -3,7 +3,7 @@
 import { api } from "../../shared/api/base";
 import { Option } from "./types";
 
-export const postOption = async (data: Option) => {
+export const postOption = async (data: { user_choice: Option }) => {
   try {
     const response = await api.post('/api/recommends', data);
     return response.data;

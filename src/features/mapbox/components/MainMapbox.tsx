@@ -4,7 +4,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { useMarkerStore } from '../../../shared/store/mapbox.store';
 import { MapboxProps, MapRefs } from '../types';
 import mockData from '../../diary/mocks/diary.json';
-
+import { useStartStore } from '../../../shared/store/recommend.store';
 
 const MapboxMainPage: React.FC<MapboxProps> = ({
   center = [127.1, 37.5133],
@@ -89,6 +89,7 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
         setIsMarkers(true);
         console.log('마커 좌표:', { longitude: e.lngLat.lng, latitude: e.lngLat.lat });
         console.log(e.lngLat);
+        useStartStore.setState({ lat: e.lngLat.lat, lng: e.lngLat.lng }); // 시작 좌표 저장
         
         // 부드러운 pitch 애니메이션
         map.easeTo({
