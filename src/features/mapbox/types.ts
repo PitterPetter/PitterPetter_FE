@@ -35,12 +35,32 @@ export interface Course {
   score: number;
 }
 
-export interface Stop {
-  id: string | number;
+export interface InputData {
+  seq: number;
   name: string;
+  category: string;
   lat: number;
   lng: number;
-  stay_min: number;
-  reason: string;
-  seq: number;
+  indoor: boolean;
+  price_level?: number;
+  open_hours?: {
+    mon: string;
+    tue: string;
+    wed: string;
+    thu: string;
+    fri: string;
+    sat: string;
+    sun: string;
+  };
+  alcohol?: number;
+  mood_tag: number;
+  food_tag?: string[];
+  rating_avg?: number;
+  link?: string;
+}
+
+// 백엔드 추천 API 응답 타입
+export interface RecommendResponse {
+  explain: string;
+  data: InputData[];
 }
