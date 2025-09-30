@@ -15,7 +15,7 @@ export const OptionsPage = () => {
   const mutation = useMutation({
     mutationFn: postOption,
     onSuccess: (data) => {
-      console.log("data", data);
+      navigation("/recommend");
     },
     onError: (error) => {
       console.error(error);
