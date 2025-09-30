@@ -24,7 +24,7 @@ export const CourseDetailPage = () => {
             <Button variant="outlined" className="w-full" onClick={() => {navigate("/options")}}>Back to Options</Button>
             <Button variant="outlined" className="w-full">Rerecommend</Button>
           </div> */}
-          <Button variant="contained" className="w-full h-[50px]" onClick={() => {navigate("/course")}}>Back to Course List</Button>
+          <Button variant="contained" className="w-full h-[50px]" onClick={() => {navigate("/course")}}>추억 블로그로 돌아가기</Button>
           <Button variant="contained" className="w-full h-[50px]" onClick={() => {navigate("/diary/create")}}>다이어리 작성하러 가기</Button>
         </div>
       </div>
