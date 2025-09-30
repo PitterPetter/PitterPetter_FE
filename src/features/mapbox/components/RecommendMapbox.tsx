@@ -6,12 +6,13 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { useQueries } from '@tanstack/react-query';
 import { useUIStore } from '../../../shared/store/ui.store';
 import { fetchRoute, routeQueryKey } from '../../../shared/api/routes.api';
-import { MapboxProps, MapRefs, Stop } from '../types'; // RouteSegment 제거
-import course from '../../course/mocks/course.json';
+import { MapboxProps, MapRefs, InputData } from '../types'; // RouteSegment 제거
+import recommendCourse from '../../course/mocks/recommendCourse.json';
+import { useRecommendStore } from '../../../shared/store/recommend.store';
 
 const MapboxRecommendPage: React.FC<MapboxProps> = ({
   center = (() => {
-    const allStops: Stop[] = course.items.flatMap(item => item.stops);
+    const allStops: InputData[] = recommendCourse.data.flatMap(item => item);
     const avgLng = allStops.reduce((s, v) => s + v.lng, 0) / allStops.length;
     const avgLat = allStops.reduce((s, v) => s + v.lat, 0) / allStops.length;
     return [avgLng, avgLat] as [number, number];
@@ -48,14 +49,14 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
 
     map.on('load', () => {
       // 마커 + 임시 점선 먼저
-      course.items.forEach(item => {
-        const sorted: Stop[] = [...item.stops].sort((a, b) => a.seq - b.seq);
+      recommendCourse.data.forEach(item => {
+        const sorted: InputData[] = [item].sort((a, b) => a.seq - b.seq);
 
         sorted.forEach(stop => addSeqMarker(map, stop));
 
         for (let i = 0; i < sorted.length - 1; i++) {
           const s = sorted[i], e = sorted[i + 1];
-          upsertLine(map, segId(s.id, e.id), lineString([s.lng, s.lat], [e.lng, e.lat]), false);
+          upsertLine(map, segId(s.seq, e.seq), lineString([s.lng, s.lat], [e.lng, e.lat]), false);
         }
       });
 
@@ -79,12 +80,12 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
       toName: string;
     }[] = [];
 
-    course.items.forEach(item => {
-      const stops: Stop[] = [...item.stops].sort((a, b) => a.seq - b.seq);
+    recommendCourse.data.forEach(item => {
+      const stops: InputData[] = [item].sort((a, b) => a.seq - b.seq);
       for (let i = 0; i < stops.length - 1; i++) {
         const s = stops[i], e = stops[i + 1];
         arr.push({
-          id: segId(s.id, e.id),
+          id: segId(s.seq, e.seq),
           start: [s.lng, s.lat],
           end: [e.lng, e.lat],
           fromName: s.name,
@@ -213,7 +214,7 @@ function segId(sid: string | number, eid: string | number) {
 function lineString(a: [number, number], b: [number, number]): GeoJSON.LineString {
   return { type: 'LineString', coordinates: [a, b] };
 }
-function addSeqMarker(map: mapboxgl.Map, stop: Stop) {
+function addSeqMarker(map: mapboxgl.Map, stop: InputData) {
   const el = document.createElement('div');
   el.style.cssText = `
     background-color: #ff4444;
