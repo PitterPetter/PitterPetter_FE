@@ -6,23 +6,28 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { useQueries } from '@tanstack/react-query';
 import { useUIStore } from '../../../shared/store/ui.store';
 import { fetchRoute, routeQueryKey } from '../../../shared/api/routes.api';
-import { MapboxProps, MapRefs, Stop } from '../types'; // RouteSegment 제거
-import course from '../../course/mocks/course.json';
+import { MapboxProps, MapRefs, InputData } from '../types';
+import { useRecommendStore } from '../../../shared/store/recommend.store';
 
 const MapboxRecommendPage: React.FC<MapboxProps> = ({
-  center = (() => {
-    const allStops: Stop[] = course.items.flatMap(item => item.stops);
-    const avgLng = allStops.reduce((s, v) => s + v.lng, 0) / allStops.length;
-    const avgLat = allStops.reduce((s, v) => s + v.lat, 0) / allStops.length;
-    return [avgLng, avgLat] as [number, number];
-  })(),
+  center = [127.1, 37.5133],
   zoom = 15,
   pitch = 0
 }) => {
   const mapContainerRef = useRef<MapRefs['container']>(null);
   const mapRef = useRef<MapRefs['map']>(null);
-
+  const { data: recommendData } = useRecommendStore();
   const { isMapReady, setMapReady } = useUIStore();
+
+  // 데이터가 있을 때만 center 계산
+  const mapCenter = useMemo(() => {
+    if (recommendData && recommendData.length > 0) {
+      const avgLng = recommendData.reduce((s, v) => s + v.lng, 0) / recommendData.length;
+      const avgLat = recommendData.reduce((s, v) => s + v.lat, 0) / recommendData.length;
+      return [avgLng, avgLat] as [number, number];
+    }
+    return center;
+  }, [recommendData, center]);
 
   // 1) 맵 초기화 + 마커/임시 점선(직선)
   useEffect(() => {
@@ -33,7 +38,7 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/standard',
-      center,
+      center: mapCenter,
       zoom,
       pitch
     });
@@ -48,16 +53,16 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
 
     map.on('load', () => {
       // 마커 + 임시 점선 먼저
-      course.items.forEach(item => {
-        const sorted: Stop[] = [...item.stops].sort((a, b) => a.seq - b.seq);
+      if (recommendData && recommendData.length > 0) {
+        const sorted: InputData[] = [...recommendData].sort((a, b) => a.seq - b.seq);
 
         sorted.forEach(stop => addSeqMarker(map, stop));
 
         for (let i = 0; i < sorted.length - 1; i++) {
           const s = sorted[i], e = sorted[i + 1];
-          upsertLine(map, segId(s.id, e.id), lineString([s.lng, s.lat], [e.lng, e.lat]), false);
+          upsertLine(map, segId(s.seq, e.seq), lineString([s.lng, s.lat], [e.lng, e.lat]), false);
         }
-      });
+      }
 
       setMapReady(true);
     });
@@ -67,7 +72,7 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
       mapRef.current = null;
       setMapReady(false);
     };
-  }, [center.toString(), zoom, pitch, setMapReady]);
+  }, [mapCenter.toString(), zoom, pitch, setMapReady, recommendData]);
 
   // 2) 세그먼트 목록
   const segments = useMemo(() => {
@@ -79,21 +84,21 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
       toName: string;
     }[] = [];
 
-    course.items.forEach(item => {
-      const stops: Stop[] = [...item.stops].sort((a, b) => a.seq - b.seq);
+    if (recommendData && recommendData.length > 0) {
+      const stops: InputData[] = [...recommendData].sort((a, b) => a.seq - b.seq);
       for (let i = 0; i < stops.length - 1; i++) {
         const s = stops[i], e = stops[i + 1];
         arr.push({
-          id: segId(s.id, e.id),
+          id: segId(s.seq, e.seq),
           start: [s.lng, s.lat],
           end: [e.lng, e.lat],
           fromName: s.name,
           toName: e.name
         });
       }
-    });
+    }
     return arr;
-  }, []);
+  }, [recommendData]);
 
   // 3) TanStack Query – 경로 호출/캐싱/상태
   const results = useQueries({
@@ -213,7 +218,7 @@ function segId(sid: string | number, eid: string | number) {
 function lineString(a: [number, number], b: [number, number]): GeoJSON.LineString {
   return { type: 'LineString', coordinates: [a, b] };
 }
-function addSeqMarker(map: mapboxgl.Map, stop: Stop) {
+function addSeqMarker(map: mapboxgl.Map, stop: InputData) {
   const el = document.createElement('div');
   el.style.cssText = `
     background-color: #ff4444;
