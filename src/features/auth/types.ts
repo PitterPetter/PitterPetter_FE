@@ -1,5 +1,9 @@
-export type CoupleRoom = {
-  id: string;
+export type PostCoupleRoom = {
   name: string;
   date: string;
+};
+
+export type GetId = {
+  coupleId: string;
+  inviteCode: string;
 };
