@@ -1,15 +1,13 @@
 import { Button } from "@mui/material";
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TextField } from "@mui/material";
 import { postCoupleRoom } from "../../features/auth/api";
-import { PostCoupleRoom, GetId } from "../../features/auth/types";
+import { GetId } from "../../features/auth/types";
 
 export const CreateCoupleRoom = () => {
-  const navigate = useNavigate();
   sessionStorage.setItem('accessToken', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMTYxNTgwODQ5OTA4NTAyOTM2ODgiLCJ1c2VyX2lkIjo0LCJpYXQiOjE3NTkyOTY3ODMsImV4cCI6MTc1OTMwMDM4M30.f6X_08YvxRA_PI0TXS0q8MlJvppCKysLoKLi4tafy38');
   const [coupleName, setCoupleName] = useState('');
   const [coupleDate, setCoupleDate] = useState(new Date());
