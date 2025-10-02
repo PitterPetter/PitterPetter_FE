@@ -64,3 +64,6 @@ export interface RecommendResponse {
   explain: string;
   data: InputData[];
 }
+
+
+export type TimeOfDay = 'dawn' | 'day' | 'dusk' | 'night';
