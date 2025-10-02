@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useMarkerStore } from '../../../shared/store/mapbox.store';
@@ -13,7 +13,7 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
 }) => {
   const mapContainerRef = useRef<MapRefs['container']>(null);
   const mapRef = useRef<MapRefs['map']>(null);
-  const { isMarkers, setIsMarkers } = useMarkerStore();
+  const { setIsMarkers } = useMarkerStore();
   const getTimeOfDay = (date = new Date()): TimeOfDay => {
     const hour = date.getHours();
     if (hour >= 5 && hour < 9) return 'dawn';
