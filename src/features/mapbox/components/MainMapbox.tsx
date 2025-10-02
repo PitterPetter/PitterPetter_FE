@@ -1,8 +1,8 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useMarkerStore } from '../../../shared/store/mapbox.store';
-import { MapboxProps, MapRefs } from '../types';
+import { MapboxProps, MapRefs, TimeOfDay } from '../types';
 import mockData from '../../diary/mocks/diary.json';
 import { useStartStore } from '../../../shared/store/recommend.store';
 
@@ -14,15 +14,26 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
   const mapContainerRef = useRef<MapRefs['container']>(null);
   const mapRef = useRef<MapRefs['map']>(null);
   const { isMarkers, setIsMarkers } = useMarkerStore();
+  const getTimeOfDay = (date = new Date()): TimeOfDay => {
+    const hour = date.getHours();
+    if (hour >= 5 && hour < 9) return 'dawn';
+    if (hour >= 9 && hour < 17) return 'day';
+    if (hour >= 17 && hour < 21) return 'dusk';
+    return 'night';
+  }
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
-
     mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
     mapRef.current = new mapboxgl.Map({ 
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/standard',
+      config: {
+        basemap: {
+          lightPreset: getTimeOfDay().toLowerCase() as 'dawn' | 'day' | 'dusk' | 'night',
+        }
+      },
       center,
       zoom,
       pitch

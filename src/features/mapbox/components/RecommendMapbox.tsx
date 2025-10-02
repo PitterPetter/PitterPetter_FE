@@ -6,7 +6,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { useQueries } from '@tanstack/react-query';
 import { useUIStore } from '../../../shared/store/ui.store';
 import { fetchRoute, routeQueryKey } from '../../../shared/api/routes.api';
-import { MapboxProps, MapRefs, InputData } from '../types';
+import { MapboxProps, MapRefs, InputData, TimeOfDay } from '../types';
 import { useRecommendStore } from '../../../shared/store/recommend.store';
 
 const MapboxRecommendPage: React.FC<MapboxProps> = ({
@@ -18,6 +18,13 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
   const mapRef = useRef<MapRefs['map']>(null);
   const { data: recommendData } = useRecommendStore();
   const { isMapReady, setMapReady } = useUIStore();
+  const getTimeOfDay = (date = new Date()): TimeOfDay => {
+    const hour = date.getHours();
+    if (hour >= 5 && hour < 9) return 'dawn';
+    if (hour >= 9 && hour < 17) return 'day';
+    if (hour >= 17 && hour < 21) return 'dusk';
+    return 'night';
+  }
 
   // 데이터가 있을 때만 center 계산
   const mapCenter = useMemo(() => {
@@ -38,6 +45,11 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/standard',
+      config: {
+        basemap: {
+          lightPreset: getTimeOfDay().toLowerCase() as 'dawn' | 'day' | 'dusk' | 'night',
+        }
+      },
       center: mapCenter,
       zoom,
       pitch
