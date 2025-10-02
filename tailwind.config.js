@@ -9,11 +9,11 @@ export default {
       keyframes: {
         scrollText: {
           "0%": { transform: "translateY(0)" },
-          "100%": { transform: "translateY(-100%)" },
+          "100%": { transform: "translateY(-50%)" },
         },
       },
       animation: {
-        scrollText: "scrollText 30s linear infinite", 
+        scrollText: "scrollText 6s linear infinite", 
       },
     },
   },
