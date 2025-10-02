@@ -29,6 +29,7 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
     mapRef.current = new mapboxgl.Map({ 
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/standard',
+      // 시간에 따라 조명 프리셋 변경
       config: {
         basemap: {
           lightPreset: getTimeOfDay().toLowerCase() as 'dawn' | 'day' | 'dusk' | 'night',
