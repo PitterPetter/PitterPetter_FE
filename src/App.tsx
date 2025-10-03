@@ -1,3 +1,4 @@
+import './App.css';
 import { LoginPage } from './pages/LoginPage';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 // import { AuthInitializer } from './app/providers/AuthInitializer';
