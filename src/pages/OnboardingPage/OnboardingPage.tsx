@@ -24,42 +24,141 @@ export const OnboardingPage = () => {
 
   return (
     <div className="w-full flex justify-center">
-      <div className="flex flex-col gap-4 p-4 pt-0 w-[800px]">
+      <div className="flex flex-col gap-4 p-4 pt-0 max-w-[450px] md:max-w-[800px]">
         <div className="h-full p-4 pb-6">
           {/* 개인 온보딩 */}
           <div className="mt-4 flex flex-col gap-2 items-center justify-center pt-8">
             <h1 className="text-2xl">혜준 님의 취향을 알려주세요</h1>
             <p className="text-gray-500 pb-8">정보를 입력해 주시면 더 정확한 추천을 해드릴 수 있어요</p>
 
-            <div className="flex flex-col gap-8 w-full px-10">
+            <div className="
+              flex flex-col w-full gap-8
+              md:px-10
+            ">
               {/* Drinking */}
               <div className="w-full flex flex-col gap-4">
                 <p className="text-black">술을 즐기는 걸 선호한다.</p>
-                <div className="flex gap-2 w-full justify-between items-center">
-                  <p className="text-gray-500 text-red-600 text-md">그렇지 않다</p>
-                  <div className="flex justify-between items-center gap-12">
-                    <span className={`w-16 h-16 ${circleStyle} ${drinking === 1 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}`} onClick={() => handleDrinking(1)}>{drinking===1 ? <FontAwesomeIcon icon={faCheck} /> : ""}</span>
-                    <span className={`w-14 h-14 ${circleStyle} ${drinking === 2 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}`} onClick={() => handleDrinking(2)}>{drinking===2 ? <FontAwesomeIcon icon={faCheck} /> : ""}</span>
-                    <span className={`w-12 h-12 ${circleStyle} ${drinking === 3 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}`} onClick={() => handleDrinking(3)}>{drinking===3 ? <FontAwesomeIcon icon={faCheck} /> : ""}</span>
-                    <span className={`w-14 h-14 ${circleStyle} ${drinking === 4 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}`} onClick={() => handleDrinking(4)}>{drinking===4 ? <FontAwesomeIcon icon={faCheck} /> : ""}</span>
-                    <span className={`w-16 h-16 ${circleStyle} ${drinking === 5 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}`} onClick={() => handleDrinking(5)}>{drinking===5 ? <FontAwesomeIcon icon={faCheck} /> : ""}</span>
+                <div className="
+                  w-full
+                  grid grid-cols-2 items-center gap-4
+                  md:flex md:justify-between md:items-center
+                ">
+                  <div className="
+                    col-span-2 order-2
+                    flex justify-between items-center gap-4
+                    md:gap-12
+                  ">
+                    <span
+                      className={`
+                        w-12 h-12 ${circleStyle} ${drinking === 1 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}
+                        md:w-16 md:h-16
+                      `}
+                      onClick={() => handleDrinking(1)}
+                    >
+                      {drinking===1 ? <FontAwesomeIcon icon={faCheck} /> : ""}
+                    </span>
+                    <span
+                      className={`
+                        w-10 h-10 ${circleStyle} ${drinking === 2 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}
+                        md:w-14 md:h-14
+                      `}
+                      onClick={() => handleDrinking(2)}
+                    >
+                      {drinking===2 ? <FontAwesomeIcon icon={faCheck} /> : ""}
+                    </span>
+                    <span
+                      className={`
+                        w-8 h-8 ${circleStyle} ${drinking === 3 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}
+                        md:w-12 md:h-12
+                      `}
+                      onClick={() => handleDrinking(3)}
+                    >
+                      {drinking===3 ? <FontAwesomeIcon icon={faCheck} /> : ""}
+                    </span>
+                    <span
+                      className={`
+                        w-10 h-10 ${circleStyle} ${drinking === 4 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}
+                        md:w-14 md:h-14
+                      `}
+                      onClick={() => handleDrinking(4)}
+                    >
+                      {drinking===4 ? <FontAwesomeIcon icon={faCheck} /> : ""}
+                    </span>
+                    <span
+                      className={`
+                        w-12 h-12 ${circleStyle} ${drinking === 5 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}
+                        md:w-16 md:h-16
+                      `}
+                      onClick={() => handleDrinking(5)}
+                    >
+                      {drinking===5 ? <FontAwesomeIcon icon={faCheck} /> : ""}
+                    </span>
                   </div>
-                  <p className="text-gray-500 text-green-600 text-md">그렇다</p>
+                  <p className="text-red-600 text-md text-left md:order-1">그렇지 않다</p>
+                  <p className="text-green-600 text-md text-right md:order-3">그렇다</p>
                 </div>
               </div>
               {/* Active */}
               <div className="w-full flex flex-col gap-4">
                 <p className="text-black">활동적인 데이트를 선호한다.</p>
-                <div className="flex gap-2 w-full justify-between items-center">
-                  <p className="text-gray-500 text-red-600 text-md">그렇지 않다</p>
-                  <div className="flex justify-between items-center gap-12">
-                    <span className={`w-16 h-16 ${circleStyle} ${active === 1 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}`} onClick={() => handleActive(1)}>{active===1 ? <FontAwesomeIcon icon={faCheck} /> : ""}</span>
-                    <span className={`w-14 h-14 ${circleStyle} ${active === 2 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}`} onClick={() => handleActive(2)}>{active===2 ? <FontAwesomeIcon icon={faCheck} /> : ""}</span>
-                    <span className={`w-12 h-12 ${circleStyle} ${active === 3 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}`} onClick={() => handleActive(3)}>{active===3 ? <FontAwesomeIcon icon={faCheck} /> : ""}</span>
-                    <span className={`w-14 h-14 ${circleStyle} ${active === 4 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}`} onClick={() => handleActive(4)}>{active===4 ? <FontAwesomeIcon icon={faCheck} /> : ""}</span>
-                    <span className={`w-16 h-16 ${circleStyle} ${active === 5 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}`} onClick={() => handleActive(5)}>{active===5 ? <FontAwesomeIcon icon={faCheck} /> : ""}</span>
+                <div className="
+                  w-full
+                  grid grid-cols-2 items-center gap-2
+                  md:flex md:justify-between md:items-center
+                ">
+                  <div className="
+                    col-span-2 order-2
+                    flex justify-between items-center gap-4
+                    md:gap-12
+                  ">
+                    <span
+                      className={`
+                        w-12 h-12 ${circleStyle} ${active === 1 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}
+                        md:w-16 md:h-16
+                      `}
+                      onClick={() => handleActive(1)}
+                    >
+                      {active===1 ? <FontAwesomeIcon icon={faCheck} /> : ""}
+                    </span>
+                    <span
+                      className={`
+                        w-10 h-10 ${circleStyle} ${active === 2 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}
+                        md:w-14 md:h-14
+                      `}
+                      onClick={() => handleActive(2)}
+                    >
+                      {active===2 ? <FontAwesomeIcon icon={faCheck} /> : ""}
+                    </span>
+                    <span
+                      className={`
+                        w-8 h-8 ${circleStyle} ${active === 3 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}
+                        md:w-12 md:h-12
+                      `}
+                      onClick={() => handleActive(3)}
+                    >
+                      {active===3 ? <FontAwesomeIcon icon={faCheck} /> : ""}
+                    </span>
+                    <span
+                      className={`
+                        w-10 h-10 ${circleStyle} ${active === 4 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}
+                        md:w-14 md:h-14
+                      `}
+                      onClick={() => handleActive(4)}
+                    >
+                      {active===4 ? <FontAwesomeIcon icon={faCheck} /> : ""}
+                    </span>
+                    <span
+                      className={`
+                        w-12 h-12 ${circleStyle} ${active === 5 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}
+                        md:w-16 md:h-16
+                      `}
+                      onClick={() => handleActive(5)}
+                    >
+                      {active===5 ? <FontAwesomeIcon icon={faCheck} /> : ""}
+                    </span>
                   </div>
-                  <p className="text-gray-500 text-green-600 text-md">그렇다</p>
+                  <p className="text-red-600 text-md text-left md:order-1">그렇지 않다</p>
+                  <p className="text-green-600 text-md text-right md:order-3">그렇다</p>
                 </div>
               </div>
 
