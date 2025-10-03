@@ -3,7 +3,7 @@ import { TextField } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from "react-router-dom";
-import { FoodList, CostList, DrinkingList, ActiveList } from "./types";
+import { FoodList, CostList, DrinkingList, ActiveList } from "../../features/onboarding/types";
 
 export const OnboardingPage = () => {
   const navigate = useNavigate();
