@@ -13,12 +13,6 @@ export const OnboardingPage = () => {
   const [food, setFood] = useState<FoodList[number][]>([]);
   const circleStyle = "border border-gray-300 rounded-full transition-all duration-250 flex justify-center items-center text-white";
   const boxStyle = "w-full h-12 rounded-md transition-all duration-250 flex justify-center items-center border border-gray-300";
-  const handleDrinking = (value: number) => {
-    setDrinking(value as DrinkingList);
-  };
-  const handleActive = (value: number) => {
-    setActive(value as ActiveList);
-  };
 
   // API 연결 후에 호출 코드 추가 예정
 
@@ -53,7 +47,7 @@ export const OnboardingPage = () => {
                         w-12 h-12 ${circleStyle} ${drinking === 1 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}
                         md:w-16 md:h-16
                       `}
-                      onClick={() => handleDrinking(1)}
+                      onClick={() => setDrinking(1)}
                     >
                       {drinking===1 ? <FontAwesomeIcon icon={faCheck} /> : ""}
                     </span>
@@ -62,7 +56,7 @@ export const OnboardingPage = () => {
                         w-10 h-10 ${circleStyle} ${drinking === 2 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}
                         md:w-14 md:h-14
                       `}
-                      onClick={() => handleDrinking(2)}
+                      onClick={() => setDrinking(2)}
                     >
                       {drinking===2 ? <FontAwesomeIcon icon={faCheck} /> : ""}
                     </span>
@@ -71,7 +65,7 @@ export const OnboardingPage = () => {
                         w-8 h-8 ${circleStyle} ${drinking === 3 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}
                         md:w-12 md:h-12
                       `}
-                      onClick={() => handleDrinking(3)}
+                      onClick={() => setDrinking(3)}
                     >
                       {drinking===3 ? <FontAwesomeIcon icon={faCheck} /> : ""}
                     </span>
@@ -80,7 +74,7 @@ export const OnboardingPage = () => {
                         w-10 h-10 ${circleStyle} ${drinking === 4 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}
                         md:w-14 md:h-14
                       `}
-                      onClick={() => handleDrinking(4)}
+                      onClick={() => setDrinking(4)}
                     >
                       {drinking===4 ? <FontAwesomeIcon icon={faCheck} /> : ""}
                     </span>
@@ -89,7 +83,7 @@ export const OnboardingPage = () => {
                         w-12 h-12 ${circleStyle} ${drinking === 5 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}
                         md:w-16 md:h-16
                       `}
-                      onClick={() => handleDrinking(5)}
+                      onClick={() => setDrinking(5)}
                     >
                       {drinking===5 ? <FontAwesomeIcon icon={faCheck} /> : ""}
                     </span>
@@ -116,7 +110,7 @@ export const OnboardingPage = () => {
                         w-12 h-12 ${circleStyle} ${active === 1 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}
                         md:w-16 md:h-16
                       `}
-                      onClick={() => handleActive(1)}
+                      onClick={() => setActive(1)}
                     >
                       {active===1 ? <FontAwesomeIcon icon={faCheck} /> : ""}
                     </span>
@@ -125,7 +119,7 @@ export const OnboardingPage = () => {
                         w-10 h-10 ${circleStyle} ${active === 2 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}
                         md:w-14 md:h-14
                       `}
-                      onClick={() => handleActive(2)}
+                      onClick={() => setActive(2)}
                     >
                       {active===2 ? <FontAwesomeIcon icon={faCheck} /> : ""}
                     </span>
@@ -134,7 +128,7 @@ export const OnboardingPage = () => {
                         w-8 h-8 ${circleStyle} ${active === 3 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}
                         md:w-12 md:h-12
                       `}
-                      onClick={() => handleActive(3)}
+                      onClick={() => setActive(3)}
                     >
                       {active===3 ? <FontAwesomeIcon icon={faCheck} /> : ""}
                     </span>
@@ -143,7 +137,7 @@ export const OnboardingPage = () => {
                         w-10 h-10 ${circleStyle} ${active === 4 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}
                         md:w-14 md:h-14
                       `}
-                      onClick={() => handleActive(4)}
+                      onClick={() => setActive(4)}
                     >
                       {active===4 ? <FontAwesomeIcon icon={faCheck} /> : ""}
                     </span>
@@ -152,7 +146,7 @@ export const OnboardingPage = () => {
                         w-12 h-12 ${circleStyle} ${active === 5 ? "bg-[#93000A]/60" : "hover:bg-[#93000A]/40"}
                         md:w-16 md:h-16
                       `}
-                      onClick={() => handleActive(5)}
+                      onClick={() => setActive(5)}
                     >
                       {active===5 ? <FontAwesomeIcon icon={faCheck} /> : ""}
                     </span>
