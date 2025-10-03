@@ -90,7 +90,7 @@ const Mapbox: React.FC<MapboxProps> = ({
     <div
       ref={mapContainerRef}
       id="map"
-      style={{ height: 'calc(100vh - 64px)', width: '100vw' }}
+      style={{ height: '100vh', width: '100vw' }}
     />
   );
 };
