@@ -34,11 +34,11 @@ export const LoginSubmit = () => {
       
       <div className="flex flex-col w-[300px] justify-center items-center gap-4">
         <div className="flex items-center w-full">
-          <div className="flex-grow h-px bg-gray-300" />
+          <div className="flex-grow h-px bg-gray-400" />
           <span className="px-2 text-sm text-gray-500 whitespace-nowrap">
             간편 로그인
           </span>
-          <div className="flex-grow h-px bg-gray-300" />
+          <div className="flex-grow h-px bg-gray-400" />
         </div>
         <GoogleLoginButton />
         <KakaoLoginButton />
