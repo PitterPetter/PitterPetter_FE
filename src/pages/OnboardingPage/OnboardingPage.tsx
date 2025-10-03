@@ -194,7 +194,7 @@ export const OnboardingPage = () => {
           <div className="flex justify-center items-center mt-12">
             <div className="flex justify-center items-center w-[304px] h-[64px] bg-[#FFEDED] text-[#121920] px-4 py-2 rounded-md cursor-pointer"
             onClick={() => {
-              navigate("/");
+              navigate("/home");
             }}>
               저장하기
             </div>
