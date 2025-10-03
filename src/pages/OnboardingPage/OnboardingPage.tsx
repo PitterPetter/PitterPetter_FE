@@ -3,21 +3,21 @@ import { TextField } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { useNavigate } from "react-router-dom";
-import { FoodList, CostList } from "./types";
+import { FoodList, CostList, DrinkingList, ActiveList } from "./types";
 
 export const OnboardingPage = () => {
   const navigate = useNavigate();
-  const [drinking, setDrinking] = useState<number>(0);
-  const [active, setActive] = useState<number>(0);
+  const [drinking, setDrinking] = useState<DrinkingList>(0);
+  const [active, setActive] = useState<ActiveList>(0);
   const [cost, setCost] = useState<CostList>('');
   const [food, setFood] = useState<FoodList[number][]>([]);
   const circleStyle = "border border-gray-300 rounded-full transition-all duration-250 flex justify-center items-center text-white";
   const boxStyle = "w-full h-12 rounded-md transition-all duration-250 flex justify-center items-center border border-gray-300";
   const handleDrinking = (value: number) => {
-    setDrinking(value);
+    setDrinking(value as DrinkingList);
   };
   const handleActive = (value: number) => {
-    setActive(value);
+    setActive(value as ActiveList);
   };
 
   // API 연결 후에 호출 코드 추가 예정
