@@ -13,10 +13,10 @@ export const CourseDetailPage = () => {
   const courseData = courseList.data.reviews.find((item) => item.id === id); // ID 기반으로 찾기 (추후에 API 연동 시 수정)
 
   return (
-    <div className="flex">
+    <div className="flex absolute left-0 top-0 w-full h-full">
       <RecommendMapbox courseData={courseData} />
       {/* url에 따라 컴포넌트 변경 */}
-      <div className="min-w-[420px] z-10 relative">
+      <div className="min-w-[380px] z-10 relative">
         <Outlet />
 
         <div className="absolute bottom-20 left-0 w-full flex flex-col gap-2 p-4">
