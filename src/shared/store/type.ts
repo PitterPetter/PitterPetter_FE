@@ -48,3 +48,9 @@ export type RecommendStore = {
   explain: string;
   data: Place[];
 };
+
+// HeaderStore
+export type HeaderStore = {
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
+};
