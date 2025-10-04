@@ -46,7 +46,7 @@ function App() {
           {/* 코스 상세 페이지 */}
           <Route path="/course/:id" element={<CourseDetailPage />}>
             <Route index element={<CourseDetailSidebar />} />
-            <Route path="place/:id" element={<PlaceDetailSidebar />} />
+            <Route path="place/:placeId" element={null} />
           </Route>
 
           {/* 사이드바 페이지 */}
