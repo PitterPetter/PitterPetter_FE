@@ -26,10 +26,10 @@ function App() {
         {/* 로그인 페이지 */}
         <Route path="/login" element={<LoginPage />} />
 
+        <Route path="/onboarding" element={<OnboardingPage />} />
         {/* 헤더 레이아웃 */}
         <Route element={<HeaderLayout />}>
           <Route path="/home" element={<MainPage />} />
-          <Route path="/onboarding" element={<OnboardingPage />} />
           <Route path="/options" element={<OptionsPage />} />
 
           {/* 커플 룸 페이지 */}

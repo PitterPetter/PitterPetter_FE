@@ -11,7 +11,7 @@ export const DiaryDetailPage = () => {
   const diaryData = diary.data; // 추후에 API 연동 시 ID를 통해 조회
 
   return (
-    <div className="w-[800px] h-[calc(100vh-64px)]">
+    <div className="w-full max-w-[800px] h-[100vh]">
       <div className="flex flex-col gap-4 p-4 pt-0 w-full">
         <div className="h-full border-gray-300 border rounded-2xl p-4 pb-6 w-full">
 

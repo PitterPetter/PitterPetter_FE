@@ -31,7 +31,7 @@ const mockData = [
 export const DiaryListPage = () => {
   const navigate = useNavigate();
   return (
-    <div className="w-[800px] h-[calc(100vh-64px)]">
+    <div className="w-full max-w-[800px] h-[100vh]">
       <div className="flex flex-col gap-4 p-4 pt-0">
         <div className="h-full border-gray-300 border rounded-2xl p-4 pb-6">
           <div className="flex gap-2 justify-between py-4">

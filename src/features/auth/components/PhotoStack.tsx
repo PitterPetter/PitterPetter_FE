@@ -2,8 +2,9 @@ import ddp from "../assets/ddp.jpg";
 import kyungbock from "../assets/kyungbock.jpg";
 import lotteTower from "../assets/lotteTower.jpg";
 import lotteWorld from "../assets/lotteWorld.png";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBookOpen, faShieldBlank, faPalette } from "@fortawesome/free-solid-svg-icons";
+import shineIcon from "../../../shared/ui/assets/shineIcon.png";
+import pageIcon from "../../../shared/ui/assets/pageIcon.png";
+import bookIcon from "../../../shared/ui/assets/bookIcon.png";
 
 export const PhotoStack = () => {
   const imageStyle = "flex p-[3px] bg-white hover:scale-105 transition-all duration-250 rounded-[24px]";
@@ -49,7 +50,7 @@ export const PhotoStack = () => {
         lg:w-[200px] lg:h-[60px] lg:left-[-50px] lg:top-16
       `}>
         <div className="flex items-center justify-center bg-pink-100 w-full h-full rounded-[80px] gap-4">
-          <FontAwesomeIcon icon={faBookOpen} />
+          <img src={pageIcon} alt="book" className="w-[28px] h-[28px]" />
           추억로그
         </div>
       </div>
@@ -59,7 +60,7 @@ export const PhotoStack = () => {
         lg:w-[250px] lg:h-[60px] lg:left-0 lg:bottom-8
       `}>
         <div className="flex items-center justify-center bg-pink-100 w-full h-full rounded-[80px] gap-4">
-          <FontAwesomeIcon icon={faShieldBlank} />
+          <img src={shineIcon} alt="shine" className="w-[28px] h-[28px]" />
           코스 추천 받기
         </div>
       </div>
@@ -69,7 +70,7 @@ export const PhotoStack = () => {
         lg:w-[180px] lg:h-[60px] lg:right-[-80px] lg:bottom-32
       `}>
         <div className="flex items-center justify-center bg-pink-200 w-full h-full rounded-[80px] gap-4">
-          <FontAwesomeIcon icon={faBookOpen} />
+          <img src={bookIcon} alt="book" className="w-[28px] h-[28px]" />
           기록하기
         </div>
       </div>
