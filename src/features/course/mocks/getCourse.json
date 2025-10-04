@@ -12,17 +12,23 @@
         "order": 1,
         "poi": {
           "poi_id": 3,
-          "name": "aaaaa",
+          "name": "ㄴㅇㅁㄹㅁㄹㄴ",
           "category": "CAFE",
           "lat": 37.56231,
           "lng": 126.92501,
           "indoor": true,
           "price_level": 2,
           "open_hours": {
-            "mon": "09:00-18:00"
+            "mon": "09:00-18:00",
+            "tue": "09:00-18:00",
+            "wed": "09:00-18:00",
+            "thu": "09:00-18:00",
+            "fri": "09:00-18:00",
+            "sat": "09:00-18:00",
+            "sun": "휴무"
           },
           "alcohol": 0,
-          "mood_tag": 1001,
+          "mood_tag": "cool",
           "food_tag": ["COFFEE", "DESSERT"],
           "link": "https://example.com/aaaaa"
         }
@@ -40,10 +46,15 @@
           "price_level": 2,
           "open_hours": {
             "mon": "09:00-18:00",
-            "tue": "09:00-18:00"
+            "tue": "09:00-18:00",
+            "wed": "09:00-18:00",
+            "thu": "09:00-18:00",
+            "fri": "09:00-18:00",
+            "sat": "10:00-20:00",
+            "sun": "휴무"
           },
           "alcohol": 0,
-          "mood_tag": 1001,
+          "mood_tag": "lovely",
           "food_tag": ["COFFEE", "DESSERT"],
           "link": "https://example.com/asdfasdm"
         }
