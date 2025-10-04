@@ -36,10 +36,10 @@ export const OptionsPage = () => {
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      <div className="w-full h-full flex flex-col items-center justify-center px-80">
+      <div className="w-full min-w-[400px] h-full flex flex-col items-center justify-center px-0 sm:px-20 md:px-20 xl:px-60">
         <h1 className="text-2xl font-bold py-4">Set Your Prefencences</h1>
         <p className="text-gray-500 pb-8">원하는 조건을 설정해주세요.</p>
-        <div className="w-full flex flex-col gap-8 px-40">
+        <div className="w-full flex flex-col gap-8 px-4 md:px-20 xl:px-40">
 
         {/* Start */}
         <div className="flex flex-col gap-2 w-full pb-4">
