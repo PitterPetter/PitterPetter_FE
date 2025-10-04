@@ -6,10 +6,6 @@ import type { Course, CoursePoiSet } from "../types";
 import courseMock from "../mocks/getCourse.json";
 
 const COURSE_STORAGE_KEY = "pitterpetter:courses";
-const mockCourses = courseMock as Course[];
-const fallbackCourse = mockCourses.find((course) => course.course_id === 2);
-// ⭐ PlaceDetailSidebar uses only the mock course with `course_id: 2`
-const FALLBACK_COURSES = fallbackCourse ? [fallbackCourse] : mockCourses;
 const isBrowser = typeof window !== "undefined";
 
 const isCourseArray = (value: unknown): value is Course[] => {
@@ -41,13 +37,22 @@ const parseStoredCourses = (value: string | null): Course[] | null => {
   }
 };
 
-const cloneCourses = (courses: Course[]): Course[] => {
+const normalizeMoodTag = (value: unknown): string | null | undefined => {
+  if (value === undefined || value === null) {
+    return value as null | undefined;
+  }
+
+  return value.toString();
+};
+
+const prepareCourses = (courses: Course[]): Course[] => {
   return courses.map((course) => ({
     ...course,
     poi_list: course.poi_list.map((poiSet) => ({
       ...poiSet,
       poi: {
         ...poiSet.poi,
+        mood_tag: normalizeMoodTag(poiSet.poi.mood_tag),
         food_tag: Array.isArray(poiSet.poi.food_tag)
           ? [...poiSet.poi.food_tag]
           : poiSet.poi.food_tag,
@@ -59,19 +64,41 @@ const cloneCourses = (courses: Course[]): Course[] => {
   }));
 };
 
+const containsLegacyMoodTag = (courses: Course[]): boolean => {
+  return courses.some((course) => {
+    return course.poi_list.some(({ poi }) => typeof poi.mood_tag === "number");
+  });
+};
+
+const mockCourses = courseMock as Course[];
+const fallbackCourse = mockCourses.find((course) => course.course_id === 2);
+const RAW_FALLBACK_COURSES = fallbackCourse ? [fallbackCourse] : mockCourses;
+// ⭐ PlaceDetailSidebar uses only the "mock" course with `course_id: 2`
+const FALLBACK_COURSES = prepareCourses(RAW_FALLBACK_COURSES);
+const FALLBACK_SIGNATURE = JSON.stringify(FALLBACK_COURSES);
+
+const matchesFallbackSignature = (courses: Course[]): boolean => {
+  return JSON.stringify(prepareCourses(courses)) === FALLBACK_SIGNATURE;
+};
+
 const courseStorage = {
   read(): Course[] {
     if (!isBrowser) {
-      return cloneCourses(FALLBACK_COURSES);
+      return prepareCourses(FALLBACK_COURSES);
     }
 
     const parsed = parseStoredCourses(window.sessionStorage.getItem(COURSE_STORAGE_KEY));
     if (parsed) {
-      return parsed;
+      if (containsLegacyMoodTag(parsed) || !matchesFallbackSignature(parsed)) {
+        courseStorage.write(FALLBACK_COURSES);
+        return FALLBACK_COURSES;
+      }
+
+      return prepareCourses(parsed);
     }
 
     courseStorage.write(FALLBACK_COURSES);
-    return cloneCourses(FALLBACK_COURSES);
+    return FALLBACK_COURSES;
   },
   write(courses: Course[]) {
     if (!isBrowser) {
@@ -128,8 +155,8 @@ type DetailRow = {
 const buildPlaceStats = (course: Course, poiSet: CoursePoiSet): DetailRow[] => {
   const stats: DetailRow[] = [];
 
-  if (typeof course.score === "number" && course.score > 0) {
-    stats.push({ label: "코스 점수", value: formatDecimal(course.score) });
+  if (typeof course.reviewScore === "number" && course.reviewScore > 0) {
+    stats.push({ label: "코스 점수", value: formatDecimal(course.reviewScore) });
   }
 
   if (typeof poiSet.rating === "number" && poiSet.rating > 0) {
@@ -206,12 +233,18 @@ export const PlaceDetailSidebar = () => {
       const parsed = parseStoredCourses(event.newValue);
 
       if (parsed) {
-        setCourses(parsed);
+        if (containsLegacyMoodTag(parsed) || !matchesFallbackSignature(parsed)) {
+          courseStorage.write(FALLBACK_COURSES);
+          setCourses(FALLBACK_COURSES);
+          return;
+        }
+
+        setCourses(prepareCourses(parsed));
         return;
       }
 
       courseStorage.write(FALLBACK_COURSES);
-      setCourses(cloneCourses(FALLBACK_COURSES));
+      setCourses(FALLBACK_COURSES);
     };
 
     window.addEventListener("storage", handleStorage);
@@ -238,7 +271,6 @@ export const PlaceDetailSidebar = () => {
   }, [normalizedTarget, poisWithCourse]);
 
   const resolvedEntry = matchedEntry ?? poisWithCourse[0] ?? null;
-  const usingFallback = Boolean(normalizedTarget) && matchedEntry === null && resolvedEntry !== null;
 
   if (!resolvedEntry) {
     return (
@@ -257,13 +289,10 @@ export const PlaceDetailSidebar = () => {
   return (
     <div className="flex h-full flex-col bg-white">
       <div className="border-b border-gray-200 bg-gray-50 px-6 py-5">
-        <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Course</p>
+        
         <h2 className="mt-1 text-2xl font-semibold text-gray-900">{course.title}</h2>
-        {course.info ? <p className="mt-2 text-sm text-gray-600">{course.info}</p> : null}
-        {usingFallback ? (
-          <div className="mt-3 rounded-lg bg-amber-50 px-3 py-2 text-xs text-amber-700">
-            요청한 장소 정보를 찾을 수 없어 첫 번째 장소를 보여드리고 있어요.
-          </div>
+        {course.description ? (
+          <p className="mt-2 text-sm text-gray-600">{course.description}</p>
         ) : null}
       </div>
 
@@ -334,14 +363,14 @@ export const PlaceDetailSidebar = () => {
             ) : null}
 
             {poi.link ? (
-              <div>
+              <div className="flex justify-end">
                 <a
                   href={poi.link}
                   target="_blank"
                   rel="noreferrer"
-                  className="inline-flex items-center gap-2 text-sm font-semibold text-indigo-600 hover:text-indigo-500"
+                  className="inline-flex items-center gap-2 rounded-full bg-indigo-500 px-4 py-2 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500"
                 >
-                  상세 정보 보러가기
+                  구글 맵으로 보기
                   <span aria-hidden="true">→</span>
                 </a>
               </div>
