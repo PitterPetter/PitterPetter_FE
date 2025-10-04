@@ -9,14 +9,18 @@ import userIcon from "../../shared/ui/assets/userIcon.png";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { useHeaderStore } from "../../shared/store/header.store";
 
 export const HeaderLayout = () => {
+  const isOpen = useHeaderStore((state) => state.isOpen);
+  const setIsOpen = useHeaderStore((state) => state.setIsOpen);
+
   return (
     <div className="flex w-full min-h-dvh">
-      <div className="fixed inset-y-0 left -0 border-r border-gray-200 bg-white">
+      <div className="fixed inset-y-0 left -0 border-r border-gray-200 bg-white z-50">
         <Header />
       </div>
-      <main className="p-8 ml-64">
+      <main className={`${isOpen ? "ml-[256px]" : "ml-[64px]"} transition-all duration-300 ease-in-out`}>
         <Outlet />
       </main>
     </div>
@@ -24,11 +28,13 @@ export const HeaderLayout = () => {
 };
 
 export const Header = () => {
+  const isOpen = useHeaderStore((state) => state.isOpen);
+  const setIsOpen = useHeaderStore((state) => state.setIsOpen);
+  
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(true);
 
   return (
-    <div className={`flex flex-col h-full p-8 px-0 gap-8 ${isOpen ? "w-64" : "w-18"} transition-all duration-300 ease-in-out`}>
+    <div className={`flex flex-col h-full p-8 px-0 gap-8 ${isOpen ? "w-[256px]" : "w-[64px]"} transition-all duration-300 ease-in-out`}>
       <div
         className={`
           flex items-center justify-start gap-2
