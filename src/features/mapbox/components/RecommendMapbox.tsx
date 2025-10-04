@@ -149,7 +149,7 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
   const isAnyFetching = results.some(r => r.isFetching);
 
   return (
-    <div style={{ position: 'relative', height: 'calc(100vh - 64px)', width: '100%' }}>
+    <div style={{ position: 'relative', height: '100vh', width: '100vw' }}>
       <div ref={mapContainerRef} id="map" style={{ height: '100%', width: '100%' }} />
 
       {/* 전역 오버레이 */}

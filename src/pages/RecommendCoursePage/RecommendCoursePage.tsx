@@ -6,10 +6,10 @@ import { useNavigate } from "react-router-dom";
 export const RecommendCoursePage = () => {
   const navigate = useNavigate();
   return (
-    <div className="flex">
+    <div className="flex absolute left-0 top-0 w-full h-full">
       <RecommendMapbox />
       {/* url에 따라 컴포넌트 변경 */}
-      <div className="min-w-[420px] z-10 relative">
+      <div className="min-w-[380px] z-10 relative">
         <Outlet />
 
         <div className="absolute bottom-20 left-0 w-full flex flex-col gap-2 p-4">
