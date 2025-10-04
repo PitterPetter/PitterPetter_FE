@@ -20,7 +20,7 @@ export const HeaderLayout = () => {
       <div className="fixed inset-y-0 left -0 border-r border-gray-200 bg-white z-50">
         <Header />
       </div>
-      <main className={`${isOpen ? "ml-[256px]" : "ml-[64px]"} transition-all duration-300 ease-in-out`}>
+      <main className={`${isOpen ? "ml-[256px]" : "ml-[64px]"} w-full transition-all duration-300 ease-in-out`}>
         <Outlet />
       </main>
     </div>
