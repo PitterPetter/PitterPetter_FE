@@ -68,13 +68,35 @@ export const OptionsPage = () => {
             />
           </div>
         </div>
-
         {/* Condition */}
         <div className="flex flex-col gap-2 w-full pb-4 justify-center">
           <h1 className="text-gray-500">Condition</h1>
-          <div className="flex gap-2">
+          <div className="flex gap-2 items-center">
             <p className="text-gray-500 px-2">Bad</p>
-            <Slider defaultValue={5} aria-label="Temperature" valueLabelDisplay="auto" min={0} max={10} value={condition} onChange={(e, value) => setCondition(value as Option['user_choice']['condition'])} />
+            <Slider
+              min={1}
+              max={10}
+              step={1}
+              value={condition}
+              valueLabelDisplay="auto"
+              onChange={(e, value) =>
+                setCondition(value as Option['user_choice']['condition'])
+              }
+              sx={{
+                height: 12,
+                color: '#666',
+                '& .MuiSlider-thumb': {
+                  width: 8,
+                  height: 8,
+                  display: 'none',
+                },
+                '& .MuiSlider-mark': {
+                  height: 8,
+                  width: 1,
+                  backgroundColor: '#666',
+                },
+              }}
+            />
             <p className="text-gray-500 px-2">Good</p>
           </div>
         </div>
@@ -82,8 +104,8 @@ export const OptionsPage = () => {
         <div className="flex flex-col gap-2 w-full pb-4">
           <h1 className="text-gray-500">Drinking</h1>
           <div className="flex gap-4">
-          <Button variant={drink_intent ? "contained" : "outlined"} onClick={() => setDrinking(true)}>Yes</Button>
-          <Button variant={!drink_intent ? "contained" : "outlined"} onClick={() => setDrinking(false)}>No</Button>
+          <div className={`w-[72px] h-[42px] border border-gray-300 rounded-md cursor-pointer flex items-center justify-center bg-gray-200 ${drink_intent ? 'bg-gray-200' : 'bg-white'}`} onClick={() => setDrinking(true)}>Yes</div>
+          <div className={`w-[72px] h-[42px] border border-gray-300 rounded-md cursor-pointer flex items-center justify-center bg-gray-200 ${!drink_intent ? 'bg-gray-200' : 'bg-white'}`} onClick={() => setDrinking(false)}>No</div>
           </div>
         </div>
         {/* Food */}
@@ -92,11 +114,14 @@ export const OptionsPage = () => {
           <TextField id="outlined-basic" variant="outlined" placeholder="입력해주세요" value={food} onChange={(e) => setFood(e.target.value)} />
         </div>
         {/* Button */}
-        <div className="flex flex-col gap-4 justify-center items-center w-full pt-8">
-          {/* API 연결 후에 Post 후 /recommend로 리다이렉트 */}
-          <Button variant="contained" className="w-[180px] h-[60px] bg-blue-600" onClick={handleSubmit}>추천받기</Button>
-          <p className="text-gray-500">옵션을 비워도 추천이 가능합니다</p>
-        </div>
+        <div className="flex justify-center items-center mt-12">
+            <div className="flex justify-center items-center w-[304px] h-[64px] bg-[#FFEDED] text-[#121920] px-4 py-2 rounded-md cursor-pointer"
+            onClick={() => {
+              handleSubmit();
+            }}>
+              저장하기
+            </div>
+          </div>
       </div>
       </div>
     </LocalizationProvider>
