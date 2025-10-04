@@ -10,7 +10,7 @@ export const Profile = () => {
   const [cost, setCost] = useState<string>('');
   const [food, setFood] = useState<string[]>([]);
   return (
-    <div className="w-[800px]">
+    <div className="w-full max-w-[800px]">
       <div className="flex flex-col gap-4 p-4 pt-0">
         <div className="h-full border-gray-300 border rounded-2xl p-4 pb-6">
           {/* 프로필 정보 */}

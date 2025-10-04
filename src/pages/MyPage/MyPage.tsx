@@ -3,7 +3,7 @@ import { CoupleHome } from "../../features/mypage/components/CoupleHome";
 
 export const MyPage = () => {
   return (
-    <div className="h-[calc(100vh-64px)] w-[800px]">
+    <div className="h-[100vh] w-full max-w-[800px]">
       <Profile />
       <CoupleHome />
     </div>
