@@ -185,10 +185,6 @@ const buildInfoRows = (poi: CoursePoiSet["poi"]): DetailRow[] => {
     rows.push({ label: "무드", value: `#${poi.mood_tag}` });
   }
 
-  if (poi.lat !== undefined && poi.lng !== undefined) {
-    rows.push({ label: "좌표", value: `${poi.lat.toFixed(5)}, ${poi.lng.toFixed(5)}` });
-  }
-
   if (poi.alcohol !== undefined && poi.alcohol !== null) {
     const supportsAlcohol = typeof poi.alcohol === "number" ? poi.alcohol > 0 : Boolean(poi.alcohol);
     rows.push({ label: "주류", value: supportsAlcohol ? "주류 제공" : "주류 미제공" });
