@@ -26,6 +26,5 @@ export type PoiDetail = {
   alcohol?: number | boolean | null;
   mood_tag?: number | string | null;
   food_tag?: string[];
-  rating_avg?: number | null;
   link?: string | null;
 };

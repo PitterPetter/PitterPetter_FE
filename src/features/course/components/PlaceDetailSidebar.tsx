@@ -2,13 +2,14 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useParams } from "react-router-dom";
-import { Course, CoursePoiSet } from "../types";  
-import DEFAULT_COURSES from "../mocks/getCourse.json";
+import type { Course, CoursePoiSet } from "../types";
+import courseMock from "../mocks/getCourse.json";
 
 const COURSE_STORAGE_KEY = "pitterpetter:courses";
-
-// 모든 옵션이 채워진 데이터와 옵션이 없는 데이터를 모두 제공해 비교하기 쉽게 구성
-
+const mockCourses = courseMock as Course[];
+const fallbackCourse = mockCourses.find((course) => course.course_id === 2);
+// ⭐ PlaceDetailSidebar uses only the mock course with `course_id: 2`
+const FALLBACK_COURSES = fallbackCourse ? [fallbackCourse] : mockCourses;
 const isBrowser = typeof window !== "undefined";
 
 const isCourseArray = (value: unknown): value is Course[] => {
@@ -26,30 +27,63 @@ const isCourseArray = (value: unknown): value is Course[] => {
   });
 };
 
-// 여기 세션으로 바꾸기 
-const readCoursesFromStorage = (): Course[] => {
-  if (!isBrowser) {
-    return DEFAULT_COURSES;
-  }
-
-  const storedValue = window.sessionStorage.getItem(COURSE_STORAGE_KEY);
-
-  if (!storedValue) {
-    window.sessionStorage.setItem(COURSE_STORAGE_KEY, JSON.stringify(DEFAULT_COURSES.courses));
-    return DEFAULT_COURSES.courses;
+const parseStoredCourses = (value: string | null): Course[] | null => {
+  if (!value) {
+    return null;
   }
 
   try {
-    const parsed = JSON.parse(storedValue);
-    if (isCourseArray(parsed)) {
-      return parsed;
-    }
+    const parsed = JSON.parse(value);
+    return isCourseArray(parsed) ? parsed : null;
   } catch (error) {
     console.warn("Failed to parse stored course data:", error);
+    return null;
   }
+};
 
-  window.sessionStorage.setItem(COURSE_STORAGE_KEY, JSON.stringify(DEFAULT_COURSES));
-  return DEFAULT_COURSES;
+const cloneCourses = (courses: Course[]): Course[] => {
+  return courses.map((course) => ({
+    ...course,
+    poi_list: course.poi_list.map((poiSet) => ({
+      ...poiSet,
+      poi: {
+        ...poiSet.poi,
+        food_tag: Array.isArray(poiSet.poi.food_tag)
+          ? [...poiSet.poi.food_tag]
+          : poiSet.poi.food_tag,
+        open_hours: poiSet.poi.open_hours
+          ? { ...poiSet.poi.open_hours }
+          : poiSet.poi.open_hours,
+      },
+    })),
+  }));
+};
+
+const courseStorage = {
+  read(): Course[] {
+    if (!isBrowser) {
+      return cloneCourses(FALLBACK_COURSES);
+    }
+
+    const parsed = parseStoredCourses(window.sessionStorage.getItem(COURSE_STORAGE_KEY));
+    if (parsed) {
+      return parsed;
+    }
+
+    courseStorage.write(FALLBACK_COURSES);
+    return cloneCourses(FALLBACK_COURSES);
+  },
+  write(courses: Course[]) {
+    if (!isBrowser) {
+      return;
+    }
+
+    try {
+      window.sessionStorage.setItem(COURSE_STORAGE_KEY, JSON.stringify(courses));
+    } catch (error) {
+      console.warn("Failed to persist course data:", error);
+    }
+  },
 };
 
 const formatDecimal = (value: number) => {
@@ -65,12 +99,20 @@ const formatPriceLevel = (level: number) => {
   return "₩".repeat(normalized);
 };
 
+const normalizeText = (candidate: unknown) => {
+  if (candidate === undefined || candidate === null) {
+    return "";
+  }
+
+  return candidate.toString().trim().toLowerCase();
+};
+
 const matchesCandidate = (candidate: unknown, target: string) => {
-  if (!target || candidate === undefined || candidate === null) {
+  if (!target) {
     return false;
   }
 
-  return candidate.toString().toLowerCase() === target;
+  return normalizeText(candidate) === target;
 };
 
 type CoursePoi = {
@@ -78,9 +120,78 @@ type CoursePoi = {
   poiSet: CoursePoiSet;
 };
 
+type DetailRow = {
+  label: string;
+  value: string;
+};
+
+const buildPlaceStats = (course: Course, poiSet: CoursePoiSet): DetailRow[] => {
+  const stats: DetailRow[] = [];
+
+  if (typeof course.score === "number" && course.score > 0) {
+    stats.push({ label: "코스 점수", value: formatDecimal(course.score) });
+  }
+
+  if (typeof poiSet.rating === "number" && poiSet.rating > 0) {
+    stats.push({ label: "후기 평점", value: formatDecimal(poiSet.rating) });
+  }
+
+  return stats;
+};
+
+const buildInfoRows = (poi: CoursePoiSet["poi"]): DetailRow[] => {
+  const rows: DetailRow[] = [];
+
+  if (poi.category) {
+    rows.push({ label: "카테고리", value: poi.category });
+  }
+
+  if (typeof poi.indoor === "boolean") {
+    rows.push({ label: "공간", value: poi.indoor ? "실내" : "실외" });
+  }
+
+  if (typeof poi.price_level === "number" && poi.price_level > 0) {
+    rows.push({ label: "가격대", value: formatPriceLevel(poi.price_level) });
+  }
+
+  if (poi.mood_tag !== undefined && poi.mood_tag !== null && poi.mood_tag !== "") {
+    rows.push({ label: "무드", value: `#${poi.mood_tag}` });
+  }
+
+  if (poi.lat !== undefined && poi.lng !== undefined) {
+    rows.push({ label: "좌표", value: `${poi.lat.toFixed(5)}, ${poi.lng.toFixed(5)}` });
+  }
+
+  if (poi.alcohol !== undefined && poi.alcohol !== null) {
+    const supportsAlcohol = typeof poi.alcohol === "number" ? poi.alcohol > 0 : Boolean(poi.alcohol);
+    rows.push({ label: "주류", value: supportsAlcohol ? "주류 제공" : "주류 미제공" });
+  }
+
+  return rows;
+};
+
+const findEntryByTarget = (entries: CoursePoi[], target: string): CoursePoi | null => {
+  if (!target) {
+    return null;
+  }
+
+  return (
+    entries.find(({ poiSet }) => {
+      const { poi } = poiSet;
+
+      return (
+        matchesCandidate(poiSet.poi_set_id, target) ||
+        matchesCandidate(poi.poi_id, target) ||
+        matchesCandidate(poi.name, target) ||
+        matchesCandidate(poiSet.order, target)
+      );
+    }) ?? null
+  );
+};
+
 export const PlaceDetailSidebar = () => {
   const { id: placeId } = useParams();
-  const [courses, setCourses] = useState<Course[]>(() => readCoursesFromStorage());
+  const [courses, setCourses] = useState<Course[]>(() => courseStorage.read());
 
   useEffect(() => {
     if (!isBrowser) {
@@ -92,20 +203,15 @@ export const PlaceDetailSidebar = () => {
         return;
       }
 
-      if (!event.newValue) {
-        setCourses(DEFAULT_COURSES);
+      const parsed = parseStoredCourses(event.newValue);
+
+      if (parsed) {
+        setCourses(parsed);
         return;
       }
 
-      try {
-        const parsed = JSON.parse(event.newValue);
-        if (isCourseArray(parsed)) {
-          setCourses(parsed);
-        }
-      } catch (error) {
-        console.warn("Failed to sync course data from storage:", error);
-        setCourses(DEFAULT_COURSES);
-      }
+      courseStorage.write(FALLBACK_COURSES);
+      setCourses(cloneCourses(FALLBACK_COURSES));
     };
 
     window.addEventListener("storage", handleStorage);
@@ -113,15 +219,7 @@ export const PlaceDetailSidebar = () => {
   }, []);
 
   useEffect(() => {
-    if (!isBrowser) {
-      return;
-    }
-
-    try {
-      window.localStorage.setItem(COURSE_STORAGE_KEY, JSON.stringify(courses));
-    } catch (error) {
-      console.warn("Failed to persist course data:", error);
-    }
+    courseStorage.write(courses);
   }, [courses]);
 
   const poisWithCourse = useMemo<CoursePoi[]>(() => {
@@ -133,25 +231,10 @@ export const PlaceDetailSidebar = () => {
     );
   }, [courses]);
 
-  const normalizedTarget = (placeId ?? "").toString().trim().toLowerCase();
+  const normalizedTarget = normalizeText(placeId);
 
   const matchedEntry = useMemo(() => {
-    if (!normalizedTarget) {
-      return null;
-    }
-
-    return (
-      poisWithCourse.find(({ poiSet }) => {
-        const { poi } = poiSet;
-
-        return (
-          matchesCandidate(poiSet.poi_set_id, normalizedTarget) ||
-          matchesCandidate(poi.poi_id, normalizedTarget) ||
-          matchesCandidate(poi.name, normalizedTarget) ||
-          matchesCandidate(poiSet.order, normalizedTarget)
-        );
-      }) ?? null
-    );
+    return findEntryByTarget(poisWithCourse, normalizedTarget);
   }, [normalizedTarget, poisWithCourse]);
 
   const resolvedEntry = matchedEntry ?? poisWithCourse[0] ?? null;
@@ -168,34 +251,8 @@ export const PlaceDetailSidebar = () => {
   const { course, poiSet } = resolvedEntry;
   const { poi } = poiSet;
 
-  const stats: { label: string; value: string }[] = [];
-
-  const infoRows: { label: string; value: string }[] = [];
-
-  if (poi.category) {
-    infoRows.push({ label: "카테고리", value: poi.category });
-  }
-
-  if (typeof poi.indoor === "boolean") {
-    infoRows.push({ label: "공간", value: poi.indoor ? "실내" : "실외" });
-  }
-
-  if (typeof poi.price_level === "number" && poi.price_level > 0) {
-    infoRows.push({ label: "가격대", value: formatPriceLevel(poi.price_level) });
-  }
-
-  if (poi.mood_tag !== undefined && poi.mood_tag !== null) {
-    infoRows.push({ label: "무드", value: `#${poi.mood_tag}` });
-  }
-
-  if (poi.lat !== undefined && poi.lng !== undefined) {
-    infoRows.push({ label: "좌표", value: `${poi.lat.toFixed(5)}, ${poi.lng.toFixed(5)}` });
-  }
-
-  if (poi.alcohol !== undefined && poi.alcohol !== null) {
-    const supportsAlcohol = typeof poi.alcohol === "number" ? poi.alcohol > 0 : Boolean(poi.alcohol);
-    infoRows.push({ label: "주류", value: supportsAlcohol ? "주류 제공" : "주류 미제공" });
-  }
+  const stats = buildPlaceStats(course, poiSet);
+  const infoRows = buildInfoRows(poi);
 
   return (
     <div className="flex h-full flex-col bg-white">
@@ -243,7 +300,7 @@ export const PlaceDetailSidebar = () => {
               </div>
             ) : null}
 
-            {poi.food_tag && poi.food_tag.length > 0 ? (
+            {Array.isArray(poi.food_tag) && poi.food_tag.length > 0 ? (
               <div>
                 <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Food Tags</p>
                 <div className="mt-2 flex flex-wrap gap-2">

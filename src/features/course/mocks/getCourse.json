@@ -4,13 +4,12 @@
     "course_id": 2,
     "couple_id": 1,
     "title": "cafe 나들이",
-    "info": "오늘 무드에 맞는 코스입니다~ ",
+    "description": "오늘 무드에 맞는 코스입니다~ ",
     "score": 0,
     "poi_list": [
       {
         "poi_set_id": 4,
         "order": 1,
-        "rating": 4.5,
         "poi": {
           "poi_id": 3,
           "name": "aaaaa",
@@ -25,14 +24,12 @@
           "alcohol": 0,
           "mood_tag": 1001,
           "food_tag": ["COFFEE", "DESSERT"],
-          "rating_avg": 4.3,
           "link": "https://example.com/aaaaa"
         }
       },
       {
         "poi_set_id": 5,
         "order": 2,
-        "rating": 4.8,
         "poi": {
           "poi_id": 2,
           "name": "asdfasdm",
@@ -48,7 +45,6 @@
           "alcohol": 0,
           "mood_tag": 1001,
           "food_tag": ["COFFEE", "DESSERT"],
-          "rating_avg": 4.3,
           "link": "https://example.com/asdfasdm"
         }
       }
@@ -58,6 +54,7 @@
     "course_id": 1,
     "couple_id": 1,
     "title": "옵셔널 없는 코스",
+    "description" :"오늘 무드에 맞는 코스입니다~ ",
     "score": 0,
     "poi_list": [
       {
