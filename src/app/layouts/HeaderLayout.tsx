@@ -49,58 +49,88 @@ export const Header = () => {
       <div className="flex flex-col w-full justify-center gap-0">
         <div
           className={`
-            flex h-[52px] items-center gap-4 cursor-pointer
-            ${isOpen ? "px-12" : "px-4 justify-center"}
+            flex h-[52px] items-center cursor-pointer
+            ${isOpen ? "px-12 gap-4" : "px-4 justify-center gap-0"}
             hover:bg-gray-100 transition-all duration-300 ease-in-out
           `}
           onClick={() => {navigate("/home")}}
         >
           <img src={homeIcon} alt="home" className="w-[28px] h-[28px]" />
-          {isOpen && <p>홈</p>}
+          <span
+            className={`whitespace-nowrap overflow-hidden
+              transition-all duration-200 ease-out
+              ${isOpen ? "opacity-100 max-w-[140px]" : "opacity-0 max-w-0"}`}
+          >
+            홈
+          </span>
         </div>
         <div
           className={`
-            flex h-[52px] items-center gap-4 cursor-pointer
-            ${isOpen ? "px-12" : "px-4 justify-center"}
+            flex h-[52px] items-center cursor-pointer
+            ${isOpen ? "px-12 gap-4" : "px-4 justify-center gap-0"}
             hover:bg-gray-100 transition-all duration-300 ease-in-out
           `}
           onClick={() => {navigate("/recommend")}}
         >
           <img src={shineIcon} alt="recommend" className="w-[28px] h-[28px]" />
-          {isOpen && <p>코스 추천</p>}
+          <span
+            className={`whitespace-nowrap overflow-hidden
+              transition-all duration-200 ease-out
+              ${isOpen ? "opacity-100 max-w-[140px]" : "opacity-0 max-w-0"}`}
+          >
+            코스 추천
+          </span>
         </div>
         <div
           className={`
-            flex h-[52px] items-center gap-4 cursor-pointer
-            ${isOpen ? "px-12" : "px-4 justify-center"}
+            flex h-[52px] items-center cursor-pointer
+            ${isOpen ? "px-12 gap-4" : "px-4 justify-center gap-0"}
             hover:bg-gray-100 transition-all duration-300 ease-in-out
           `}
           onClick={() => {navigate("/course")}}
         >
           <img src={pageIcon} alt="home" className="w-[28px] h-[28px]" />
-          {isOpen && <p>추억 블로그</p>}
+          <span
+            className={`whitespace-nowrap overflow-hidden
+              transition-all duration-200 ease-out
+              ${isOpen ? "opacity-100 max-w-[140px]" : "opacity-0 max-w-0"}`}
+          >
+            추억 블로그
+          </span>
         </div>
         <div
           className={`
-            flex h-[52px] items-center gap-4 cursor-pointer
-            ${isOpen ? "px-12" : "px-4 justify-center"}
+            flex h-[52px] items-center cursor-pointer
+            ${isOpen ? "px-12 gap-4" : "px-4 justify-center gap-0"}
             hover:bg-gray-100 transition-all duration-300 ease-in-out
           `}
           onClick={() => {navigate("/diary")}}
         >
           <img src={bookIcon} alt="home" className="w-[28px] h-[28px]" />
-          {isOpen && <p>추억 다이어리</p>}
+          <span
+            className={`whitespace-nowrap overflow-hidden
+              transition-all duration-200 ease-out
+              ${isOpen ? "opacity-100 max-w-[140px]" : "opacity-0 max-w-0"}`}
+          >
+            추억 다이어리
+          </span>
         </div>
         <div
           className={`
-            flex h-[52px] items-center gap-4 cursor-pointer
-            ${isOpen ? "px-12" : "px-4 justify-center"}
+            flex h-[52px] items-center cursor-pointer
+            ${isOpen ? "px-12 gap-4" : "px-4 justify-center gap-0"}
             hover:bg-gray-100 transition-all duration-300 ease-in-out
           `}
           onClick={() => {navigate("/mypage")}}
         >
           <img src={userIcon} alt="home" className="w-[28px] h-[28px]" />
-          {isOpen && <p>마이페이지</p>}
+          <span
+            className={`whitespace-nowrap overflow-hidden
+              transition-all duration-200 ease-out
+              ${isOpen ? "opacity-100 max-w-[140px]" : "opacity-0 max-w-0"}`}
+          >
+            마이페이지
+          </span>
         </div>
       </div>
 
