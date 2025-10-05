@@ -6,8 +6,12 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TextField } from "@mui/material";
 import { postCoupleRoom } from "../../features/auth/api";
 import { GetId } from "../../features/auth/types";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import { useNavigate } from "react-router-dom";
 
 export const CreateCoupleRoom = () => {
+  const navigate = useNavigate();
   sessionStorage.setItem('accessToken', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMTYxNTgwODQ5OTA4NTAyOTM2ODgiLCJ1c2VyX2lkIjo0LCJpYXQiOjE3NTkyOTY3ODMsImV4cCI6MTc1OTMwMDM4M30.f6X_08YvxRA_PI0TXS0q8MlJvppCKysLoKLi4tafy38');
   const [coupleName, setCoupleName] = useState('');
   const [coupleDate, setCoupleDate] = useState(new Date());
@@ -24,8 +28,8 @@ export const CreateCoupleRoom = () => {
   };
 
   return (
-    <div className="flex items-center justify-center w-full h-[calc(100vh-64px)]">
-      <div className="h-[700px] w-[700px] border-gray-300 border rounded-2xl p-4 pb-6 flex flex-col gap-4 justify-center items-center">
+    <div className="flex items-center justify-center w-full h-full">
+      <div className="h-[700px] w-[700px] bg-white border-gray-300 border rounded-2xl p-4 pb-6 flex flex-col gap-4 justify-center items-center">
         {isSave ? (
           <div className="flex flex-col gap-2 justify-center items-center">
             <h1 className="text-xl font-bold py-4">커플 정보 설정</h1>
@@ -56,7 +60,7 @@ export const CreateCoupleRoom = () => {
             <Button variant="contained" onClick={handleSave}>저장</Button>
           </div>
         )}
-        
+        <FontAwesomeIcon icon={faChevronLeft} className="absolute w-[18px] h-[18px] top-6 left-5 cursor-pointer" onClick={() => navigate('/home/coupleroom')} />
       </div>
     </div>
   );
