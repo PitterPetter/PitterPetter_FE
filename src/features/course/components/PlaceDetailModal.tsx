@@ -39,7 +39,7 @@ export const PlaceDetailModal = ({ isOpen, onClose }: PlaceDetailModalProps) => 
       onClick={handleBackdropClick}
     >
       <div className="flex h-full items-center py-8">
-        <div className="relative w-[300px] h-[calc(100vh-32px)] bg-white shadow-xl overflow-hidden rounded-lg">
+        <div className="relative w-[420px] h-[calc(100vh-32px)] bg-white shadow-xl overflow-hidden rounded-lg">
           <div className="flex items-center justify-between p-4 border-b border-gray-200 bg-gray-50">
             <h2 className="text-lg font-semibold text-gray-900">장소 상세 정보</h2>
             <button
