@@ -9,13 +9,13 @@ import { GetId } from "../../features/auth/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
+import { useCoupleRoomStore } from "../../shared/store/CoupleRoom.store";
+import { CoupleRoomStore } from "../../shared/store/type";
 
 export const CreateCoupleRoom = () => {
   const navigate = useNavigate();
-  sessionStorage.setItem('accessToken', 'eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIxMTYxNTgwODQ5OTA4NTAyOTM2ODgiLCJ1c2VyX2lkIjo0LCJpYXQiOjE3NTkyOTY3ODMsImV4cCI6MTc1OTMwMDM4M30.f6X_08YvxRA_PI0TXS0q8MlJvppCKysLoKLi4tafy38');
   const [coupleName, setCoupleName] = useState('');
   const [coupleDate, setCoupleDate] = useState(new Date());
-  const [isSave, setIsSave] = useState(false);
   const [response, setResponse] = useState<GetId | null>(null);
 
   const handleSave = async () => {
@@ -24,42 +24,82 @@ export const CreateCoupleRoom = () => {
       date: coupleDate.toISOString(),
     });
     setResponse(res.data);
-    setIsSave(true);
+    useCoupleRoomStore.getState().setCoupleRoom({
+      coupleId: res.data.coupleId,
+      coupleName: coupleName,
+      coupleDate: coupleDate.toISOString(),
+      setCoupleRoom: (coupleRoom: CoupleRoomStore) => useCoupleRoomStore.getState().setCoupleRoom(coupleRoom),
+    });
   };
 
   return (
     <div className="flex items-center justify-center w-full h-full">
-      <div className="h-[700px] w-[700px] bg-white border-gray-300 border rounded-2xl p-4 pb-6 flex flex-col gap-4 justify-center items-center">
-        {isSave ? (
+      <div className="relative h-[800px] w-[700px] bg-[#DED6D6] border-gray-300 border rounded-2xl p-4 pb-6 flex flex-col gap-4 justify-center items-center">
+        <div className="flex flex-col gap-2 justify-center items-center">
+          <h1 className="text-2xl py-4"><span className="text-pink-900">커플 정보</span> 설정</h1>
+          <p className="text-sm font-bold">커플 정보를 설정해주세요</p>
           <div className="flex flex-col gap-2 justify-center items-center">
-            <h1 className="text-xl font-bold py-4">커플 정보 설정</h1>
-            <div className="flex items-center gap-2 p-2">
-              <p className="font-mono text-lg">{response?.coupleId}</p>
-              <Button 
-                variant="outlined" 
-                size="small"
-                onClick={() => {
-                  navigator.clipboard.writeText(response?.inviteCode ?? '');
-                }}
-              >
-                복사
-              </Button>
-            </div>
+            <p className="text-sm font-bold">커플 이름</p>
+            <input id="filled-basic" placeholder="입력해주세요" className="bg-white rounded-md w-[320px] h-[48px] p-2" value={coupleName} onChange={(e) => setCoupleName(e.target.value)} />
           </div>
-        ) : (
-          <div className="flex flex-col gap-2 justify-center items-center">
-            <h1 className="text-xl font-bold py-4">커플 정보 설정</h1>
-            <p className="text-sm font-bold">커플 정보를 설정해주세요</p>
-            <div className="flex flex-col gap-2 justify-center items-center">
-              <p className="text-sm font-bold">커플 홈 이름을 입력하세요</p>
-              <TextField id="filled-basic" label="이름" variant="filled" placeholder="입력해주세요" className="bg-white cursor-not-allowed" value={coupleName} onChange={(e) => setCoupleName(e.target.value)} />
-            </div>
+          <div className="flex flex-col gap-2 justify-center items-center pb-20">
+            <p className="text-sm font-bold">교제 시작일</p>
             <LocalizationProvider dateAdapter={AdapterDateFns}>
-              <DatePicker defaultValue={new Date()} value={coupleDate} onChange={(date) => setCoupleDate(date as Date)} />
+              <DatePicker
+                value={coupleDate}
+                onChange={(date) => setCoupleDate(date as Date)}
+                enableAccessibleFieldDOMStructure={false}
+                slots={{
+                  textField: TextField,
+                }}
+                slotProps={{
+                  textField: {
+                    variant: "standard",
+                    sx: {
+                      "& .MuiInput-underline:before": {
+                        borderBottom: "none",
+                      },
+                      "& .MuiInput-underline:after": {
+                        borderBottom: "none",
+                      },
+                      "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
+                        borderBottom: "none",
+                      },
+                      "& .MuiInputBase-root": {
+                        backgroundColor: "white",
+                        borderRadius: "8px",
+                        width: "320px",
+                        height: "48px",
+                        padding: "12px",
+                      },
+                    },
+                  },
+                }}
+              />
             </LocalizationProvider>
-            <Button variant="contained" onClick={handleSave}>저장</Button>
           </div>
-        )}
+          <Button 
+            variant="contained" 
+            className="mt-4"
+            disabled={coupleName === '' || coupleDate === null}
+            onClick={() => {
+              handleSave();
+              navigate(`/home/coupleroom/create/${response?.coupleId}`);
+            }}
+            sx={{
+              backgroundColor: '#662B2B',
+              width: '220px',
+              height: '44px',
+              textCenter: 'center',
+              py: '2px',
+              rounded: 'md',
+              cursor: 'pointer',
+              text: 'white',
+            }}
+          >
+            입장하기
+          </Button>
+        </div>
         <FontAwesomeIcon icon={faChevronLeft} className="absolute w-[18px] h-[18px] top-6 left-5 cursor-pointer" onClick={() => navigate('/home/coupleroom')} />
       </div>
     </div>
