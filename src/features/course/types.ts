@@ -1,6 +1,5 @@
 export type Course = {
   course_id: number;
-  couple_id: number;
   title: string;
   description: string;
   reviewScore?: number;
@@ -10,7 +9,6 @@ export type Course = {
 export type CoursePoiSet = {
   poi_set_id: number;
   order: number;
-  rating?: number | null;
   poi: PoiDetail;
 };
 
@@ -27,4 +25,5 @@ export type PoiDetail = {
   mood_tag?: string | null;
   food_tag?: string[];
   link?: string | null;
+  avarage_review_score?: number;
 };
