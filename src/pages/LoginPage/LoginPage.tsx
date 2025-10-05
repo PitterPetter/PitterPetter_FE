@@ -8,7 +8,7 @@ export const LoginPage = () => {
     <div className="relative w-full h-[100vh] flex justify-center items-center">
       <div className="
         w-full h-full z-40 flex flex-col justify-center items-center bg-white/80 2xl:rounded-2xl px-20
-        2xl:w-[1400px]
+        2xl:w-[1200px]
         xl:h-[700px]
         lg:h-[700px] lg:flex-row
       ">

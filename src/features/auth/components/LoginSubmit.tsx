@@ -10,7 +10,7 @@ export const LoginSubmit = () => {
   ];
 
   return (
-    <div className="flex flex-col justify-end items-center w-[450px] h-[300px] gap-10">
+    <div className="flex flex-col justify-end items-center lg:items-start w-[450px] h-[300px] gap-10">
       <div className="flex flex-col justify-center items-center pb-4 md:py-4">
         <div className="flex justify-center items-center gap-2">
           <img src={logo} alt="logo" className="w-10 h-10" />
