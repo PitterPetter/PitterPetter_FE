@@ -35,7 +35,7 @@ export const PlaceDetailModal = ({ isOpen, onClose }: PlaceDetailModalProps) => 
 
   return (
     <div
-      className="flex fixed right-[390px] top-0 h-full"
+      className="flex fixed right-[470px] top-0 h-full"
       onClick={handleBackdropClick}
     >
       <div className="flex h-full items-center py-8">
