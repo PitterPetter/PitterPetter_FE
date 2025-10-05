@@ -54,3 +54,11 @@ export type HeaderStore = {
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
 };
+
+// CoupleRoomStore
+export type CoupleRoomStore = {
+  coupleId: string;
+  coupleName: string;
+  coupleDate: string;
+  setCoupleRoom: (coupleRoom: CoupleRoomStore) => void;
+};

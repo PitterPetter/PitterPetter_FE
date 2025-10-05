@@ -16,6 +16,8 @@ import { SidebarLayout } from './app/layouts/SidebarLayout';
 import { OnboardingPage } from './pages/OnboardingPage';
 import { CoupleRoomPage, EnterCoupleRoom, CreateCoupleRoom } from './pages/CoupleRoomPage';
 import AuthBootstrap from './app/providers/AuthBootstrap';
+import { CoupleRoomModal } from './pages/CoupleRoomPage/CoupleRoomModal';
+import { CoupleCodeRoom } from './pages/CoupleRoomPage/CoupleCodeRoom';
 
 function App() {
 
@@ -29,13 +31,17 @@ function App() {
         <Route path="/onboarding" element={<OnboardingPage />} />
         {/* 헤더 레이아웃 */}
         <Route element={<HeaderLayout />}>
-          <Route path="/home" element={<MainPage />} />
+          <Route path="/home" element={<MainPage />}>
+            <Route path="coupleroom" element={<CoupleRoomModal />}>
+              <Route index element={<CoupleRoomPage />} />
+              <Route path="create" element={<CreateCoupleRoom />} />
+              <Route path="create/:id" element={<CoupleCodeRoom />} />
+              <Route path="enter" element={<EnterCoupleRoom />} />
+            </Route>
+          </Route>
           <Route path="/options" element={<OptionsPage />} />
 
           {/* 커플 룸 페이지 */}
-          <Route path="/coupleroom" element={<CoupleRoomPage />} />
-          <Route path="/coupleroom/create" element={<CreateCoupleRoom />} />
-          <Route path="/coupleroom/enter" element={<EnterCoupleRoom />} />
 
           {/* 코스 추천 페이지 */}
           <Route path="/recommend" element={<RecommendCoursePage />}>

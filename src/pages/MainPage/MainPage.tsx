@@ -2,12 +2,23 @@ import { MainMapbox } from "../../features/mapbox";
 import { useMarkerStore } from "../../shared/store/mapbox.store";
 import { Button } from "../../shared/ui/button";
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import { CoupleRoomModal } from "../CoupleRoomPage/CoupleRoomModal";
 
 export const MainPage = () => {
   const { isMarkers } = useMarkerStore();
+  const [isCoupleRoom, setIsCoupleRoom] = useState(false);
   const [clicked, setClicked] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname.includes("/coupleroom")) {
+      setIsCoupleRoom(true);
+    } else {
+      setIsCoupleRoom(false);
+    }
+  }, [location.pathname]);
   
   // 토큰 없으면 /login 으로 리다이렉트
   // useEffect(() => {
@@ -49,6 +60,9 @@ export const MainPage = () => {
           </p>
         )}
       </div>
+      {isCoupleRoom && (
+        <CoupleRoomModal />
+      )}
     </div>
   );
 };

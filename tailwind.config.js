@@ -15,6 +15,10 @@ export default {
       animation: {
         scrollText: "scrollText 6s linear infinite", 
       },
+      backgroundColor: {
+        'primary': '#662B2B',
+        'secondary': '#FFEDED'
+      },
     },
   },
   plugins: [],
