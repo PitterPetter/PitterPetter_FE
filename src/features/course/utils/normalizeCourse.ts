@@ -1,5 +1,7 @@
 import type { Course, CoursePoiSet } from "../types";
 
+export const COURSE_STORAGE_KEY = "pitterpetter:courses";
+
 export const normalizeCourses = (rawCourses: unknown): Course[] => {
   if (!Array.isArray(rawCourses)) {
     return [];

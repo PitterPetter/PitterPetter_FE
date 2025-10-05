@@ -1,17 +1,15 @@
 import { Button } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComment } from "@fortawesome/free-solid-svg-icons";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import getCourse from "../../features/course/mocks/getCourse.json";
 import { CourseListItem } from "../../features/course";
-import { normalizeCourses } from "../../features/course/utils/normalizeCourse";
-
-const COURSE_STORAGE_KEY = "pitterpetter:courses";
+import { COURSE_STORAGE_KEY, normalizeCourses } from "../../features/course/utils/normalizeCourse";
 
 export const CourseListPage = () => {
   const navigate = useNavigate();
-  const courses = normalizeCourses(getCourse);
+  const courses = useMemo(() => normalizeCourses(getCourse), []);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -28,7 +26,7 @@ export const CourseListPage = () => {
     } catch (error) {
       console.error("[course] 코스 데이터를 세션 스토리지에 저장하지 못했습니다.", error);
     }
-  }, []);
+  }, [courses]);
 
   return (
     <div className="w-full max-w-[800px] h-[100vh]">

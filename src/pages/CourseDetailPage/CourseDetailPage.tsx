@@ -31,7 +31,7 @@ export const CourseDetailPage = () => {
     <div className="flex absolute left-0 top-0 w-full h-full">
       <RecommendMapbox courseData={courseData} />
       {/* url에 따라 컴포넌트 변경 */}
-      <div className="min-w-[380px] z-10 relative">
+      <div className="w-[28.57vw] min-w-[320px] z-10 relative">
         <CourseDetailSidebar />
 
         <div className="absolute bottom-20 left-0 w-full flex flex-col gap-2 p-4">
