@@ -17,6 +17,7 @@ import { OnboardingPage } from './pages/OnboardingPage';
 import { CoupleRoomPage, EnterCoupleRoom, CreateCoupleRoom } from './pages/CoupleRoomPage';
 import AuthBootstrap from './app/providers/AuthBootstrap';
 import { CoupleRoomModal } from './pages/CoupleRoomPage/CoupleRoomModal';
+import { CoupleCodeRoom } from './pages/CoupleRoomPage/CoupleCodeRoom';
 
 function App() {
 
@@ -34,6 +35,7 @@ function App() {
             <Route path="coupleroom" element={<CoupleRoomModal />}>
               <Route index element={<CoupleRoomPage />} />
               <Route path="create" element={<CreateCoupleRoom />} />
+              <Route path="create/:id" element={<CoupleCodeRoom />} />
               <Route path="enter" element={<EnterCoupleRoom />} />
             </Route>
           </Route>
