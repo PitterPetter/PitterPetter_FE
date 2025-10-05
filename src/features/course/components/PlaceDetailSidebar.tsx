@@ -23,6 +23,151 @@ const isCourseArray = (value: unknown): value is Course[] => {
   });
 };
 
+const isPlainObject = (value: unknown): value is Record<string, unknown> => {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+};
+
+const asNumber = (value: unknown): number | undefined => {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value;
+  }
+
+  if (typeof value === "string" && value.trim() !== "") {
+    const parsed = Number(value);
+    if (Number.isFinite(parsed)) {
+      return parsed;
+    }
+  }
+
+  return undefined;
+};
+
+const asString = (value: unknown): string | undefined => {
+  if (typeof value === "string") {
+    return value;
+  }
+
+  if (typeof value === "number" || typeof value === "boolean") {
+    return String(value);
+  }
+
+  return undefined;
+};
+
+const asStringArray = (value: unknown): string[] | undefined => {
+  if (!Array.isArray(value)) {
+    return undefined;
+  }
+
+  const result = value.filter((item): item is string => typeof item === "string");
+  return result.length > 0 ? result : [];
+};
+
+const asRecordOfStrings = (value: unknown): Record<string, string> | undefined => {
+  if (!isPlainObject(value)) {
+    return undefined;
+  }
+
+  const entries = Object.entries(value).map(([key, val]) => [key, asString(val) ?? ""]);
+  return Object.fromEntries(entries);
+};
+
+const toPoiDetail = (candidate: unknown): CoursePoiSet["poi"] | null => {
+  if (!isPlainObject(candidate)) {
+    return null;
+  }
+
+  const lat = asNumber(candidate.lat);
+  const lng = asNumber(candidate.lng);
+  if (lat === undefined || lng === undefined) {
+    return null;
+  }
+
+  const price = asNumber(candidate.price_level ?? candidate.priceLevel);
+  const alcohol = candidate.alcohol;
+  const averageRating = [
+    candidate.avarage_review_score,
+    candidate.average_review_score,
+    candidate.ratingAvg,
+  ]
+    .map(asNumber)
+    .find((value) => value !== undefined);
+
+  return {
+    poi_id: (candidate.poi_id ?? candidate.poiId ?? 0) as number | string,
+    name: asString(candidate.name) ?? "",
+    category: asString(candidate.category) ?? "",
+    lat,
+    lng,
+    indoor: typeof candidate.indoor === "boolean" ? candidate.indoor : undefined,
+    price_level: price ?? null,
+    open_hours: asRecordOfStrings(candidate.open_hours ?? candidate.openHours),
+    alcohol:
+      typeof alcohol === "number" || typeof alcohol === "boolean" || alcohol === null
+        ? alcohol
+        : undefined,
+    mood_tag: asString(candidate.mood_tag ?? candidate.moodTag) ?? undefined,
+    food_tag: asStringArray(candidate.food_tag ?? candidate.foodTag),
+    link: candidate.link === null ? null : asString(candidate.link),
+    avarage_review_score: averageRating ?? undefined,
+  };
+};
+
+const toCoursePoiSet = (candidate: unknown): CoursePoiSet | null => {
+  if (!isPlainObject(candidate)) {
+    return null;
+  }
+
+  const poi = toPoiDetail(candidate.poi);
+  if (!poi) {
+    return null;
+  }
+
+  return {
+    poi_set_id: asNumber(candidate.poi_set_id ?? candidate.poiSetId ?? candidate.id) ?? 0,
+    order: asNumber(candidate.order ?? candidate.seq) ?? 0,
+    poi,
+  };
+};
+
+const toCourse = (candidate: unknown): Course | null => {
+  if (!isPlainObject(candidate)) {
+    return null;
+  }
+
+  const rawList = Array.isArray(candidate.poi_list)
+    ? candidate.poi_list
+    : Array.isArray(candidate.poiList)
+      ? candidate.poiList
+      : [];
+
+  const poi_list = rawList
+    .map(toCoursePoiSet)
+    .filter((item): item is CoursePoiSet => item !== null);
+
+  const review = [candidate.reviewScore, candidate.score]
+    .map(asNumber)
+    .find((value) => value !== undefined);
+
+  return {
+    course_id: asNumber(candidate.course_id ?? candidate.courseId ?? candidate.id) ?? 0,
+    title: asString(candidate.title) ?? "",
+    description: asString(candidate.description) ?? "",
+    reviewScore: review ?? undefined,
+    poi_list,
+  };
+};
+
+const normalizeCourses = (value: unknown): Course[] => {
+  if (!Array.isArray(value)) {
+    return [];
+  }
+
+  return value
+    .map((item) => toCourse(item))
+    .filter((item): item is Course => item !== null);
+};
+
 const parseStoredCourses = (value: string | null): Course[] | null => {
   if (!value) {
     return null;
@@ -30,7 +175,12 @@ const parseStoredCourses = (value: string | null): Course[] | null => {
 
   try {
     const parsed = JSON.parse(value);
-    return isCourseArray(parsed) ? parsed : null;
+    if (isCourseArray(parsed)) {
+      return parsed;
+    }
+
+    const normalized = normalizeCourses(parsed);
+    return normalized.length > 0 ? normalized : null;
   } catch (error) {
     console.warn("Failed to parse stored course data:", error);
     return null;
@@ -70,7 +220,7 @@ const containsLegacyMoodTag = (courses: Course[]): boolean => {
   });
 };
 
-const mockCourses = courseMock as Course[];
+const mockCourses = normalizeCourses(courseMock);
 const fallbackCourse = mockCourses.find((course) => course.course_id === 2);
 const RAW_FALLBACK_COURSES = fallbackCourse ? [fallbackCourse] : mockCourses;
 // ⭐ PlaceDetailSidebar uses only the "mock" course with `course_id: 2`
@@ -106,7 +256,10 @@ const courseStorage = {
     }
 
     try {
-      window.sessionStorage.setItem(COURSE_STORAGE_KEY, JSON.stringify(courses));
+      window.sessionStorage.setItem(
+        COURSE_STORAGE_KEY,
+        JSON.stringify(prepareCourses(courses))
+      );
     } catch (error) {
       console.warn("Failed to persist course data:", error);
     }
@@ -124,6 +277,33 @@ const formatPriceLevel = (level: number) => {
 
   const normalized = Math.max(1, Math.min(4, Math.round(level)));
   return "₩".repeat(normalized);
+};
+
+const MAX_STAR_RATING = 5;
+
+const clampRating = (value: number) => {
+  return Math.max(0, Math.min(MAX_STAR_RATING, value));
+};
+
+const renderStarRating = (rating: number) => {
+  const clamped = clampRating(rating);
+  const highlighted = Math.round(clamped);
+
+  return (
+    <div className="mt-1 flex items-center gap-2">
+      <div className="flex text-lg leading-none">
+        {Array.from({ length: MAX_STAR_RATING }, (_, index) => (
+          <span
+            key={index}
+            className={index < highlighted ? "text-yellow-400" : "text-gray-300"}
+          >
+            ★
+          </span>
+        ))}
+      </div>
+      <span className="text-sm text-gray-500">{formatDecimal(clamped)}</span>
+    </div>
+  );
 };
 
 const normalizeText = (candidate: unknown) => {
@@ -147,20 +327,21 @@ type CoursePoi = {
   poiSet: CoursePoiSet;
 };
 
+type StatRow = {
+  label: string;
+  rating: number;
+};
+
 type DetailRow = {
   label: string;
   value: string;
 };
 
-const buildPlaceStats = (course: Course, poiSet: CoursePoiSet): DetailRow[] => {
-  const stats: DetailRow[] = [];
+const buildPlaceStats = (course: Course, poi: CoursePoiSet["poi"]): StatRow[] => {
+  const stats: StatRow[] = [];
 
   if (typeof course.reviewScore === "number" && course.reviewScore > 0) {
-    stats.push({ label: "코스 점수", value: formatDecimal(course.reviewScore) });
-  }
-
-  if (typeof poiSet.rating === "number" && poiSet.rating > 0) {
-    stats.push({ label: "후기 평점", value: formatDecimal(poiSet.rating) });
+    stats.push({ label: "00님의 평가", rating: course.reviewScore });
   }
 
   return stats;
@@ -279,35 +460,31 @@ export const PlaceDetailSidebar = () => {
   const { course, poiSet } = resolvedEntry;
   const { poi } = poiSet;
 
-  const stats = buildPlaceStats(course, poiSet);
+  const stats = buildPlaceStats(course, poi);
   const infoRows = buildInfoRows(poi);
+  const googleRating =
+    typeof poi.avarage_review_score === "number" && poi.avarage_review_score > 0
+      ? poi.avarage_review_score
+      : null;
 
   return (
     <div className="flex h-full flex-col bg-white">
-      <div className="border-b border-gray-200 bg-gray-50 px-6 py-5">
-        
-        <h2 className="mt-1 text-2xl font-semibold text-gray-900">{course.title}</h2>
-        {course.description ? (
-          <p className="mt-2 text-sm text-gray-600">{course.description}</p>
-        ) : null}
-      </div>
 
-      <div className="flex-1 overflow-y-auto px-6 py-6">
-        <div className="rounded-3xl border border-gray-100 bg-white shadow-md">
+      <div className="flex-1 overflow-y-auto">
           <div className="border-b border-gray-100 px-6 py-5">
-            <p className="text-xs font-semibold uppercase tracking-wider text-indigo-500">Place</p>
             <h3 className="mt-2 text-xl font-bold text-gray-900">{poi.name}</h3>
             {poi.category ? <p className="text-sm text-gray-500">{poi.category}</p> : null}
           </div>
 
           {stats.length > 0 ? (
-            <div className="grid grid-cols-2 gap-4 px-6 py-5 sm:grid-cols-4">
+            <div className="grid w-full grid-cols-1 gap-4 px-6 py-5">
               {stats.map((stat) => (
-                <div key={stat.label} className="rounded-2xl bg-gray-50 px-4 py-3">
-                  <p className="text-xs font-medium uppercase tracking-wide text-gray-500">
-                    {stat.label}
-                  </p>
-                  <p className="mt-1 text-lg font-semibold text-gray-900">{stat.value}</p>
+                <div
+                  key={stat.label}
+                  className="flex w-full items-center justify-between gap-4 rounded-2xl bg-gray-50 px-4 py-3"
+                >
+                  <p className="flex-1 text-sm font-medium text-gray-700">{stat.label}</p>
+                  {renderStarRating(stat.rating)}
                 </div>
               ))}
             </div>
@@ -324,6 +501,14 @@ export const PlaceDetailSidebar = () => {
                 ))}
               </div>
             ) : null}
+
+            {googleRating !== null ? (
+              <div className="flex justify-between gap-4 text-sm">
+                <span className="text-gray-500">구글 평점</span>
+                <div className="flex-shrink-0">{renderStarRating(googleRating)}</div>
+              </div>
+            ) : null}
+    
 
             {Array.isArray(poi.food_tag) && poi.food_tag.length > 0 ? (
               <div>
@@ -374,6 +559,5 @@ export const PlaceDetailSidebar = () => {
           </div>
         </div>
       </div>
-    </div>
   );
 };
