@@ -62,10 +62,10 @@ export const PlaceDetailModal = ({ isOpen, onClose }: PlaceDetailModalProps) => 
               </svg>
             </button>
           </div>
-
+   
           <div className="h-[calc(100vh-144px)] overflow-y-auto">
-            <PlaceDetailSidebar />
-          </div>
+              <PlaceDetailSidebar />       
+               </div>
         </div>
       </div>
     </div>

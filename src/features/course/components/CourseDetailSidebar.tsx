@@ -3,6 +3,7 @@
 // import { usePlaceStore } from "../../shared/store/mapbox.store";
 import { useNavigate } from "react-router-dom";
 import course from "../mocks/course.json";
+import courseList from "../mocks/getCourse.json";
 import { useParams, useLocation } from "react-router-dom";
 
 export const CourseDetailSidebar = () => {
@@ -21,7 +22,8 @@ export const CourseDetailSidebar = () => {
     path = `${pathType}/${id}/place`;
   };
   // 정렬 후 출력
-  const sortedStops = [...course.items[0].stops].sort((a, b) => a.seq - b.seq);
+  const mockCourse = courseList.find((item) => item.courseId === 4) ?? courseList[0];
+  const sortedStops = [...mockCourse.poiList].sort((a, b) => a.order - b.order);
 
   return (
     <div className="flex flex-col items-start gap-8 p-4 h-full relative">
@@ -32,14 +34,15 @@ export const CourseDetailSidebar = () => {
       <div className="flex flex-col w-full gap-2 items-start">
         {
           sortedStops.map((item) => (
-            <div key={item.id} className="flex w-full items-center gap-4 cursor-pointer hover:bg-gray-100 p-2" onClick={() => {navigate(`/${path}/${item.id}`)}}>
+            <div key={item.poiSetId} className="flex w-full items-center gap-4 cursor-pointer hover:bg-gray-100 p-2" onClick={() => {navigate(`/${path}/${item.poi?.poiId}`)}}>
               <div className="flex items-center gap-2">
-                <div className="w-[32px] h-[32px] bg-black text-white rounded-full flex items-center justify-center">{item.seq}</div>
+                <div className="w-[32px] h-[32px] bg-black text-white rounded-full flex items-center justify-center">{item.order}</div>
               </div>
               <div>
-                <h2>{item.name}</h2>
-                <p className="text-gray-500 text-sm">{item.reason}</p>
-                <p className="text-gray-500 text-sm">예상 시간: {item.stay_min}분</p>
+                <h2>{item.poi?.name}</h2>
+                <p className="text-gray-500 text-sm">{item.poi?.category}</p>
+                <p className="text-gray-500 text-sm">이유 또는 설명을 넣는 곳 인데 </p>
+                <p className="text-gray-500 text-sm">예상 시간 60 분</p>
               </div>
             </div>
           ))
