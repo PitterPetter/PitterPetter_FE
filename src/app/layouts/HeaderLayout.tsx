@@ -95,7 +95,7 @@ export const Header = () => {
               transition-all duration-200 ease-out
               ${isOpen ? "opacity-100 max-w-[140px]" : "opacity-0 max-w-0"}`}
           >
-            추억 블로그
+            추억의 코스
           </span>
         </div>
         <div
