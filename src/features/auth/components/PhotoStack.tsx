@@ -21,7 +21,7 @@ export const PhotoStack = () => {
         ${imageStyle}        
         absolute top-[0px] left-[100px] z-10 rotate-[1deg]
         group-hover:left-[0px] group-hover:top-[0px] group-hover:rotate-[-5deg]
-        lg:group-hover:left-[210px] lg:group-hover:top-[50px] lg:group-hover:rotate-[-10deg]
+        lg:group-hover:left-[180px] lg:group-hover:top-[50px] lg:group-hover:rotate-[-10deg]
         lg:left-[240px] lg:top-[70px]
       `}>
         <img src={kyungbock} alt="kyungbock" className="w-full h-full rounded-[20px]" />
@@ -29,7 +29,7 @@ export const PhotoStack = () => {
       <div className={`
         ${imageStyle}
         absolute top-[90px] right-[5px] z-20 rotate-[15deg] group-hover:rotate-[12deg]
-        group-hover:right-[80px] group-hover:top-[180px] group-hover:rotate-[4deg]
+        group-hover:right-[100px] group-hover:top-[180px] group-hover:rotate-[10deg]
         lg:right-[240px] lg:top-[200px]
       `}>
         <img src={ddp} alt="ddp" className="w-full h-full rounded-[20px]" />
@@ -65,7 +65,7 @@ export const PhotoStack = () => {
       <div className={`
         ${buttonStyle}
         absolute bottom-12 left-[12px] z-50 rotate-[-12deg] group-hover:rotate-[-12deg] w-[204px] h-[48px]
-        group-hover:left-[180px] group-hover:bottom-[160px]
+        group-hover:left-[180px] group-hover:bottom-[150px]
         lg:w-[250px] lg:h-[60px] lg:left-[170px] lg:bottom-[170px]
       `}>
         <div className="flex items-center justify-center bg-pink-100 w-full h-full rounded-[80px] gap-4">
