@@ -1,93 +1,464 @@
-
-  [
-    {
-    "course_id": 2,
-    "couple_id": 1,
-    "title": "cafe 나들이",
-    "description": "오늘 무드에 맞는 코스입니다~ ",
-    "score": 0,
-    "poi_list": [
+[
+  {
+    "courseId": 1,
+    "title": "연남동 감성 데이트",
+    "description": "연남동의 아기자기한 카페에서 시작해 경의선 숲길을 산책하고연남동의 아기자기한 카페에서 시작해 경의선 숲길을 산책하고연남동의 아기자기한 카페에서 시작해 경의선 숲길을 산책하고",
+    "score": 5,
+    "poiList": [
       {
-        "poi_set_id": 4,
+        "poiSetId": 1,
         "order": 1,
         "poi": {
-          "poi_id": 3,
-          "name": "감나무 카페",
+          "poiId": 1,
+          "name": "연남동 카페거리",
           "category": "CAFE",
           "lat": 37.56231,
           "lng": 126.92501,
           "indoor": true,
-          "price_level": 2,
-          "open_hours": {
-            "mon": "09:00-18:00",
-            "tue": "09:00-18:00",
-            "wed": "09:00-18:00",
-            "thu": "09:00-18:00",
-            "fri": "09:00-18:00",
-            "sat": "09:00-18:00",
-            "sun": "휴무"
+          "priceLevel": 2,
+          "openHours": {
+            "mon": "11:00-22:00",
+            "tue": "11:00-22:00",
+            "wed": "11:00-22:00",
+            "thu": "11:00-22:00",
+            "fri": "11:00-23:00",
+            "sat": "11:00-23:00",
+            "sun": "11:00-22:00"
           },
           "alcohol": 0,
-          "mood_tag": "cool",
-          "food_tag": ["COFFEE", "DESSERT"],
-          "link": "https://example.com/aaaaa"
+          "moodTag": "lovely",
+          "foodTag": ["coffee", "dessert"],
+          "link": "https://example.com/yeonnam-cafe-street",
+          "ratingAvg": 4.5
         }
       },
       {
-        "poi_set_id": 5,
+        "poiSetId": 2,
         "order": 2,
         "poi": {
-          "poi_id": 2,
-          "name": "asdfasdm",
-          "category": "CAFE",
-          "lat": 37.56231,
-          "lng": 126.92501,
-          "indoor": true,
-          "price_level": 2,
-          "open_hours": {
-            "mon": "09:00-18:00",
-            "tue": "09:00-18:00",
-            "wed": "09:00-18:00",
-            "thu": "09:00-18:00",
-            "fri": "09:00-18:00",
-            "sat": "10:00-20:00",
-            "sun": "휴무"
+          "poiId": 2,
+          "name": "경의선 숲길",
+          "category": "PARK",
+          "lat": 37.558,
+          "lng": 126.927,
+          "indoor": false,
+          "priceLevel": 0,
+          "openHours": {
+            "mon": "00:00-24:00",
+            "tue": "00:00-24:00",
+            "wed": "00:00-24:00",
+            "thu": "00:00-24:00",
+            "fri": "00:00-24:00",
+            "sat": "00:00-24:00",
+            "sun": "00:00-24:00"
           },
           "alcohol": 0,
-          "mood_tag": "lovely",
-          "food_tag": ["COFFEE", "DESSERT"],
-          "link": "https://example.com/asdfasdm"
+          "moodTag": "coolBreeze",
+          "foodTag": [],
+          "link": "https://parks.seoul.go.kr/template/sub/gyeongui.do",
+          "ratingAvg": 4.6
+        }
+      },
+      {
+        "poiSetId": 3,
+        "order": 3,
+        "poi": {
+          "poiId": 3,
+          "name": "연남동 이탈리안 레스토랑",
+          "category": "RESTAURANT",
+          "lat": 37.561,
+          "lng": 126.926,
+          "indoor": true,
+          "priceLevel": 3,
+          "openHours": {
+            "mon": "12:00-22:00",
+            "tue": "12:00-22:00",
+            "wed": "12:00-22:00",
+            "thu": "12:00-22:00",
+            "fri": "12:00-23:00",
+            "sat": "12:00-23:00",
+            "sun": "12:00-22:00"
+          },
+          "alcohol": 1,
+          "moodTag": "hip",
+          "foodTag": ["pasta", "steak", "wine"],
+          "link": "https://example.com/yeonnam-restaurant",
+          "ratingAvg": 4.7
+        }
+      },
+      {
+        "poiSetId": 4,
+        "order": 4,
+        "poi": {
+          "poiId": 4,
+          "name": "홍대 루프탑 바",
+          "category": "RESTAURANT",
+          "lat": 37.5595,
+          "lng": 126.924,
+          "indoor": false,
+          "priceLevel": 3,
+          "openHours": {
+            "mon": "18:00-01:00",
+            "tue": "18:00-01:00",
+            "wed": "18:00-01:00",
+            "thu": "18:00-01:00",
+            "fri": "18:00-02:00",
+            "sat": "18:00-02:00",
+            "sun": "18:00-01:00"
+          },
+          "alcohol": 2,
+          "moodTag": "cityNightView",
+          "foodTag": ["cocktail", "beer", "snack"],
+          "link": "https://example.com/rooftop-bar",
+          "ratingAvg": 4.4
         }
       }
     ]
   },
   {
-    "course_id": 1,
-    "couple_id": 1,
-    "title": "옵셔널 없는 코스",
-    "description" :"오늘 무드에 맞는 코스입니다~ ",
-    "score": 0,
-    "poi_list": [
+    "courseId": 2,
+    "title": "한강 힐링 데이트",
+    "description": "서울숲에서 여유로운 산책을 즐기고, 한강공원에서 시원한 강바람을 맞으며 자전거를 타고, 유람선에서 야경을 감상하는 힐링 데이트 코스입니다.",
+    "score": 4,
+    "poiList": [
       {
-        "poi_set_id": 1,
+        "poiSetId": 5,
         "order": 1,
         "poi": {
-          "poi_id": 1,
-          "name": "Blue Bottle Yeonnam",
-          "category": "CAFE",
-          "lat": 37.56231,
-          "lng": 126.92501
+          "poiId": 5,
+          "name": "서울숲",
+          "category": "PARK",
+          "lat": 37.544,
+          "lng": 127.037,
+          "indoor": false,
+          "priceLevel": 0,
+          "openHours": {
+            "mon": "00:00-24:00",
+            "tue": "00:00-24:00",
+            "wed": "00:00-24:00",
+            "thu": "00:00-24:00",
+            "fri": "00:00-24:00",
+            "sat": "00:00-24:00",
+            "sun": "00:00-24:00"
+          },
+          "alcohol": 0,
+          "moodTag": "healing",
+          "foodTag": [],
+          "link": "https://parks.seoul.go.kr/template/sub/seoulforest.do",
+          "ratingAvg": 4.8
         }
       },
       {
-        "poi_set_id": 2,
+        "poiSetId": 6,
         "order": 2,
         "poi": {
-          "poi_id": 4,
-          "name": "Han River Walk",
+          "poiId": 6,
+          "name": "뚝섬한강공원",
           "category": "PARK",
-          "lat": 37.5285,
-          "lng": 126.9326
+          "lat": 37.529,
+          "lng": 127.072,
+          "indoor": false,
+          "priceLevel": 0,
+          "openHours": {
+            "mon": "00:00-24:00",
+            "tue": "00:00-24:00",
+            "wed": "00:00-24:00",
+            "thu": "00:00-24:00",
+            "fri": "00:00-24:00",
+            "sat": "00:00-24:00",
+            "sun": "00:00-24:00"
+          },
+          "alcohol": 0,
+          "moodTag": "coolBreeze",
+          "foodTag": [],
+          "link": "https://hangang.seoul.go.kr/archives/46729",
+          "ratingAvg": 4.7
+        }
+      },
+      {
+        "poiSetId": 7,
+        "order": 3,
+        "poi": {
+          "poiId": 7,
+          "name": "한강 유람선",
+          "category": "PARK",
+          "lat": 37.525,
+          "lng": 126.93,
+          "indoor": false,
+          "priceLevel": 2,
+          "openHours": {
+            "mon": "13:00-22:00",
+            "tue": "13:00-22:00",
+            "wed": "13:00-22:00",
+            "thu": "13:00-22:00",
+            "fri": "13:00-22:00",
+            "sat": "13:00-22:00",
+            "sun": "13:00-22:00"
+          },
+          "alcohol": 1,
+          "moodTag": "romantic",
+          "foodTag": ["wine", "beer"],
+          "link": "https://www.elandcruise.com/",
+          "ratingAvg": 4.5
+        }
+      }
+    ]
+  },
+  {
+    "courseId": 3,
+    "title": "도심 속 고궁 데이트",
+    "description": "국립고궁박물관에서 조선 왕실의 문화를 엿보고, 경복궁을 거닐며 역사의 숨결을 느끼고, 분위기 좋은 레스토랑에서 식사 후 낙산공원에서 서울의 야경을 감상하는 데이트 코스입니다.",
+    "score": 5,
+    "poiList": [
+      {
+        "poiSetId": 8,
+        "order": 1,
+        "poi": {
+          "poiId": 8,
+          "name": "국립고궁박물관",
+          "category": "MUSEUM",
+          "lat": 37.576,
+          "lng": 126.975,
+          "indoor": true,
+          "priceLevel": 0,
+          "openHours": {
+            "mon": "10:00-18:00",
+            "tue": "10:00-18:00",
+            "wed": "10:00-21:00",
+            "thu": "10:00-18:00",
+            "fri": "10:00-18:00",
+            "sat": "10:00-21:00",
+            "sun": "10:00-18:00"
+          },
+          "alcohol": 0,
+          "moodTag": "educational",
+          "foodTag": [],
+          "link": "https://www.gogung.go.kr/main.do",
+          "ratingAvg": 4.7
+        }
+      },
+      {
+        "poiSetId": 9,
+        "order": 2,
+        "poi": {
+          "poiId": 9,
+          "name": "경복궁",
+          "category": "MUSEUM",
+          "lat": 37.579,
+          "lng": 126.977,
+          "indoor": false,
+          "priceLevel": 1,
+          "openHours": {
+            "mon": "09:00-18:00",
+            "tue": "Closed",
+            "wed": "09:00-18:00",
+            "thu": "09:00-18:00",
+            "fri": "09:00-18:00",
+            "sat": "09:00-18:00",
+            "sun": "09:00-18:00"
+          },
+          "alcohol": 0,
+          "moodTag": "historic",
+          "foodTag": [],
+          "link": "https://www.royalpalace.go.kr/",
+          "ratingAvg": 4.8
+        }
+      },
+      {
+        "poiSetId": 10,
+        "order": 3,
+        "poi": {
+          "poiId": 10,
+          "name": "삼청동 한옥 레스토랑",
+          "category": "RESTAURANT",
+          "lat": 37.58,
+          "lng": 126.982,
+          "indoor": true,
+          "priceLevel": 3,
+          "openHours": {
+            "mon": "11:30-22:00",
+            "tue": "11:30-22:00",
+            "wed": "11:30-22:00",
+            "thu": "11:30-22:00",
+            "fri": "11:30-22:00",
+            "sat": "11:30-22:00",
+            "sun": "11:30-22:00"
+          },
+          "alcohol": 1,
+          "moodTag": "romantic",
+          "foodTag": ["korean", "wine"],
+          "link": "https://example.com/samcheong-restaurant",
+          "ratingAvg": 4.6
+        }
+      },
+      {
+        "poiSetId": 11,
+        "order": 4,
+        "poi": {
+          "poiId": 11,
+          "name": "낙산공원",
+          "category": "PARK",
+          "lat": 37.579,
+          "lng": 127.006,
+          "indoor": false,
+          "priceLevel": 0,
+          "openHours": {
+            "mon": "00:00-24:00",
+            "tue": "00:00-24:00",
+            "wed": "00:00-24:00",
+            "thu": "00:00-24:00",
+            "fri": "00:00-24:00",
+            "sat": "00:00-24:00",
+            "sun": "00:00-24:00"
+          },
+          "alcohol": 0,
+          "moodTag": "cityNightView",
+          "foodTag": [],
+          "link": "http://parks.seoul.go.kr/template/sub/naksan.do",
+          "ratingAvg": 4.7
+        }
+      }
+    ]
+  },
+  {
+    "courseId": 4,
+    "title": "남산타워 로맨틱 데이트",
+    "description": "케이블카를 타고 남산에 올라 서울의 전경을 한눈에 담고, N서울타워에서 사랑의 자물쇠를 걸고, 분위기 있는 레스토랑에서 저녁 식사를 즐기는 로맨틱 데이트 코스입니다.",
+    "score": 3,
+    "poiList": [
+      {
+        "poiSetId": 12,
+        "order": 1,
+        "poi": {
+          "poiId": 12,
+          "name": "남산 케이블카",
+          "category": "PARK",
+          "lat": 37.555,
+          "lng": 126.985,
+          "indoor": false,
+          "priceLevel": 2,
+          "openHours": {
+            "mon": "10:00-23:00",
+            "tue": "10:00-23:00",
+            "wed": "10:00-23:00",
+            "thu": "10:00-23:00",
+            "fri": "10:00-23:00",
+            "sat": "10:00-23:00",
+            "sun": "10:00-23:00"
+          },
+          "alcohol": 0,
+          "moodTag": "romantic",
+          "foodTag": [],
+          "link": "http://www.cablecar.co.kr/",
+          "ratingAvg": 4.4
+        }
+      },
+      {
+        "poiSetId": 13,
+        "order": 2,
+        "poi": {
+          "poiId": 13,
+          "name": "N서울타워",
+          "category": "PARK",
+          "lat": 37.551,
+          "lng": 126.988,
+          "indoor": true,
+          "priceLevel": 2,
+          "openHours": {
+            "mon": "12:00-22:00",
+            "tue": "12:00-22:00",
+            "wed": "12:00-22:00",
+            "thu": "12:00-22:00",
+            "fri": "11:00-22:30",
+            "sat": "11:00-22:30",
+            "sun": "11:00-22:00"
+          },
+          "alcohol": 0,
+          "moodTag": "cityNightView",
+          "foodTag": [],
+          "link": "https://www.seoultower.co.kr/kv",
+          "ratingAvg": 4.6
+        }
+      },
+      {
+        "poiSetId": 14,
+        "order": 3,
+        "poi": {
+          "poiId": 14,
+          "name": "남산 레스토랑",
+          "category": "RESTAURANT",
+          "lat": 37.552,
+          "lng": 126.987,
+          "indoor": true,
+          "priceLevel": 4,
+          "openHours": {
+            "mon": "11:00-23:00",
+            "tue": "11:00-23:00",
+            "wed": "11:00-23:00",
+            "thu": "11:00-23:00",
+            "fri": "11:00-23:00",
+            "sat": "11:00-23:00",
+            "sun": "11:00-23:00"
+          },
+          "alcohol": 2,
+          "moodTag": "luxurious",
+          "foodTag": ["steak", "wine", "pasta"],
+          "link": "https://example.com/namsan-restaurant",
+          "ratingAvg": 4.5
+        }
+      },
+      {
+        "poiSetId": 15,
+        "order": 4,
+        "poi": {
+          "poiId": 15,
+          "name": "남산공원",
+          "category": "PARK",
+          "lat": 37.553,
+          "lng": 126.98,
+          "indoor": false,
+          "priceLevel": 0,
+          "openHours": {
+            "mon": "00:00-24:00",
+            "tue": "00:00-24:00",
+            "wed": "00:00-24:00",
+            "thu": "00:00-24:00",
+            "fri": "00:00-24:00",
+            "sat": "00:00-24:00",
+            "sun": "00:00-24:00"
+          },
+          "alcohol": 0,
+          "moodTag": "healing",
+          "foodTag": [],
+          "link": "https://parks.seoul.go.kr/template/sub/namsan.do",
+          "ratingAvg": 4.7
+        }
+      },
+      {
+        "poiSetId": 16,
+        "order": 5,
+        "poi": {
+          "poiId": 16,
+          "name": "명동 쇼핑 거리",
+          "category": "RESTAURANT",
+          "lat": 37.561,
+          "lng": 126.986,
+          "indoor": false,
+          "priceLevel": 2,
+           "openHours": {
+            "mon": "11:00-23:00",
+            "tue": "11:00-23:00",
+            "wed": "11:00-23:00",
+            "thu": "11:00-23:00",
+            "fri": "11:00-23:00",
+            "sat": "11:00-23:00",
+            "sun": "11:00-23:00"
+          },
+          "alcohol": 1,
+          "moodTag": "lively",
+          "foodTag": ["streetFood", "koreanSnack"],
+          "link": "https://example.com/myeongdong",
+          "ratingAvg": 4.3
         }
       }
     ]
