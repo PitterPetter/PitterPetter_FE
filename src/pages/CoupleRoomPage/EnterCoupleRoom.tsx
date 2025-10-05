@@ -1,6 +1,8 @@
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 
 export const EnterCoupleRoom = () => {
   const navigate = useNavigate();
@@ -38,7 +40,7 @@ export const EnterCoupleRoom = () => {
 
   return (
     <div className="flex items-center justify-center w-full h-full">
-      <div className="h-[700px] w-[700px] bg-[#DED6D6] border-gray-300 border rounded-2xl p-4 py-16 flex flex-col gap-2 justify-center items-center">
+      <div className="relative h-[800px] w-[700px] bg-[#DED6D6] border-gray-300 border rounded-2xl p-4 py-16 flex flex-col gap-2 justify-center items-center">
         <h1 className="text-2xl">코드를 입력하고 <span className="bg-pink-200 py-1">커플인증</span>하기</h1>
         <p>서비스를 이용하기 위해 커플 인증이 필요해요</p>
         <p className="text-sm text-gray-600 mt-8">연인의 화면에 표시된 6자리 코드를 입력해 주세요</p>
@@ -66,6 +68,7 @@ export const EnterCoupleRoom = () => {
             const enteredCode = codes.join('');
             console.log('입력된 코드:', enteredCode);
             // 코드 검증 로직 추가 예정
+            navigate('/home');
           }}
           sx={{
             backgroundColor: '#662B2B',
@@ -80,7 +83,8 @@ export const EnterCoupleRoom = () => {
         >
           입장하기
         </Button>
-      </div>
+          <FontAwesomeIcon icon={faChevronLeft} className="absolute w-[18px] h-[18px] top-6 left-5 cursor-pointer" onClick={() => navigate('/home/coupleroom')} />
+        </div>
     </div>
   );
 };
