@@ -2,7 +2,6 @@
 
 // import { usePlaceStore } from "../../shared/store/mapbox.store";
 import { useNavigate } from "react-router-dom";
-import course from "../mocks/course.json";
 import courseList from "../mocks/getCourse.json";
 import { useParams, useLocation } from "react-router-dom";
 
@@ -26,24 +25,32 @@ export const CourseDetailSidebar = () => {
   const sortedStops = [...mockCourse.poiList].sort((a, b) => a.order - b.order);
 
   return (
-    <div className="flex flex-col items-start gap-8 p-4 h-full relative">
-      <div className="flex justify-between w-full">
-        <h1 className="text-2xl font-bold">추천 코스</h1>
-        <p className="text-gray-500 text-sm">{course.items[0].route_id}</p>
+    <div className="flex flex-col h-full gap-8 p-6 bg-white">
+      <div className="flex flex-col gap-2 w-full">
+        <h1 className="text-2xl font-semibold text-[#0B0B0C]">{mockCourse.title}</h1>
+        <p className="text-base text-[#6B7486]">{mockCourse.description}</p>
       </div>
-      <div className="flex flex-col w-full gap-2 items-start">
+      <div className="w-full h-px bg-gray-200" />
+      <div className="flex flex-col w-full">
         {
-          sortedStops.map((item) => (
-            <div key={item.poiSetId} className="flex w-full items-center gap-4 cursor-pointer hover:bg-gray-100 p-2" onClick={() => {navigate(`/${path}/${item.poi?.poiId}`)}}>
-              <div className="flex items-center gap-2">
-                <div className="w-[32px] h-[32px] bg-black text-white rounded-full flex items-center justify-center">{item.order}</div>
+          sortedStops.map((item, index) => (
+            <div
+              key={item.poiSetId}
+              className="flex flex-col gap-3 py-5 cursor-pointer transition-colors hover:bg-gray-50 px-2 -mx-2"
+              onClick={() => {navigate(`/${path}/${item.poi?.poiId}`);}}
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-8 h-8 bg-[#662B2B] text-white rounded-full flex items-center justify-center text-sm font-semibold">
+                  {item.order}
+                </div>
+                <span className="text-[#662B2B] text-lg font-medium">{item.poi?.name}</span>
               </div>
-              <div>
-                <h2>{item.poi?.name}</h2>
-                <p className="text-gray-500 text-sm">{item.poi?.category}</p>
-                <p className="text-gray-500 text-sm">이유 또는 설명을 넣는 곳 인데 </p>
-                <p className="text-gray-500 text-sm">예상 시간 60 분</p>
+              <div className="flex flex-col gap-2 pl-[44px]">
+                <p className="text-sm text-[#1F2937] font-semibold uppercase tracking-wide">{item.poi?.category}</p>
+                <p className="text-sm text-gray-500">이유 또는 설명을 넣는 곳인데, 추천 이유가 들어갈 자리입니다.</p>
+                <p className="text-sm text-gray-400">예상 시간 60분 · 이동 거리 정보가 들어갑니다.</p>
               </div>
+              {index !== sortedStops.length - 1 && <div className="w-full h-px bg-gray-200" />}
             </div>
           ))
         }
