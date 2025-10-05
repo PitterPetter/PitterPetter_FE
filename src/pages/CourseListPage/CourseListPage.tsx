@@ -5,16 +5,13 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import getCourse from "../../features/course/mocks/getCourse.json";
 import { CourseListItem } from "../../features/course";
+import { normalizeCourses } from "../../features/course/utils/normalizeCourse";
 
 const COURSE_STORAGE_KEY = "pitterpetter:courses";
 
 export const CourseListPage = () => {
   const navigate = useNavigate();
-  const mockData = getCourse.map((course) => ({
-    id: course.courseId,
-    comment: course.description,
-    created_at: new Date().toISOString(),
-  }));
+  const courses = normalizeCourses(getCourse);
 
   useEffect(() => {
     if (typeof window === "undefined") {
@@ -22,7 +19,7 @@ export const CourseListPage = () => {
     }
 
     try {
-      sessionStorage.setItem(COURSE_STORAGE_KEY, JSON.stringify(getCourse));
+      sessionStorage.setItem(COURSE_STORAGE_KEY, JSON.stringify(courses));
       console.info("[course] CourseListPage 진입 시 코스 데이터를 세션 스토리지에 저장했습니다.");
 
       const storedRaw = sessionStorage.getItem(COURSE_STORAGE_KEY);
@@ -46,8 +43,8 @@ export const CourseListPage = () => {
           </div>
           <div className="grid grid-cols-3 grid-rows-3 gap-4">
             {
-              mockData.map((course) => (
-                <CourseListItem key={course.id} {...course} />
+              courses.map((course) => (
+                <CourseListItem key={course.course_id} course={course} />
               ))
             }
           </div>
