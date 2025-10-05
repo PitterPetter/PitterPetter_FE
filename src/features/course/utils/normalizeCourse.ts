@@ -12,6 +12,24 @@ export const normalizeCourses = (rawCourses: unknown): Course[] => {
     .filter((course): course is Course => course !== null);
 };
 
+export const readCoursesFromSession = (): Course[] => {
+  if (typeof window === "undefined") {
+    return [];
+  }
+
+  const stored = window.sessionStorage.getItem(COURSE_STORAGE_KEY);
+  if (!stored) {
+    return [];
+  }
+
+  try {
+    return normalizeCourses(JSON.parse(stored));
+  } catch (error) {
+    console.warn("[course] 코스 데이터를 불러오는 중 오류가 발생했습니다.", error);
+    return [];
+  }
+};
+
 const normalizeCourse = (candidate: unknown): Course | null => {
   if (!candidate || typeof candidate !== "object") {
     return null;
