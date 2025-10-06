@@ -21,19 +21,6 @@ export const ConnectCourse = () => {
     setSearchResults(courseData);
   }, []);
 
-  // 검색
-  const handleSearch = () => {
-    if (searchTerm.trim()) {
-      const filtered = courseData.filter(item => 
-        item.courseId.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.title.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setSearchResults(filtered);
-    } else {
-      setSearchResults(courseData);
-    }
-  };
-
   // 코스 선택
   const handleCourseSelect = (courseId: string) => {
     setSearchTerm(courseId);
