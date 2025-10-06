@@ -86,7 +86,7 @@ export const ConnectCourse = () => {
             placeholder="코스 ID 또는 제목으로 검색"
           />
           <button 
-            onClick={handleSearch}
+            onClick={() => handleInputChange({ target: { value: '' } } as React.ChangeEvent<HTMLInputElement>)}
             className="w-[120px] h-[42px] rounded-md p-3 bg-pink-300 cursor-pointer border border-pink-200 text-white flex items-center justify-center gap-2 hover:bg-pink-400 transition-all duration-200"
           >
             <FontAwesomeIcon icon={faMagnifyingGlass} className="w-[12px] h-[12px]" />
