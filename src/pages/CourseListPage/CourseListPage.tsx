@@ -1,32 +1,51 @@
 import { Button } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComment } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import getCourse from "../../features/course/mocks/getCourse.json";
+import { getCourseList } from "../../features/course/api";
 import { CourseListItem } from "../../features/course";
-import { COURSE_STORAGE_KEY, normalizeCourses } from "../../features/course/utils/normalizeCourse";
+import { COURSE_STORAGE_KEY, normalizeCourses, readCoursesFromSession } from "../../features/course/utils/normalizeCourse";
+import { injectTempToken } from "../../features/course/util/injectTempToken";
+import type { Course } from "../../features/course/types";
 
 export const CourseListPage = () => {
   const navigate = useNavigate();
-  const courses = useMemo(() => normalizeCourses(getCourse), []);
+  const [courses, setCourses] = useState<Course[]>(() => {
+    const fromSession = readCoursesFromSession();
+    if (fromSession.length > 0) {
+      return fromSession;
+    }
+    return [];
+  });
 
   useEffect(() => {
-    if (typeof window === "undefined") {
-      return;
-    }
+    let cancel = false;
 
-    try {
-      sessionStorage.setItem(COURSE_STORAGE_KEY, JSON.stringify(courses));
-      console.info("[course] CourseListPage 진입 시 코스 데이터를 세션 스토리지에 저장했습니다.");
+    // 임시 토큰 주입 (로컬 테스트 전용)
+    injectTempToken();
 
-      const storedRaw = sessionStorage.getItem(COURSE_STORAGE_KEY);
-      const storedParsed = storedRaw ? JSON.parse(storedRaw) : null;
-      console.info("[course] 저장된 세션 스토리지 값:", storedParsed);
-    } catch (error) {
-      console.error("[course] 코스 데이터를 세션 스토리지에 저장하지 못했습니다.", error);
-    }
-  }, [courses]);
+    getCourseList()
+      .then((response) => {
+        if (cancel) return;
+        const normalized = normalizeCourses(response.data);
+        setCourses(normalized);
+        try {
+          if (typeof window !== "undefined") {
+            sessionStorage.setItem(COURSE_STORAGE_KEY, JSON.stringify(normalized));
+          }
+        } catch (error) {
+          console.error("[course] 코스 데이터를 세션 스토리지에 저장하지 못했습니다.", error);
+        }
+      })
+      .catch((error) => {
+        console.error("[course] 코스 목록을 불러오지 못했습니다.", error);
+      });
+
+    return () => {
+      cancel = true;
+    };
+  }, []);
 
   return (
     <div className="w-full max-w-[800px] h-[100vh]">
