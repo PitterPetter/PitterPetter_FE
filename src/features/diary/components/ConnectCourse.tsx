@@ -82,12 +82,12 @@ export const ConnectCourse = () => {
             value={searchTerm}
             onChange={handleInputChange}
             onKeyPress={handleKeyPress}
-            className="w-full h-[42px] rounded-md p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-transparent" 
+            className="w-full h-[42px] rounded-md text-[#93000A] p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#93000A]/20 focus:border-transparent" 
             placeholder="코스 ID 또는 제목으로 검색"
           />
           <button 
             onClick={() => handleInputChange({ target: { value: '' } } as React.ChangeEvent<HTMLInputElement>)}
-            className="w-[120px] h-[42px] rounded-md p-3 bg-pink-300 cursor-pointer border border-pink-200 text-white flex items-center justify-center gap-2 hover:bg-pink-400 transition-all duration-200"
+            className="w-[120px] h-[42px] rounded-md p-3 bg-third/60 cursor-pointer border border-third/60 text-white flex items-center justify-center gap-2 hover:bg-third/80 transition-all duration-200"
           >
             <FontAwesomeIcon icon={faMagnifyingGlass} className="w-[12px] h-[12px]" />
             검색
@@ -99,11 +99,11 @@ export const ConnectCourse = () => {
               <div 
                 key={item.courseId} 
                 onClick={() => handleCourseSelect(item.courseId)}
-                className="p-3 hover:bg-gray-50 cursor-pointer border-b border-gray-100 last:border-b-0"
+                className="p-3 hover:bg-third/5 text-[#93000A] cursor-pointer border-b border-gray-100 last:border-b-0"
               >
                 <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-600">{item.courseId}</span>
-                  <span className="text-sm text-gray-800">{item.title}</span>
+                  <span className="text-sm font-medium">{item.courseId}</span>
+                  <span className="text-sm">{item.title}</span>
                 </div>
               </div>
             ))}
