@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { getCourseList } from "../../features/course/api";
 import { CourseListItem } from "../../features/course";
 import { COURSE_STORAGE_KEY, normalizeCourses, readCoursesFromSession } from "../../features/course/utils/normalizeCourse";
+import { injectTempToken } from "../../features/course/util/injectTempToken";
 import type { Course } from "../../features/course/types";
 
 export const CourseListPage = () => {
@@ -20,6 +21,9 @@ export const CourseListPage = () => {
 
   useEffect(() => {
     let cancel = false;
+
+    // 임시 토큰 주입 (로컬 테스트 전용)
+    injectTempToken();
 
     getCourseList()
       .then((response) => {
