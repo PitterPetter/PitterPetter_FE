@@ -5,7 +5,7 @@ import { WriteDiary } from "../../features/diary/components/WriteDiary";
 export const CreateDiaryPage = () => {
   
   return (
-    <div className="w-full h-[100vh] flex flex-col gap-4 items-center justify-center py-10">
+    <div className="w-full h-[100vh] flex flex-col gap-4 items-center justify-start py-10">
       {/* 코스 연결 */}
       <ConnectCourse />
 
