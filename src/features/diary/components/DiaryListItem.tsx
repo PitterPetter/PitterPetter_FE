@@ -10,7 +10,7 @@ export const DiaryListItem = (item: any) => {
       onClick={() => {navigate(`/diary/${item.id}`)}}
     >
       <div className="absolute top-2 right-3">
-        <FontAwesomeIcon icon={faHeart} className={`w-[15px] h-[15px] hover:text-red-300 ${item.isLiked ? "text-pink-400" : "text-gray-500"}`}
+        <FontAwesomeIcon icon={faHeart} className={`w-[15px] h-[15px] hover:text-red-300 ${item.isLiked ? "text-pink-700" : "text-gray-500"}`}
           onClick={() => {item.isLiked = !item.isLiked}}
         />
       </div>
