@@ -1,5 +1,6 @@
 import { ConnectCourse } from "../../features/diary/components/ConnectCourse";
 import { Review } from "../../features/diary/components/Review";
+import { WriteDiary } from "../../features/diary/components/WriteDiary";
 
 export const CreateDiaryPage = () => {
   
@@ -15,7 +16,7 @@ export const CreateDiaryPage = () => {
 
       {/* 게시물 작성 */}
       <div className="h-full border-gray-300 border rounded-2xl p-4 pb-6 w-[800px]">
-
+        <WriteDiary />
       </div>
 
       {/* 저장 */}
