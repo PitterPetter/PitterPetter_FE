@@ -5,16 +5,19 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useState } from "react";
 import { Course } from "../types";
 import mockData from "../mocks/diary.json";
+import { useDiaryStore } from "../../../shared/store/diary.store";
 
 export const ConnectCourse = () => {
   const [searchResults, setSearchResults] = useState<Course[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const { setCourseId } = useDiaryStore();
   const courseData = mockData.data.content.map(item => ({
     ...item,
     courseId: item.diaryId
   })) as Course[];
 
+  // 검색
   const handleSearch = () => {
     if (searchTerm.trim()) {
       const filtered = courseData.filter(item => 
@@ -28,11 +31,14 @@ export const ConnectCourse = () => {
     setIsSearchOpen(!isSearchOpen);
   };
 
+  // 코스 선택
   const handleCourseSelect = (courseId: string) => {
     setSearchTerm(courseId);
+    setCourseId(courseId);
     handleInputChange({ target: { value: courseId } } as React.ChangeEvent<HTMLInputElement>);
   };
 
+  // 검색어 입력
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setSearchTerm(value);
@@ -47,6 +53,21 @@ export const ConnectCourse = () => {
       setSearchResults(courseData);
     }
   };
+
+  // 검색어 입력 키
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      const exactMatch = courseData.find(item => 
+        item.courseId.toLowerCase() === searchTerm.toLowerCase()
+      );
+      
+      if (exactMatch) {
+        setCourseId(exactMatch.courseId);
+        setSearchTerm(exactMatch.courseId);
+        setSearchResults([exactMatch]);
+      }
+    }
+  };
   return (
     <div className="h-full border-gray-300 border rounded-2xl p-4 pb-6 w-[800px] flex flex-col gap-4">
       <h1>코스 연결</h1>
@@ -57,6 +78,7 @@ export const ConnectCourse = () => {
             type="text" 
             value={searchTerm}
             onChange={handleInputChange}
+            onKeyPress={handleKeyPress}
             onFocus={() => setIsSearchOpen(true)}
             className="w-full h-[42px] rounded-md p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-transparent" 
             placeholder="코스 ID 또는 제목으로 검색"
