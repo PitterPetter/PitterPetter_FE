@@ -38,7 +38,7 @@ export const DiaryListPage = () => {
               다이어리
             </div>
             <div
-              className="flex items-center justify-center gap-2 w-[210px] h-[42px] bg-third/20 text-[#662B2B]/80 rounded-md cursor-pointer border border-primary/10 hover:bg-third/40 transition-all duration-300"
+              className="flex items-center justify-center gap-2 w-[210px] h-[42px] bg-third/60 text-white rounded-xl cursor-pointer border border-primary/10 hover:bg-third/80 transition-all duration-300"
               onClick={() => {navigate("/diary/create")}}
             >
               <FontAwesomeIcon icon={faPlus} className="w-[14px] h-[14px]" />

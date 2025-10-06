@@ -15,26 +15,26 @@ export const DiaryDetailPage = () => {
     <div className="flex flex-col items-center justify-start p-4 pt-10 w-full">
       <div className="h-full p-4 pb-6 w-[800px] flex flex-col gap-4">
         {/* 다이어리 제목 및 날짜 */}
-        <div className="flex justify-between p-4 w-full">
+        <div className="flex justify-between p-4 pr-0 w-full">
           <div className="flex flex-col gap-2">
             <h1 className="text-4xl font-bold text-gray-800">{diaryData.title}</h1>
             <p className="text-sm text-gray-500">{diaryData.createdAt.split("T")[0]}</p>
           </div>
           <div>
             <div
-              className="flex items-center justify-center w-[120px] h-[45px] rounded-md cursor-pointer border border-primary/10 bg-third/40 hover:bg-third/60 transition-all duration-300"
+              className="flex items-center justify-center w-[120px] h-[45px] text-white rounded-md cursor-pointer border border-primary/10 bg-third/60 hover:bg-third/80 transition-all duration-300"
               onClick={() => {navigate("/diary")}}>목록으로</div>
           </div>
         </div>
 
         {/* 다이어리 내용 */}
-        <div className="flex gap-2 p-4 w-full justify-between relative h-full">
+        <div className="flex gap-2 p-4 pr-0 w-full justify-between relative h-full">
           <div className="flex flex-col gap-2 w-full h-full">
             <p>{diaryData.content}</p>
           </div>
           <div>
             <div
-              className="flex items-center justify-center w-[120px] h-[45px] rounded-md cursor-pointer border border-primary/10 bg-third/20 hover:bg-third/40 transition-all duration-300"
+              className="flex items-center justify-center w-[120px] h-[45px] text-white rounded-md cursor-pointer border border-primary/10 bg-third/40 hover:bg-third/60 transition-all duration-300"
               onClick={() => {navigate(`/diary/create/${id}`)}}
             >
               수정하기
