@@ -2,7 +2,7 @@
 
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Course } from "../types";
 import mockData from "../mocks/diary.json";
 import { useDiaryStore } from "../../../shared/store/diary.store";
@@ -10,12 +10,16 @@ import { useDiaryStore } from "../../../shared/store/diary.store";
 export const ConnectCourse = () => {
   const [searchResults, setSearchResults] = useState<Course[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(true);
   const { setCourseId } = useDiaryStore();
   const courseData = mockData.data.content.map(item => ({
     ...item,
     courseId: item.diaryId
   })) as Course[];
+
+  useEffect(() => {
+    setSearchResults(courseData);
+  }, []);
 
   // 검색
   const handleSearch = () => {
@@ -28,7 +32,6 @@ export const ConnectCourse = () => {
     } else {
       setSearchResults(courseData);
     }
-    setIsSearchOpen(!isSearchOpen);
   };
 
   // 코스 선택
@@ -79,7 +82,6 @@ export const ConnectCourse = () => {
             value={searchTerm}
             onChange={handleInputChange}
             onKeyPress={handleKeyPress}
-            onFocus={() => setIsSearchOpen(true)}
             className="w-full h-[42px] rounded-md p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-transparent" 
             placeholder="코스 ID 또는 제목으로 검색"
           />
@@ -92,7 +94,7 @@ export const ConnectCourse = () => {
           </button>
         </div>
         {isSearchOpen && searchResults.length > 0 && (
-          <div className="mt-3 border border-gray-200 rounded-lg bg-white shadow-sm">
+          <div className="mt-3 border border-gray-200 rounded-lg bg-white shadow-sm max-h-40 overflow-y-auto">
             {searchResults.map((item) => (
               <div 
                 key={item.courseId} 
