@@ -72,7 +72,7 @@ export const ConnectCourse = () => {
     }
   };
   return (
-    <div className="h-full border-gray-300 border rounded-2xl p-4 pb-6 w-[800px] flex flex-col gap-4">
+    <div className="h-full rounded-2xl p-4 pb-6 w-[800px] flex flex-col gap-4 bg-white">
       <h1 className="text-2xl">코스 연결</h1>
       <div className="flex flex-col gap-2">
         연관 코스 코드

@@ -12,8 +12,8 @@ export const DiaryDetailPage = () => {
   const diaryData = diary.data; // 추후에 API 연동 시 ID를 통해 조회
 
   return (
-    <div className="flex flex-col items-center justify-start p-4 pt-10 w-full">
-      <div className="h-full p-4 pb-6 w-[800px] flex flex-col gap-4">
+    <div className="flex flex-col items-center justify-start p-4 pt-10 w-full bg-primary/5">
+      <div className="h-full p-4 pb-6 w-[800px] flex flex-col gap-4 bg-white rounded-2xl">
         {/* 다이어리 제목 및 날짜 */}
         <div className="flex justify-between p-4 pr-0 w-full">
           <div className="flex flex-col gap-2">

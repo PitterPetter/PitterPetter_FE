@@ -24,17 +24,17 @@ export const CreateDiaryPage = () => {
   };
   
   return (
-    <div className="w-full h-[100vh] flex flex-col gap-4 items-center justify-start py-10">
+    <div className="w-full h-full flex flex-col gap-6 items-center justify-start py-10 bg-primary/5">
       {/* 코스 연결 */}
       <ConnectCourse />
 
       {/* 리뷰 */}
-      <div className="h-full border-gray-300 border rounded-2xl p-4 pb-6 w-[800px]">
+      <div className="h-full rounded-2xl p-4 pb-6 w-[800px] bg-white">
         <Review />
       </div>
 
       {/* 게시물 작성 */}
-      <div className="h-full border-gray-300 border rounded-2xl p-4 pb-6 w-[800px]">
+      <div className="h-full rounded-2xl p-4 pb-6 w-[800px] bg-white">
         <WriteDiary />
         <div className="flex justify-end gap-4 p-4">
           <div
