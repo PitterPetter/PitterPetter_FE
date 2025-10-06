@@ -13,7 +13,6 @@ import { useHeaderStore } from "../../shared/store/header.store";
 
 export const HeaderLayout = () => {
   const isOpen = useHeaderStore((state) => state.isOpen);
-  const setIsOpen = useHeaderStore((state) => state.setIsOpen);
 
   return (
     <div className="flex w-full min-h-dvh">
