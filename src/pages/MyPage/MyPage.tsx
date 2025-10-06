@@ -1,13 +1,44 @@
 import { Profile } from "../../features/mypage/components/Profile";
 import { CoupleHome } from "../../features/mypage/components/CoupleHome";
 import { PersonalOnboarding } from "../../features/onboarding/PersonalOnboarding";
+import { useHeaderStore } from "../../shared/store/header.store";
 
 export const MyPage = () => {
+  const isOpen = useHeaderStore((s) => s.isOpen);
+
   return (
-    <div className="h-[100vh] w-full max-w-[800px]">
-      <Profile />
-      <PersonalOnboarding />
-      <CoupleHome />
+    <div
+      className="
+        flex flex-col 2xl:flex-row gap-8 2xl:gap-4 items-center justify-start py-10 bg-primary/5
+        w-full h-full min-h-screen
+        2xl:px-20 2xl:items-start
+        px-0
+      ">
+      {/* 왼쪽 섹션 */}
+      <div className={`flex flex-col gap-8 w-full ${isOpen ? "min-w-[720px] max-w-[720px]" : "min-w-[720px] max-w-[720px] 2xl:min-w-[850px] 2xl:max-w-[850px]"}`
+      }>
+        {/* 프로필 카드 */}
+        <div className="p-8 border border-primary/10 rounded-2xl shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md">
+          <Profile />
+        </div>
+
+        {/* 개인 온보딩 카드 */}
+        <div className="p-8 px-2 md:px-0 border border-primary/10 rounded-2xl shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md">
+          <h2 className="text-2xl font-semibold mb-4 text-gray-800 px-2 md:px-8">개인 온보딩</h2>
+          <PersonalOnboarding />
+        </div>
+      </div>
+
+      {/* 커플 홈 섹션 */}
+      <div className={`
+        flex justify-center items-center w-full px-2 md:px-0
+        2xl:max-h-[600px]
+        border border-primary/10 rounded-2xl shadow-sm bg-white/80 
+        backdrop-blur-sm p-6 transition-all hover:shadow-md
+        ${isOpen ? "min-w-[720px] max-w-[720px] 2xl:max-w-[720px] 2xl:min-w-[400px]" : "min-w-[720px] max-w-[720px] 2xl:max-w-[850px] 2xl:min-w-[400px]"}
+      `}>
+        <CoupleHome />
+      </div>
     </div>
   );
 };
