@@ -15,8 +15,6 @@ export const PersonalOnboarding = () => {
   
   return (
     <div className="mt-4 flex flex-col gap-2 items-center justify-center pt-8">
-      <h1 className="text-2xl">혜준 님의 취향을 알려주세요</h1>
-      <p className="text-gray-500 pb-8">정보를 입력해 주시면 더 정확한 추천을 해드릴 수 있어요</p>
 
       <div className="
         flex flex-col w-full gap-8
