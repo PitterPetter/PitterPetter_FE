@@ -12,7 +12,6 @@ import { CourseListPage } from './pages/CourseListPage';
 import { CourseDetailPage } from './pages/CourseDetailPage';
 import { CourseDetailSidebar, PlaceDetailSidebar } from './features/course';
 import { DiaryDetailPage } from './pages/DiaryDetailPage';
-import { SidebarLayout } from './app/layouts/SidebarLayout';
 import { OnboardingPage } from './pages/OnboardingPage';
 import { CoupleRoomPage, EnterCoupleRoom, CreateCoupleRoom } from './pages/CoupleRoomPage';
 import AuthBootstrap from './app/providers/AuthBootstrap';
@@ -55,15 +54,15 @@ function App() {
             <Route path="place/:placeId" element={null} />
           </Route>
 
-          {/* 사이드바 페이지 */}
-          <Route element={<SidebarLayout />}>
-            <Route path="/course" element={<CourseListPage />} />
-            <Route path="/mypage" element={<MyPage />} />
+          {/* 코스 목록 페이지 */}
+          <Route path="/course" element={<CourseListPage />} />
 
-            {/* 다이어리 페이지 */}
-            <Route path="/diary" element={<DiaryListPage />} />
-            <Route path="/diary/:id" element={<DiaryDetailPage />} />
-          </Route>
+          {/* 마이페이지 */}
+          <Route path="/mypage" element={<MyPage />} />
+
+          {/* 다이어리 페이지 */}
+          <Route path="/diary" element={<DiaryListPage />} />
+          <Route path="/diary/:id" element={<DiaryDetailPage />} />
         </Route>
       </Routes>
     </BrowserRouter>
