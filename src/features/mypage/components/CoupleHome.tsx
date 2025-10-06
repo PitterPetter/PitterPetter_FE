@@ -1,7 +1,7 @@
 export const CoupleHome = () => {
   return (
-    <div className="h-full w-full p-4">
-      <h1 className="text-xl py-0 mb-4">커플 홈</h1>
+    <div className="h-full w-full p-8 py-2">
+      <h1 className="text-2xl py-0 mb-4">커플 홈</h1>
       <div className="flex flex-col gap-2">
         <div className="flex justify-center items-center w-full text-xl">
           커플명

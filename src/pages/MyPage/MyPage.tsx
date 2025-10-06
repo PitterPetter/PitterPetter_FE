@@ -20,12 +20,18 @@ export const MyPage = () => {
         {/* 프로필 카드 */}
         <div className="p-8 border border-primary/10 rounded-2xl shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md">
           <Profile />
+          <div className="flex justify-end mt-12 px-0">
+            <div className="bg-third/60 text-white w-[120px] h-[40px] text-center py-2 rounded-md cursor-pointer border border-primary/10 text-gray-500 mt-4 hover:bg-third/80 transition-all duration-300">저장</div>
+          </div>
         </div>
 
         {/* 개인 온보딩 카드 */}
         <div className="p-8 px-2 md:px-0 border border-primary/10 rounded-2xl shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md">
-          <h2 className="text-2xl font-semibold mb-4 text-gray-800 px-2 md:px-8">개인 온보딩</h2>
+          <h2 className="text-2xl mb-4 text-gray-800 px-2 md:px-8">개인 온보딩</h2>
           <PersonalOnboarding />
+          <div className="flex justify-end mt-12 px-8">
+            <div className="bg-third/60 text-white w-[120px] h-[40px] text-center py-2 rounded-md cursor-pointer border border-primary/10 text-gray-500 mt-4 hover:bg-third/80 transition-all duration-300">저장</div>
+          </div>
         </div>
       </div>
 
