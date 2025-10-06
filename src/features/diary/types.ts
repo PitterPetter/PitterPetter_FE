@@ -1,7 +1,12 @@
 export interface Course {
-  id: string;
+  courseId: string;
   title: string;
-  content: string;
+  excerpt: string;
+  updatedAt: string;
+  likeCount: number;
+  lat: number;
+  lng: number;
+  isLiked: boolean;
 }
 
 export interface Diary {
