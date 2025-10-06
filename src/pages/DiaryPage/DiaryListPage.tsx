@@ -1,6 +1,5 @@
-import { Button } from "@mui/material";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faComment, faHeart } from "@fortawesome/free-solid-svg-icons";
+import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { DiaryListItem } from "../../features/diary";
 
@@ -31,16 +30,22 @@ const mockData = [
 export const DiaryListPage = () => {
   const navigate = useNavigate();
   return (
-    <div className="w-full max-w-[800px] h-[100vh]">
-      <div className="flex flex-col gap-4 p-4 pt-0">
+    <div className="w-full h-full flex flex-col items-center justify-start py-10">
+      <div className="flex flex-col gap-4 p-4 pt-0 w-[900px]">
         <div className="h-full border-gray-300 border rounded-2xl p-4 pb-6">
           <div className="flex gap-2 justify-between py-4">
-            <div className="w-full font-bold">
-              저장된 다이어리 목록
+            <div className="w-full text-2xl">
+              다이어리
             </div>
-            <Button variant="outlined" className="w-[170px]" onClick={() => {navigate("/diary/create")}}>새 다이어리 만들기</Button>
+            <div
+              className="flex items-center justify-center gap-2 w-[210px] h-[42px] bg-third/20 text-[#662B2B]/80 rounded-md cursor-pointer border border-primary/10 hover:bg-third/40 transition-all duration-300"
+              onClick={() => {navigate("/diary/create")}}
+            >
+              <FontAwesomeIcon icon={faPlus} className="w-[14px] h-[14px]" />
+              새 다이어리 만들기
+            </div>
           </div>
-          <div className="grid grid-cols-3 grid-rows-3 gap-4">
+          <div className="grid grid-cols-3 gap-4">
             {
               mockData.map((item) => (
                 <DiaryListItem key={item.id} {...item} />
