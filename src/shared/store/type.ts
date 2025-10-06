@@ -67,4 +67,6 @@ export type CoupleRoomStore = {
 export type DiaryStore = {
   courseId: string;
   setCourseId: (courseId: string) => void;
+  rating: number;
+  setRating: (rating: number) => void;
 };
