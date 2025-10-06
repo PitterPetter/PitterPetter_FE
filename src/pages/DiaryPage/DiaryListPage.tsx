@@ -38,7 +38,7 @@ export const DiaryListPage = () => {
             <div className="w-full font-bold">
               저장된 다이어리 목록
             </div>
-            <Button variant="outlined" className="w-[170px]" onClick={() => {navigate("/diary")}}>새 다이어리 만들기</Button>
+            <Button variant="outlined" className="w-[170px]" onClick={() => {navigate("/diary/create")}}>새 다이어리 만들기</Button>
           </div>
           <div className="grid grid-cols-3 grid-rows-3 gap-4">
             {
