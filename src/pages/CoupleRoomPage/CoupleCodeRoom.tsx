@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import { PhotoStack } from "../../features/auth/components/PhotoStack";
 
 export const CoupleCodeRoom = () => {
@@ -20,7 +20,6 @@ export const CoupleCodeRoom = () => {
     navigator.clipboard.writeText(coupleId ? coupleId : id);
     setCopied(true);
     toast.success('복사되었습니다');
-    setTimeout(() => setCopied(false), 2000);
   };
   return (
     <div className="flex items-center justify-center w-full h-full">
@@ -36,7 +35,6 @@ export const CoupleCodeRoom = () => {
         </div>
         <FontAwesomeIcon icon={faChevronLeft} className="absolute w-[18px] h-[18px] top-6 left-5 cursor-pointer" onClick={() => navigate('/home/coupleroom')} />
       </div>
-      <ToastContainer />
     </div>
   );
 };
