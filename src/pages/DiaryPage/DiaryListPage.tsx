@@ -5,6 +5,7 @@ import { DiaryListItem } from "../../features/diary";
 import { useQuery } from "@tanstack/react-query";
 import { diaryApi } from "../../features/diary/api";
 import { Diary } from "../../features/diary/types";
+import { Spinner } from "../../shared/ui/spinner";
 
 export const DiaryListPage = () => {
   const navigate = useNavigate();
@@ -35,7 +36,9 @@ export const DiaryListPage = () => {
           </div>
           <div className="grid grid-cols-3 gap-4">
             {isLoading ? (
-              <div className="col-span-3 text-center py-8">로딩 중...</div>
+              <div className="col-span-3 text-center py-8">
+                <Spinner />
+              </div>
             ) : error ? (
               <div className="col-span-3 text-center py-8 text-red-500">
                 에러가 발생했습니다: {error.message}
