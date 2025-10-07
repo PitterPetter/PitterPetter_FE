@@ -69,4 +69,12 @@ export type DiaryStore = {
   setCourseId: (courseId: string) => void;
   rating: number;
   setRating: (rating: number) => void;
+
+  // 다이어리 작성
+  diaryTitle: string;
+  setDiaryTitle: (diaryTitle: string) => void;
+  diaryContent: string;
+  setDiaryContent: (diaryContent: string) => void;
+  diaryImage: string;
+  setDiaryImage: (diaryImage: string) => void;
 };
