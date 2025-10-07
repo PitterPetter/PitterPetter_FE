@@ -1,9 +1,14 @@
 export type Onboarding = {
-    drinking: DrinkingList;
-    active: ActiveList;
-    cost: CostList;
-    food: FoodList[];
+    alcoholPreference: DrinkingList;
+    activeBound: ActiveList;
+    dataCostPreference: CostList;
+    favoriteFoodCategories: FoodList[];
     atmosphere: AtmosphereList;
+    setAlcoholPreference: (value: DrinkingList) => void;
+    setActiveBound: (value: ActiveList) => void;
+    setDataCostPreference: (value: CostList) => void;
+    setFavoriteFoodCategories: (value: FoodList[] | ((prev: FoodList[]) => FoodList[])) => void;
+    setAtmosphere: (value: AtmosphereList) => void;
 };
 
 export type DrinkingList = 0 | 1 | 2 | 3 | 4 | 5; // drinking category

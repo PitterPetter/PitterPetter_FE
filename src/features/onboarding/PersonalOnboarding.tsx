@@ -2,17 +2,14 @@
 import { TextField } from '@mui/material';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
-import { FoodList, CostList, DrinkingList, ActiveList } from "./types";
+import { FoodList, CostList } from "./types";
+import { useOnboardingStore } from "../../shared/store/onboarding.store";
 
 const FOOD_CATEGORIES = ['한식', '중식', '양식', '일식', '분식'];
 const COST_PREFERENCE = ['1만원 이하', '1 ~ 3만원', '3 ~ 5만원', '5 ~ 8만원', '8만원 이상'];
 
 export const PersonalOnboarding = () => {
-  const [alcoholPreference, setAlcoholPreference] = useState<DrinkingList>(0);
-  const [activeBound, setActiveBound] = useState<ActiveList>(0);
-  const [dataCostPreference, setDataCostPreference] = useState<CostList>('');
-  const [favoriteFoodCategories, setFavoriteFoodCategories] = useState<FoodList[]>([]);
+  const { alcoholPreference, activeBound, dataCostPreference, favoriteFoodCategories, atmosphere, setAlcoholPreference, setActiveBound, setDataCostPreference, setFavoriteFoodCategories, setAtmosphere } = useOnboardingStore();
   const circleStyle = "border border-gray-300 rounded-full transition-all duration-250 flex justify-center items-center text-white";
   const boxStyle = "w-full h-12 rounded-md transition-all duration-250 flex justify-center items-center border border-gray-300";
   
@@ -124,7 +121,7 @@ export const PersonalOnboarding = () => {
         {/* Atmosphere */}
         <div className="w-full flex flex-col gap-2">
           <p className="text-black">어떤 분위기를 선호하세요?</p>
-          <TextField id="outlined-basic" variant="outlined" placeholder="입력해주세요." />
+          <TextField id="outlined-basic" variant="outlined" placeholder="입력해주세요." value={atmosphere} onChange={(e) => setAtmosphere(e.target.value)} />
         </div>
       </div>
     </div>
