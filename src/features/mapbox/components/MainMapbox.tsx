@@ -1,9 +1,9 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useMarkerStore } from '../../../shared/store/mapbox.store';
 import { MapboxProps, MapRefs, TimeOfDay } from '../types';
-import mockData from '../../diary/mocks/diary.json';
+import { mapboxApi } from '../api';
 import { useStartStore } from '../../../shared/store/recommend.store';
 
 const MapboxMainPage: React.FC<MapboxProps> = ({
@@ -13,6 +13,7 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
 }) => {
   const mapContainerRef = useRef<MapRefs['container']>(null);
   const mapRef = useRef<MapRefs['map']>(null);
+  const [mapData, setMapData] = useState<any>(null);
 
   const { setIsMarkers } = useMarkerStore();
 
@@ -27,7 +28,7 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
   };
 
   const makeFeatureCollection = () => {
-    const features = (mockData.data?.content ?? []).map(
+    const features = (mapData?.data?.content ?? []).map(
       (
         item: {
           lng: number;
@@ -131,8 +132,21 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
     }
   };
 
+  // 데이터 로드
   useEffect(() => {
-    if (!mapContainerRef.current) return;
+    const loadMapData = async () => {
+      try {
+        const response = await mapboxApi.getMapboxData();
+        setMapData(response.data);
+      } catch (error) {
+        console.error('Failed to load map data:', error);
+      }
+    };
+    loadMapData();
+  }, []);
+
+  useEffect(() => {
+    if (!mapContainerRef.current || !mapData) return;
     mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
     const map = new mapboxgl.Map({
@@ -265,7 +279,7 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
       mapRef.current?.remove();
       mapRef.current = null;
     };
-  }, []);
+  }, [mapData]);
 
   return (
     <div

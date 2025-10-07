@@ -17,6 +17,7 @@ import { CoupleRoomPage, EnterCoupleRoom, CreateCoupleRoom } from './pages/Coupl
 import AuthBootstrap from './app/providers/AuthBootstrap';
 import { CoupleRoomModal } from './pages/CoupleRoomPage/CoupleRoomModal';
 import { CoupleCodeRoom } from './pages/CoupleRoomPage/CoupleCodeRoom';
+import { CreateDiaryPage } from './pages/DiaryPage/CreateDiaryPage';
 
 function App() {
 
@@ -62,6 +63,7 @@ function App() {
 
           {/* 다이어리 페이지 */}
           <Route path="/diary" element={<DiaryListPage />} />
+          <Route path="/diary/create" element={<CreateDiaryPage />} />
           <Route path="/diary/:id" element={<DiaryDetailPage />} />
         </Route>
       </Routes>

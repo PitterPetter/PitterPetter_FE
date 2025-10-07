@@ -13,7 +13,7 @@
         "isLiked": true
       },
       {
-        "diaryId": "d_123",
+        "diaryId": "d_124",
         "title": "서울 여행",
         "excerpt": "드디어 함께 떠난 첫 여행",
         "updatedAt": "2025-09-04T00:00:00Z",
@@ -23,13 +23,53 @@
         "isLiked": true
       },
       {
-        "diaryId": "d_123",
+        "diaryId": "d_125",
         "title": "부산 여행",
         "excerpt": "이번에는 부산 맛집을 많이 찾아봤어요. 맛있는 음식을 많이 먹었어요. 다음에 또 함께 떠나요.",
         "updatedAt": "2025-09-06T00:00:00Z",
         "likeCount": 8,
         "lat": 37.514,
         "lng": 127.096,
+        "isLiked": true
+      },
+      {
+        "diaryId": "d_126",
+        "title": "대전 여행",
+        "excerpt": "이번에는 대전 맛집을 많이 찾아봤어요. 맛있는 음식을 많이 먹었어요. 다음에 또 함께 떠나요.",
+        "updatedAt": "2025-09-07T00:00:00Z",
+        "likeCount": 8,
+        "lat": 37.514,
+        "lng": 127.086,
+        "isLiked": true
+      },
+      {
+        "diaryId": "d_127",
+        "title": "광주 여행",
+        "excerpt": "이번에는 광주 맛집을 많이 찾아봤어요. 맛있는 음식을 많이 먹었어요. 다음에 또 함께 떠나요.",
+        "updatedAt": "2025-09-08T00:00:00Z",
+        "likeCount": 8,
+        "lat": 37.514,
+        "lng": 127.076,
+        "isLiked": true
+      },
+      {
+        "diaryId": "d_128",
+        "title": "대구 여행",
+        "excerpt": "이번에는 대구 맛집을 많이 찾아봤어요. 맛있는 음식을 많이 먹었어요. 다음에 또 함께 떠나요.",
+        "updatedAt": "2025-09-09T00:00:00Z",
+        "likeCount": 8,
+        "lat": 37.514,
+        "lng": 127.066,
+        "isLiked": true
+      },
+      {
+        "diaryId": "d_129",
+        "title": "대구 여행",
+        "excerpt": "이번에는 대구 맛집을 많이 찾아봤어요. 맛있는 음식을 많이 먹었어요. 다음에 또 함께 떠나요.",
+        "updatedAt": "2025-09-09T00:00:00Z",
+        "likeCount": 8,
+        "lat": 37.514,
+        "lng": 127.066,
         "isLiked": true
       }
     ],
