@@ -18,4 +18,8 @@ export const handlers = [
     await delay(2000);
     return HttpResponse.json(course);
   }),
+  http.post('https://api.loventure.us/api/diaries', async (req) => {
+    await delay(2000);
+    return HttpResponse.json(diary);
+  }),
 ];
