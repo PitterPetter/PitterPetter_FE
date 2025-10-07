@@ -2,9 +2,13 @@ import { ConnectCourse } from "../../features/diary/components/ConnectCourse";
 import { Review } from "../../features/diary/components/Review";
 import { WriteDiary } from "../../features/diary/components/WriteDiary";
 import { useNavigate } from "react-router-dom";
+import { diaryApi } from "../../features/diary/api";
+import { useDiaryStore } from "../../shared/store/diary.store";
+import { toast } from 'react-toastify';
 
 export const CreateDiaryPage = () => {
   const navigate = useNavigate();
+  const { diaryTitle, diaryContent, diaryImage } = useDiaryStore();
 
   const handleCancel = () => {
     const isReal = confirm('정말 취소하시겠습니까?\n(취소할 경우, 작성한 내용은 사라집니다)');
@@ -18,9 +22,16 @@ export const CreateDiaryPage = () => {
     console.log('임시저장');
   };
 
-  const handleSave = () => {
-    // API 연동 후 저장
-    console.log('저장');
+  const handleSave = async () => {
+    // 낙관적 업데이트
+    toast.success('다이어리가 성공적으로 저장되었습니다.');
+    navigate('/diary');
+    const res = await diaryApi.createDiary({
+      title: diaryTitle,
+      content: diaryContent,
+      image: diaryImage,
+    });
+    console.log(res);
   };
   
   return (

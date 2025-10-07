@@ -1,24 +1,43 @@
 // 다이어리 상세 페이지
 
 import { useParams } from "react-router-dom";
-import diary from "../../features/diary/mocks/diaryDetail.json";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
+import { diaryDetailApi } from "../../features/diary/api";
+import { useQuery } from "@tanstack/react-query";
+import { Spinner } from "../../shared/ui/spinner";
 
 export const DiaryDetailPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
-  const diaryData = diary.data; // 추후에 API 연동 시 ID를 통해 조회
+  const { data: diaryData, isLoading, error } = useQuery({
+    queryKey: ['diaryDetail', id],
+    queryFn: async () => {
+      const response = await diaryDetailApi.getDiaryDetail(id as string);
+      return response.data.data;
+    }
+  });
 
   return (
     <div className="flex flex-col items-center justify-start p-4 pt-10 w-full bg-primary/5">
+      {isLoading? (
+        <div className="h-full min-h-[100vh] p-4 pb-6 w-[800px] flex flex-col gap-4 rounded-2xl">
+          <Spinner />
+        </div>
+      ) : error ? (
+        <div className="h-full p-4 pb-6 w-[800px] flex flex-col gap-4 bg-white rounded-2xl">
+          <div className="text-center py-8 text-red-500">
+            에러가 발생했습니다: {error.message}
+          </div>
+        </div>
+      ) : (
       <div className="h-full p-4 pb-6 w-[800px] flex flex-col gap-4 bg-white rounded-2xl">
         {/* 다이어리 제목 및 날짜 */}
         <div className="flex justify-between p-4 pr-0 w-full">
           <div className="flex flex-col gap-2">
-            <h1 className="text-4xl font-bold text-gray-800">{diaryData.title}</h1>
-            <p className="text-sm text-gray-500">{diaryData.createdAt.split("T")[0]}</p>
+            <h1 className="text-4xl font-bold text-gray-800">{diaryData?.title}</h1>
+            <p className="text-sm text-gray-500">{diaryData?.createdAt.split("T")[0]}</p>
           </div>
           <div>
             <div
@@ -30,7 +49,7 @@ export const DiaryDetailPage = () => {
         {/* 다이어리 내용 */}
         <div className="flex gap-2 p-4 pr-0 w-full justify-between relative h-full">
           <div className="flex flex-col gap-2 w-full h-full">
-            <p>{diaryData.content}</p>
+            <p>{diaryData?.content}</p>
           </div>
           <div>
             <div
@@ -55,9 +74,9 @@ export const DiaryDetailPage = () => {
 
             </div>
             <div className="flex flex-col w-full h-full gap-2 items-start justify-start">
-              <p className="text-sm text-gray-500">코스 코드: {diaryData.courseId}</p>
+              <p className="text-sm text-gray-500">코스 코드: {diaryData?.courseId}</p>
               <div className="text-sm text-gray-500">
-                성산일출봉
+                {diaryData?.title}
               </div>
             </div>
           </div>
@@ -73,7 +92,7 @@ export const DiaryDetailPage = () => {
               </div>
             ))}
             <div className="text-sm text-gray-500">
-              {diaryData.rating}
+              {diaryData?.rating}
             </div>
           </div>
         </div>
@@ -96,6 +115,7 @@ export const DiaryDetailPage = () => {
           ))}
         </div>
       </div>
+      )}
     </div>
   );
 };

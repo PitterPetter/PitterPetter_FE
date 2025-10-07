@@ -18,6 +18,8 @@ import AuthBootstrap from './app/providers/AuthBootstrap';
 import { CoupleRoomModal } from './pages/CoupleRoomPage/CoupleRoomModal';
 import { CoupleCodeRoom } from './pages/CoupleRoomPage/CoupleCodeRoom';
 import { CreateDiaryPage } from './pages/DiaryPage/CreateDiaryPage';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
 
@@ -67,6 +69,18 @@ function App() {
           <Route path="/diary/:id" element={<DiaryDetailPage />} />
         </Route>
       </Routes>
+      <ToastContainer 
+        position="top-right"
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss={false}
+        draggable={false}
+        pauseOnHover={false}
+        theme="light"
+      />
     </BrowserRouter>
   )
 }

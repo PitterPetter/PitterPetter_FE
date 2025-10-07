@@ -6,4 +6,12 @@ export const useDiaryStore = create<DiaryStore>((set) => ({
   setCourseId: (courseId: string) => set({ courseId }),
   rating: 0,
   setRating: (rating: number) => set({ rating }),
+
+  // 다이어리 작성
+  diaryTitle: '',
+  setDiaryTitle: (diaryTitle: string) => set({ diaryTitle }),
+  diaryContent: '',
+  setDiaryContent: (diaryContent: string) => set({ diaryContent }),
+  diaryImage: '',
+  setDiaryImage: (diaryImage: string) => set({ diaryImage }),
 }));

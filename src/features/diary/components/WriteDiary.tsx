@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { ImageUpload, MarkdownEditor } from '../../../shared/ui';
+import { useDiaryStore } from '../../../shared/store/diary.store';
 
 export const WriteDiary = () => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [diaryContent, setDiaryContent] = useState<string>('');
+  const { diaryTitle, setDiaryTitle, diaryContent, setDiaryContent } = useDiaryStore();
 
   const handleImageSelect = (file: File | null) => {
     console.log('Selected file:', file);
@@ -24,6 +25,8 @@ export const WriteDiary = () => {
           <input 
             type="text" 
             placeholder="제목을 입력해 주세요" 
+            value={diaryTitle}
+            onChange={(e) => setDiaryTitle(e.target.value)}
             className="w-full h-[42px] rounded-md p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#662B2B]/20 focus:border-[#662B2B] transition-colors" 
           />
         </div>
