@@ -3,3 +3,7 @@ import { api } from "../../shared/api/base";
 export const diaryApi = {
   getDiaryList: () => api.get('/api/diaries'),
 };
+
+export const courseApi = {
+  getCourseList: () => api.get('/api/courses'),
+};
