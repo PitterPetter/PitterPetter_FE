@@ -4,6 +4,7 @@ import { WriteDiary } from "../../features/diary/components/WriteDiary";
 import { useNavigate } from "react-router-dom";
 import { diaryApi } from "../../features/diary/api";
 import { useDiaryStore } from "../../shared/store/diary.store";
+import { toast } from 'react-toastify';
 
 export const CreateDiaryPage = () => {
   const navigate = useNavigate();
@@ -22,7 +23,9 @@ export const CreateDiaryPage = () => {
   };
 
   const handleSave = async () => {
-    // API 연동 후 저장
+    // 낙관적 업데이트
+    toast.success('다이어리가 성공적으로 저장되었습니다.');
+    navigate('/diary');
     const res = await diaryApi.createDiary({
       title: diaryTitle,
       content: diaryContent,
