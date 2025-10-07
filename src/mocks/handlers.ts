@@ -9,4 +9,8 @@ export const handlers = [
   http.get('*/home', () => {
     return HttpResponse.json({ message: 'Home endpoint' });
   }),
+  http.get('https://api.loventure.us/api/diaries', async () => {
+    await delay(2000);
+    return HttpResponse.json(diary);
+  }),
 ];

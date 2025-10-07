@@ -2,33 +2,21 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { DiaryListItem } from "../../features/diary";
-
-const mockData = [
-  {
-    id: 1,
-    title: '다이어리 1',
-    content: '다이어리 1 내용',
-    createdAt: '2025.09.16',
-    isLiked: true,
-  },
-  {
-    id: 2,
-    title: '다이어리 2',
-    content: '다이어리 2 내용',
-    createdAt: '2025.09.16',
-    isLiked: true,
-  },
-  {
-    id: 3,
-    title: '다이어리 3',
-    content: '다이어리 3 내용',
-    createdAt: '2025.09.16',
-    isLiked: false,
-  },
-];
+import { useQuery } from "@tanstack/react-query";
+import { diaryApi } from "../../features/diary/api";
+import { Diary } from "../../features/diary/types";
 
 export const DiaryListPage = () => {
   const navigate = useNavigate();
+
+  const { data: diaryList, isLoading, error } = useQuery({
+    queryKey: ['diaries'],
+    queryFn: async () => {
+      const response = await diaryApi.getDiaryList();
+      return response.data.data.content as Diary[];
+    }
+  });
+  
   return (
     <div className="w-full h-full flex flex-col items-center justify-start py-10 bg-primary/5">
       <div className="flex flex-col gap-4 p-4 pt-0 w-[900px]">
@@ -46,11 +34,17 @@ export const DiaryListPage = () => {
             </div>
           </div>
           <div className="grid grid-cols-3 gap-4">
-            {
-              mockData.map((item) => (
-                <DiaryListItem key={item.id} {...item} />
+            {isLoading ? (
+              <div className="col-span-3 text-center py-8">로딩 중...</div>
+            ) : error ? (
+              <div className="col-span-3 text-center py-8 text-red-500">
+                에러가 발생했습니다: {error.message}
+              </div>
+            ) : (
+              diaryList?.map((item: Diary) => (
+                <DiaryListItem key={item.diaryId} {...item} />
               ))
-            }
+            )}
           </div>
         </div>
       </div>
