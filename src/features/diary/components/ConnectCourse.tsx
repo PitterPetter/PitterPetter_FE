@@ -2,30 +2,42 @@
 
 import { faMagnifyingGlass } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Course } from "../types";
-import mockData from "../mocks/diary.json";
 import { useDiaryStore } from "../../../shared/store/diary.store";
+import { courseApi } from "../api";
+import { useQuery } from "@tanstack/react-query";
+import { Spinner } from "../../../shared/ui/spinner";
 
 export const ConnectCourse = () => {
   const [searchResults, setSearchResults] = useState<Course[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const [isSearchOpen, setIsSearchOpen] = useState(true);
   const { setCourseId } = useDiaryStore();
-  const courseData = mockData.data.content.map(item => ({
-    ...item,
-    courseId: item.diaryId
-  })) as Course[];
+
+  const { data: courseList, isLoading, error } = useQuery({
+    queryKey: ['courses'],
+    queryFn: async () => {
+      const response = await courseApi.getCourseList();
+      console.log(response);
+      return response.data;
+    }
+  });
+  const courseData = useMemo(() => {
+    return courseList?.map((item: any) => ({
+      ...item,
+      courseId: item.courseId
+    })) as Course[] || [];
+  }, [courseList]);
 
   useEffect(() => {
     setSearchResults(courseData);
-  }, []);
+  }, [courseData]);
 
   // 코스 선택
-  const handleCourseSelect = (courseId: string) => {
-    setSearchTerm(courseId);
-    setCourseId(courseId);
-    handleInputChange({ target: { value: courseId } } as React.ChangeEvent<HTMLInputElement>);
+  const handleCourseSelect = (courseId: number | string) => {
+    setSearchTerm(String(courseId));
+    setCourseId(String(courseId));
+    handleInputChange({ target: { value: String(courseId) } } as React.ChangeEvent<HTMLInputElement>);
   };
 
   // 검색어 입력
@@ -35,8 +47,8 @@ export const ConnectCourse = () => {
     
     if (value.trim()) {
       const filtered = courseData.filter(item => 
-        item.courseId.toLowerCase().includes(value.toLowerCase()) ||
-        item.title.toLowerCase().includes(value.toLowerCase())
+        String(item.courseId).toLowerCase().includes(value.toLowerCase()) ||
+        String(item.title).toLowerCase().includes(value.toLowerCase())
       );
       setSearchResults(filtered);
     } else {
@@ -48,12 +60,12 @@ export const ConnectCourse = () => {
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
       const exactMatch = courseData.find(item => 
-        item.courseId.toLowerCase() === searchTerm.toLowerCase()
+        String(item.courseId).toLowerCase() === searchTerm.toLowerCase()
       );
       
       if (exactMatch) {
-        setCourseId(exactMatch.courseId);
-        setSearchTerm(exactMatch.courseId);
+        setCourseId(String(exactMatch.courseId));
+        setSearchTerm(String(exactMatch.courseId));
         setSearchResults([exactMatch]);
       }
     }
@@ -80,22 +92,27 @@ export const ConnectCourse = () => {
             검색
           </button>
         </div>
-        {isSearchOpen && searchResults.length > 0 && (
-          <div className="mt-3 border border-gray-200 rounded-lg bg-white shadow-sm max-h-40 overflow-y-auto">
-            {searchResults.map((item) => (
-              <div 
-                key={item.courseId} 
-                onClick={() => handleCourseSelect(item.courseId)}
-                className="p-3 hover:bg-third/5 text-[#93000A] cursor-pointer border-b border-gray-100 last:border-b-0"
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium">{item.courseId}</span>
-                  <span className="text-sm">{item.title}</span>
-                </div>
+        <div className="mt-3 border border-gray-200 rounded-lg bg-white shadow-sm max-h-40 overflow-y-auto">
+          {isLoading ? (
+            <div className="flex justify-center items-center h-full w-full py-4">
+              <Spinner />
+            </div>
+          ) : error ? (
+            <div className="text-center py-2 text-red-500">에러가 발생했습니다: {error.message}</div>
+          ) : (
+            searchResults.map((item: Course) => (
+            <div 
+              key={item.courseId} 
+              onClick={() => handleCourseSelect(item.courseId)}
+              className="p-3 hover:bg-third/5 text-[#93000A] cursor-pointer border-b border-gray-100 last:border-b-0"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium">{item.courseId}</span>
+                <span className="text-sm">{item.title}</span>
               </div>
-            ))}
-          </div>
-        )}
+            </div>
+          )))}
+        </div>
       </div>
     </div>
   )
