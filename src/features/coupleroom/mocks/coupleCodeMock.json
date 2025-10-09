@@ -1,4 +1,7 @@
 {
   "status": "success",
-  "coupleCode": "123456"
+  "data": {
+    "coupleId": 123456,
+    "coupleCode": "123456"
+  }
 }

@@ -14,7 +14,7 @@ export const CoupleCodeRoom = () => {
   const [copied, setCopied] = useState(false);
   let id = '';
   if (!coupleId) {
-    id = '123123';
+    id = '000000';
   };
 
   const handleCopy = () => {
