@@ -2,6 +2,7 @@ import { http, HttpResponse, delay } from 'msw';
 import diary from '../features/diary/mocks/diary.json';
 import course from '../features/course/mocks/getCourse.json';
 import diaryDetail from '../features/diary/mocks/diaryDetail.json';
+import coupleRoomCode from '../features/coupleroom/mocks/coupleCodeMock.json';
 
 export const handlers = [
   // 맵박스 조회 API
@@ -37,5 +38,11 @@ export const handlers = [
   http.get('https://api.loventure.us/api/diaries/:id', async (req) => {
     await delay(2000);
     return HttpResponse.json(diaryDetail);
+  }),
+
+  // 커플 방 생성 API
+  http.post('https://api.loventure.us/api/coupleroom', async (req) => {
+    await delay(2000);
+    return HttpResponse.json(coupleRoomCode);
   }),
 ];
