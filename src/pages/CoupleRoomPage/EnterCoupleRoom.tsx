@@ -66,7 +66,7 @@ export const EnterCoupleRoom = () => {
       const result = await validateCoupleCode(enteredCode);
       console.log('result', result);
       
-      if (result.status === 'success' && enteredCode === '123123') {
+      if (result.status === 'success') {
         toast.success('커플 인증이 완료되었습니다');
         navigate('/home');
       } else {
