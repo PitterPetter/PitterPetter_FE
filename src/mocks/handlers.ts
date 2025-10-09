@@ -41,7 +41,13 @@ export const handlers = [
   }),
 
   // 커플 방 생성 API
-  http.post('https://api.loventure.us/api/coupleroom', async (req) => {
+  http.post('https://api.loventure.us/api/home/coupleroom', async (req) => {
+    await delay(2000);
+    return HttpResponse.json(coupleRoomCode);
+  }),
+
+  // 커플 방 코드 검증 API
+  http.post('https://api.loventure.us/api/couples/match', async (req) => {
     await delay(2000);
     return HttpResponse.json(coupleRoomCode);
   }),
