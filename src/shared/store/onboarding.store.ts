@@ -1,0 +1,15 @@
+import { create } from "zustand";
+import { Onboarding, DrinkingList, ActiveList, AtmosphereList, FoodList, CostList } from "../../features/onboarding/types";
+
+export const useOnboardingStore = create<Onboarding>((set) => ({
+  alcoholPreference: 0,
+  activeBound: 0,
+  dataCostPreference: '',
+  favoriteFoodCategories: [],
+  atmosphere: '',
+  setAlcoholPreference: (value: DrinkingList) => set({ alcoholPreference: value }),
+  setActiveBound: (value: ActiveList) => set({ activeBound: value }),
+  setDataCostPreference: (value: CostList) => set({ dataCostPreference: value }),
+  setFavoriteFoodCategories: (value: FoodList[] | ((prev: FoodList[]) => FoodList[])) => set((state) => ({ favoriteFoodCategories: typeof value === 'function' ? value(state.favoriteFoodCategories) : value })),
+  setAtmosphere: (value: AtmosphereList) => set({ atmosphere: value }),
+}));
