@@ -16,9 +16,13 @@ export const CoupleCodeRoom = () => {
   if (!coupleId) {
     id = '123123';
   };
+
   const handleCopy = () => {
     navigator.clipboard.writeText(coupleId ? coupleId : id);
     setCopied(true);
+    setTimeout(() => {
+      setCopied(false);
+    }, 2800);
     toast.success('복사되었습니다');
   };
   return (
