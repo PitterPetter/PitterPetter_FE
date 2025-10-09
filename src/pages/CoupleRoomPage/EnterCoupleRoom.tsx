@@ -3,10 +3,29 @@ import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
+import { coupleRoomApi } from "../../features/coupleroom/api";
+import { toast } from 'react-toastify';
+import { useMutation } from "@tanstack/react-query";
 
 export const EnterCoupleRoom = () => {
   const navigate = useNavigate();
   const [codes, setCodes] = useState(['', '', '', '', '', '']);
+  const [isError, setIsError] = useState(false);
+
+  const { mutateAsync: validateCoupleCode, isPending } = useMutation({
+    mutationFn: async (coupleCode: string) => {
+      try {
+        const res = await coupleRoomApi.validateCoupleCode(coupleCode);
+        if (res.data.status === 'error') {
+          throw new Error('커플 인증에 실패했습니다');
+        }
+        return res.data;
+      } catch (error) {
+        setIsError(true);
+        throw error;
+      }
+    },
+  });
 
   const handleInputChange = (index: number, value: string) => {
     if (value.length > 1) return; // 한 글자만 입력 가능
@@ -38,6 +57,30 @@ export const EnterCoupleRoom = () => {
     }
   };
 
+  const handleEnter = async () => {
+    const enteredCode = codes.join('');
+    console.log('입력된 코드:', enteredCode);
+    
+    try {
+      setIsError(false);
+      const result = await validateCoupleCode(enteredCode);
+      console.log('result', result);
+      
+      if (result.status === 'success' && enteredCode === '123123') {
+        toast.success('커플 인증이 완료되었습니다');
+        navigate('/home');
+      } else {
+        setIsError(true);
+        throw new Error('커플 인증에 실패했습니다');
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('커플 인증에 실패했습니다');
+      setIsError(true);
+      throw error;
+    }
+  };
+
   return (
     <div className="flex items-center justify-center w-full h-full">
       <div className="relative h-[800px] w-[700px] bg-[#DED6D6] border-gray-300 border rounded-2xl p-4 py-16 flex flex-col gap-2 justify-center items-center">
@@ -59,17 +102,12 @@ export const EnterCoupleRoom = () => {
             />
           ))}
         </div>
-        
-        <Button 
+        {isError && <p className="text-red-500">커플 인증에 실패했습니다</p>}
+        <Button
           variant="contained" 
           className="mt-4"
-          disabled={codes.some(code => code === '')}
-          onClick={() => {
-            const enteredCode = codes.join('');
-            console.log('입력된 코드:', enteredCode);
-            // 코드 검증 로직 추가 예정
-            navigate('/home');
-          }}
+          disabled={codes.some(code => code === '') || isPending}
+          onClick={handleEnter}
           sx={{
             backgroundColor: '#662B2B',
             width: '220px',
@@ -81,7 +119,7 @@ export const EnterCoupleRoom = () => {
             text: 'white',
           }}
         >
-          입장하기
+          {isPending ? '입장하는 중...' : '입장하기'}
         </Button>
           <FontAwesomeIcon icon={faChevronLeft} className="absolute w-[18px] h-[18px] top-6 left-5 cursor-pointer" onClick={() => navigate('/home/coupleroom')} />
         </div>

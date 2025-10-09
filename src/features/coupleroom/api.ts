@@ -3,4 +3,5 @@ import { PostCoupleRoom } from "./types";
 
 export const coupleRoomApi = {
   createCoupleRoom: (coupleRoom: PostCoupleRoom) => api.post('/api/coupleroom', coupleRoom),
+  validateCoupleCode: (coupleCode: string) => api.post('/api/couples/match', coupleCode),
 };
