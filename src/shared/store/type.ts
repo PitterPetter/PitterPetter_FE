@@ -61,6 +61,8 @@ export type CoupleRoomStore = {
   coupleName: string;
   coupleDate: string;
   setCoupleRoom: (coupleRoom: CoupleRoomStore) => void;
+  coupleCode: string;
+  setCoupleCode: (coupleCode: string) => void;
 };
 
 // DiaryStore
