@@ -11,25 +11,30 @@ import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { useCoupleRoomStore } from "../../shared/store/CoupleRoom.store";
 import { CoupleRoomStore } from "../../shared/store/type";
+import { coupleRoomApi } from "../../features/coupleroom/api";
 
 export const CreateCoupleRoom = () => {
   const navigate = useNavigate();
   const [coupleName, setCoupleName] = useState('');
   const [coupleDate, setCoupleDate] = useState(new Date());
-  const [response, setResponse] = useState<GetId | null>(null);
 
   const handleSave = async () => {
-    const res = await postCoupleRoom({
+    const res = await coupleRoomApi.createCoupleRoom({
       name: coupleName,
       date: coupleDate.toISOString(),
     });
-    setResponse(res.data);
-    useCoupleRoomStore.getState().setCoupleRoom({
-      coupleId: res.data.coupleId,
-      coupleName: coupleName,
-      coupleDate: coupleDate.toISOString(),
-      setCoupleRoom: (coupleRoom: CoupleRoomStore) => useCoupleRoomStore.getState().setCoupleRoom(coupleRoom),
-    });
+    if (res.data.status === 'success') {
+      useCoupleRoomStore.getState().setCoupleRoom({
+        coupleId: res.data.coupleId,
+        coupleName: coupleName,
+        coupleDate: coupleDate.toISOString(),
+        setCoupleRoom: (coupleRoom: CoupleRoomStore) => useCoupleRoomStore.getState().setCoupleRoom(coupleRoom),
+        coupleCode: res.data.coupleCode,
+        setCoupleCode: (coupleCode: string) => useCoupleRoomStore.getState().setCoupleCode(coupleCode),
+      });
+      console.log('res',res);
+      navigate(`/home/coupleroom/create/${res.data.coupleId}`);
+    }
   };
 
   return (
@@ -84,7 +89,6 @@ export const CreateCoupleRoom = () => {
             disabled={coupleName === '' || coupleDate === null}
             onClick={() => {
               handleSave();
-              navigate(`/home/coupleroom/create/${response?.coupleId}`);
             }}
             sx={{
               backgroundColor: '#662B2B',
