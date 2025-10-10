@@ -17,8 +17,8 @@ export const OnboardingPage = () => {
       toast.success('온보딩 정보가 성공적으로 저장되었습니다.');
       navigate("/home");
     },
-    onError: (error) => {
-      toast.error('온보딩 정보 저장 실패');
+    onError: (error: any) => {
+      toast.error('온보딩 정보 저장 실패', error);
     }
   });
   const handleSubmit = () => {
