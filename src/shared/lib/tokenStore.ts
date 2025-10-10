@@ -1,7 +1,7 @@
 // token storage
 
-const ACCESS = 'access_token';
-const REFRESH = 'refresh_token';
+const ACCESS = 'accessToken';
+const REFRESH = 'refreshToken';
 
 export const tokenStore = {
   getAccessToken() {console.log("HIHI"); return sessionStorage.getItem(ACCESS) ?? ''; },
