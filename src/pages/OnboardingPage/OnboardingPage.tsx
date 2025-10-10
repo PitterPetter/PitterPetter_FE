@@ -23,7 +23,14 @@ export const OnboardingPage = () => {
     }
   });
   const handleSubmit = () => {
-    mutation.mutate({ alcoholPreference, activeBound, dataCostPreference, favoriteFoodCategories, atmosphere });
+
+    mutation.mutate({ 
+      alcoholPreference, 
+      activeBound, 
+      dateCostPreference: dataCostPreference,
+      favoriteFoodCategories: favoriteFoodCategories,
+      preferredAtmosphere: atmosphere
+    });
   };
   return (
     <div className="w-full flex justify-center">
