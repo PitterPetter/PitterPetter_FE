@@ -159,7 +159,9 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
       },
       center,
       zoom,
-      pitch
+      pitch,
+      minZoom: 13,
+      maxZoom: 18
     });
 
     map.on('error', (e) => {

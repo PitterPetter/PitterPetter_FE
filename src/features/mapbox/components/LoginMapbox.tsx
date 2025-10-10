@@ -38,6 +38,8 @@ const Mapbox: React.FC<MapboxProps> = ({
       center,
       zoom,
       pitch,
+      minZoom: 13,
+      maxZoom: 18,
       interactive: false // 클릭 및 상호작용 비활성화
     });
 

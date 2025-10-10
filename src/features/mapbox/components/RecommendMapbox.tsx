@@ -53,7 +53,9 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
       },
       center: mapCenter,
       zoom,
-      pitch
+      pitch,
+      minZoom: 13,
+      maxZoom: 18
     });
 
     map.on('error', (e) => {
