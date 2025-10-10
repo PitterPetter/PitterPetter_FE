@@ -10,3 +10,18 @@ export const postCoupleRoom = async (coupleRoom: PostCoupleRoom) => {
     throw error;
   }
 };
+
+export const getRedirectPath = async (): Promise<string> => {
+  try {
+    const response = await api.get('/api/auth/redirect');
+    if (response.data && response.data.success) {
+      console.log('[authApi] redirect url fetched:', response.data.redirectUrl);
+      return response.data.redirectUrl;
+    }
+
+    return '/home';
+  } catch (error) {
+     console.error("[authApi] Failed to fetch redirect path, falling back to /home:", error);
+     return '/home';
+  }
+};
