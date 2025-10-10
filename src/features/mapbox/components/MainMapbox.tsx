@@ -14,6 +14,7 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
   const mapContainerRef = useRef<MapRefs['container']>(null);
   const mapRef = useRef<MapRefs['map']>(null);
   const [mapData, setMapData] = useState<any>(null);
+  const [isMapReady, setIsMapReady] = useState(false);
 
   const { setIsMarkers } = useMarkerStore();
 
@@ -255,6 +256,7 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
 
       map.once('idle', () => {
         syncAlwaysOnPopups();
+        setIsMapReady(true);
       });
 
     });
@@ -288,15 +290,26 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
 
       mapRef.current?.remove();
       mapRef.current = null;
+      setIsMapReady(false);
     };
   }, [mapData]);
 
   return (
-    <div
-      ref={mapContainerRef}
-      id="map"
-      style={{ height: '100vh', width: '100vw' }}
-    />
+    <div style={{ position: 'relative', height: '100vh', width: '100vw' }}>
+      <div
+        ref={mapContainerRef}
+        id="map"
+        style={{ height: '100%', width: '100%' }}
+      />
+      
+      {/* 로딩 오버레이 */}
+      {!isMapReady && (
+        <div className="pointer-events-none absolute inset-0 bg-white z-20 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-300 border-t-transparent" />
+          <span className="ml-3 text-gray-700 font-medium">지도 로딩 중…</span>
+        </div>
+      )}
+    </div>
   );
 };
 
