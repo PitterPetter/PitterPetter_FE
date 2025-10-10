@@ -9,6 +9,8 @@ export const tokenStore = {
   },
   setAccessToken(token: string) {
     ACCESS = token;
+
+    
     console.log("[tokenStore] setAccessToken: updated");
   },
   clear() {
