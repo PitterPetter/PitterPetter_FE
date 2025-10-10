@@ -1,28 +1,28 @@
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { tokenStore } from "../../shared/lib/tokenStore";
-import { refreshStore } from "../../shared/lib/refreshStore";
 
 export default function AuthBootstrap() {
   const location = useLocation();
   const navigate = useNavigate();
 
   useEffect(() => {
-    // 로그인 리다이렉트 후 쿼리스트링에 토큰을 실어주는 백엔드 대응
+    // 로그인 리다이렉트 후 쿼리스트링에서 access_token만 추출
+    // refresh_token은 httpOnly 쿠키로 자동 관리됨
     const url = new URL(window.location.href);
     const qs = url.searchParams;
 
     const access = qs.get("access_token");
-    const refresh = qs.get("refresh_token");
 
-    if (!access && !refresh) return;
+    console.log("[AuthBootstrap] access_token in query:", !!access);
 
-    if (access) {
-      tokenStore.setAccessToken(access);
+    if (!access) {
+      console.log("[AuthBootstrap] no access_token, skipping");
+      return;
     }
-    if (refresh) {
-      refreshStore.set(refresh);
-    }
+
+    console.log("[AuthBootstrap] saving access_token to sessionStorage");
+    tokenStore.setAccessToken(access);
 
     // 쿼리 제거
     const clean = `${window.location.origin}${location.pathname}`;
