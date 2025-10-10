@@ -3,7 +3,6 @@
 import axios, { AxiosError, AxiosRequestConfig } from "axios";
 import { ENV } from "../config/env";
 import { tokenStore } from "../lib/tokenStore";
-import { refreshStore } from "../lib/refreshStore";
 import { raw } from "./raw";
 
 type RetriableConfig = AxiosRequestConfig & { _retry?: boolean };
@@ -92,7 +91,6 @@ api.interceptors.response.use(
       } catch (e) {
         console.error("[auth] dequeue failed. redirect to /login");
         tokenStore.clear();
-        refreshStore.clear();
         window.location.href = "/login";
         return Promise.reject(e);
       }
@@ -103,28 +101,18 @@ api.interceptors.response.use(
     original._retry = true;
 
     try {
-      // refresh 토큰은 sessionStorage 또는 HttpOnly 쿠키에 있을 수 있음
-      const refresh = refreshStore.get();
-      
-      const headers: Record<string, string> = {};
-      if (refresh) {
-        headers.Authorization = `Bearer ${refresh}`;
-        console.log("[auth] POST", REFRESH_PATH, "with Authorization header + cookie");
-      } else {
-        console.log("[auth] POST", REFRESH_PATH, "with cookie only (no sessionStorage refresh)");
-      }
+      // refresh 토큰은 httpOnly 쿠키로 자동 전송됨
+      console.log("[auth] POST", REFRESH_PATH, "with httpOnly cookie");
 
       const { data } = await raw.post(
         REFRESH_PATH,
         undefined,
         {
-          withCredentials: true, // HttpOnly 쿠키의 refresh 토큰 전송
-          headers,
+          withCredentials: true, // httpOnly 쿠키의 refresh 토큰 자동 전송
         }
       );
 
       const newAccess = (data as any)?.accessToken as string | undefined;
-      const newRefresh = (data as any)?.refreshToken as string | undefined; // 토큰 회전 시 수신
 
       if (!newAccess) {
         console.error("[auth] refresh response missing accessToken");
@@ -132,9 +120,6 @@ api.interceptors.response.use(
       }
 
       tokenStore.setAccessToken(newAccess);
-      if (newRefresh) {
-        refreshStore.set(newRefresh);
-      }
 
       console.log("[auth] refresh success. broadcasting to queue");
       processQueue(null, newAccess);
@@ -146,7 +131,6 @@ api.interceptors.response.use(
       console.error("[auth] refresh failed:", e);
       processQueue(e, null);
       tokenStore.clear();
-      refreshStore.clear();
       console.log("[auth] redirect -> /login");
       window.location.href = "/login";
       return Promise.reject(e);
