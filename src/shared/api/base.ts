@@ -27,13 +27,14 @@ export const api = axios.create({
 
 // request: 토큰 자동 주입
 api.interceptors.request.use((config) => {
-  console.log('API 요청 인터셉터 실행', config.url);
+  console.log('API 요청 인터셉터 실행:', config.url);
   const access = tokenStore.getAccessToken();
   if (access) {
     config.headers = config.headers ?? {};
     (config.headers as Record<string, string>).authorization = `Bearer ${access}`;
-    console.log('토큰 값:', access ? access : '토큰 없음');
   }
+  console.log('요청 헤더:', config.headers);
+  console.log('Authorization 헤더:', (config.headers as any)?.authorization || '없음');
   return config;
 });
 
