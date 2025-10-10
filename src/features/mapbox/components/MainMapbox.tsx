@@ -296,8 +296,19 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
         }
       });
 
-      // 클러스터 클릭 시 확대
+      map.on('mouseenter', 'cluster-circles', () => {
+        map.getCanvas().style.cursor = 'pointer';
+      });
+      map.on('mouseleave', 'cluster-circles', () => {
+        map.getCanvas().style.cursor = '';
+      });
+      
       map.on('click', 'cluster-circles', (e) => {
+        e.preventDefault();
+        if (e.originalEvent) {
+          e.originalEvent.stopPropagation();
+        }
+
         const features = map.queryRenderedFeatures(e.point, {
           layers: ['cluster-circles']
         });
@@ -334,6 +345,12 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
       let currentMarker: mapboxgl.Marker | null = null;
 
       map.on('click', (e) => {
+        const features = map.queryRenderedFeatures(e.point, {
+          layers: ['cluster-circles']
+        });
+        
+        if (features.length > 0) return;
+
         if (currentMarker) currentMarker.remove();
 
         currentMarker = new mapboxgl.Marker({ color: '#ff4444' })
