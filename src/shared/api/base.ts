@@ -103,23 +103,23 @@ api.interceptors.response.use(
     original._retry = true;
 
     try {
-      // 서버가 Authorization 헤더에 refresh를 요구
+      // refresh 토큰은 sessionStorage 또는 HttpOnly 쿠키에 있을 수 있음
       const refresh = refreshStore.get();
-      if (!refresh) {
-        console.warn("[auth] no refresh token. redirect to /login");
-        tokenStore.clear();
-        refreshStore.clear();
-        window.location.href = "/login";
-        return Promise.reject(error);
+      
+      const headers: Record<string, string> = {};
+      if (refresh) {
+        headers.Authorization = `Bearer ${refresh}`;
+        console.log("[auth] POST", REFRESH_PATH, "with Authorization header + cookie");
+      } else {
+        console.log("[auth] POST", REFRESH_PATH, "with cookie only (no sessionStorage refresh)");
       }
 
-      console.log("[auth] POST", REFRESH_PATH, "with Authorization: Bearer <refresh>");
       const { data } = await raw.post(
         REFRESH_PATH,
         undefined,
         {
-          withCredentials: true, // 백엔드가 쿠키도 병행 확인한다면 유지
-          headers: { Authorization: `Bearer ${refresh}` },
+          withCredentials: true, // HttpOnly 쿠키의 refresh 토큰 전송
+          headers,
         }
       );
 
