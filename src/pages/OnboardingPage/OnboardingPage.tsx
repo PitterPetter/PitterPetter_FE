@@ -1,11 +1,29 @@
 import { useNavigate } from "react-router-dom";
 import { PersonalOnboarding } from "../../features/onboarding/PersonalOnboarding";
+import { useMutation } from "@tanstack/react-query";
+import { onboardingApi } from "../../features/onboarding/api";
+import { useOnboardingStore } from "../../shared/store/onboarding.store";
+import { toast } from 'react-toastify';
 
 export const OnboardingPage = () => {
   const navigate = useNavigate();
 
   // API 연결 후에 호출 코드 추가 예정
-
+  const { alcoholPreference, activeBound, dataCostPreference, favoriteFoodCategories, atmosphere } = useOnboardingStore();
+  const mutation = useMutation({
+    mutationFn: onboardingApi.saveOnboarding,
+    onSuccess: (data) => {
+      console.log(data);
+      toast.success('온보딩 정보가 성공적으로 저장되었습니다.');
+      navigate("/home");
+    },
+    onError: (error) => {
+      toast.error('온보딩 정보 저장 실패');
+    }
+  });
+  const handleSubmit = () => {
+    mutation.mutate({ alcoholPreference, activeBound, dataCostPreference, favoriteFoodCategories, atmosphere });
+  };
   return (
     <div className="w-full flex justify-center">
       <div className="flex flex-col gap-4 p-4 pt-0 max-w-[450px] md:max-w-[800px]">
@@ -18,7 +36,7 @@ export const OnboardingPage = () => {
           <div className="flex justify-center items-center mt-12">
             <div className="flex justify-center items-center w-[304px] h-[64px] bg-[#FFEDED] text-[#121920] px-4 py-2 rounded-md cursor-pointer"
             onClick={() => {
-              navigate("/home");
+              handleSubmit();
             }}>
               저장하기
             </div>
