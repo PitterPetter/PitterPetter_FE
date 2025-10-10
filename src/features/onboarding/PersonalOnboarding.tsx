@@ -5,8 +5,8 @@ import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { FoodList, CostList } from "./types";
 import { useOnboardingStore } from "../../shared/store/onboarding.store";
 
-const FOOD_CATEGORIES = ['KOREAN', 'CHINESE', 'WESTERN', 'JAPANESE', 'SNACK'];
-const COST_PREFERENCE = ['BELOW_10K', 'FROM_10k_TO_30k', 'FROM_30k_TO_50k', 'FROM_50k_TO_80k', 'ABOVE_80K'];
+const FOOD_CATEGORIES = ['한식', '중식', '양식', '일식', '분식'];
+const COST_PREFERENCE = ['1만원 이하', '1 ~ 3만원', '3 ~ 5만원', '5 ~ 8만원', '8만원 이상'];
 
 export const PersonalOnboarding = () => {
   const { alcoholPreference, activeBound, dataCostPreference, favoriteFoodCategories, atmosphere, setAlcoholPreference, setActiveBound, setDataCostPreference, setFavoriteFoodCategories, setAtmosphere } = useOnboardingStore();
