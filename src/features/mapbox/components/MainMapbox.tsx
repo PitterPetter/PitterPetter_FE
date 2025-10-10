@@ -7,8 +7,8 @@ import { mapboxApi } from '../api';
 import { useStartStore } from '../../../shared/store/recommend.store';
 
 const MapboxMainPage: React.FC<MapboxProps> = ({
-  center = [127.1, 37.5133],
-  zoom = 15,
+  center = [127.104, 37.505],
+  zoom = 16,
   pitch = 60
 }) => {
   const mapContainerRef = useRef<MapRefs['container']>(null);
