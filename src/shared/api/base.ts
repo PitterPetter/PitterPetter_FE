@@ -113,15 +113,9 @@ api.interceptors.response.use(
         return Promise.reject(error);
       }
 
-      console.log("[auth] POST", REFRESH_PATH, "with Authorization: Bearer <refresh>");
-      const { data } = await raw.post(
-        REFRESH_PATH,
-        undefined,
-        {
-          withCredentials: true, // 백엔드가 쿠키도 병행 확인한다면 유지
-          headers: { Authorization: `Bearer ${refresh}` },
-        }
-      );
+      console.log("[auth] POST /api/auth/refresh");
+      console.log("[auth] cookies:", document.cookie);
+      const { data } = await raw.post("/api/auth/refresh", undefined, { withCredentials: true });
 
       const newAccess = (data as any)?.accessToken as string | undefined;
       const newRefresh = (data as any)?.refreshToken as string | undefined; // 토큰 회전 시 수신
