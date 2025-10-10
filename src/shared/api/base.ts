@@ -72,7 +72,7 @@ api.interceptors.response.use(
     const isAuthExpired = status === 401 || status === 419 || status === 440;
 
     // refresh 요청 자체이거나, 재시도 이미 했거나, 인증 만료가 아니면 패스
-    const isRefreshCall = path === "/auth/refresh";
+    const isRefreshCall = path === "/api/auth/refresh";
     if (!isAuthExpired || original._retry || isRefreshCall) {
       console.warn("[auth] bypass refresh. isAuthExpired:", isAuthExpired, "isRefreshCall:", isRefreshCall, "alreadyRetried:", !!original._retry);
       return Promise.reject(error);
@@ -104,8 +104,8 @@ api.interceptors.response.use(
 
     try {
       // 쿠키로 인증 → 본문 없이 호출
-      console.log("[auth] POST /auth/refresh");
-      const { data } = await raw.post("/auth/refresh", undefined, { withCredentials: true });
+      console.log("[auth] POST /api/auth/refresh");
+      const { data } = await raw.post("/api/auth/refresh", undefined, { withCredentials: true });
 
       const newAccess = (data as any)?.accessToken as string | undefined;
       if (!newAccess) {
