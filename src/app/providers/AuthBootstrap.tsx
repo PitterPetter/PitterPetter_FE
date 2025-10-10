@@ -41,7 +41,7 @@ export default function AuthBootstrap() {
         navigate("/home", { replace: true });
       });
 
-  }, [location.pathname, navigate]);
+  }, [location.search, navigate]);
 
   return null;
 }

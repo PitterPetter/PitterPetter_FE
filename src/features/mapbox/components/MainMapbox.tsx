@@ -3,9 +3,10 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useMarkerStore } from '../../../shared/store/mapbox.store';
 import { MapboxProps, MapRefs, TimeOfDay } from '../types';
-import { mapboxApi } from '../api';
+// import { mapboxApi } from '../api';
 import { useStartStore } from '../../../shared/store/recommend.store';
 import { useHeaderStore } from '../../../shared/store/header.store';
+import diaryMock from '../../diary/mocks/diary.json';
 
 const MapboxMainPage: React.FC<MapboxProps> = ({
   center = [127.104, 37.505],
@@ -206,7 +207,8 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
   useEffect(() => {
     const loadMapData = async () => {
       try {
-        const response = await mapboxApi.getMapboxData();
+        //const response = await mapboxApi.getMapboxData();
+        const response = diaryMock;
         setMapData(response.data);
       } catch (error) {
         console.error('Failed to load map data:', error);
