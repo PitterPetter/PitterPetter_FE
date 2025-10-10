@@ -53,8 +53,19 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
       },
       center: mapCenter,
       zoom,
-      pitch
+      pitch,
+      minZoom: 13,
+      maxZoom: 18
     });
+
+    map.on('error', (e) => {
+      if (e.error?.message?.includes('meshes is not iterable')) {
+        console.debug('3D mesh error suppressed (map works fine)');
+        return;
+      }
+      console.error('Map error:', e);
+    });
+
     mapRef.current = map;
 
     map.once('style.load', () => {
@@ -154,7 +165,7 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
 
       {/* 전역 오버레이 */}
       {(!isMapReady || isAnyPending) && (
-        <div className="pointer-events-none absolute inset-0 bg-white/40 backdrop-blur-sm z-20 flex items-center justify-center">
+        <div className="pointer-events-none absolute inset-0 bg-white z-20 flex items-center justify-center">
           <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-300 border-t-transparent" />
           <span className="ml-3 text-gray-700 font-medium">경로 계산 중…</span>
         </div>

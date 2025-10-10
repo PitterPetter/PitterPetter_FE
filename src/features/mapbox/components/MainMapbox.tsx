@@ -5,16 +5,18 @@ import { useMarkerStore } from '../../../shared/store/mapbox.store';
 import { MapboxProps, MapRefs, TimeOfDay } from '../types';
 import { mapboxApi } from '../api';
 import { useStartStore } from '../../../shared/store/recommend.store';
+import { useHeaderStore } from '../../../shared/store/header.store';
 
 const MapboxMainPage: React.FC<MapboxProps> = ({
-  center = [127.1, 37.5133],
-  zoom = 15,
+  center = [127.104, 37.505],
+  zoom = 16,
   pitch = 60
 }) => {
   const mapContainerRef = useRef<MapRefs['container']>(null);
   const mapRef = useRef<MapRefs['map']>(null);
   const [mapData, setMapData] = useState<any>(null);
-
+  const [isMapReady, setIsMapReady] = useState(false);
+  const { isOpen } = useHeaderStore();
   const { setIsMarkers } = useMarkerStore();
 
   const popupMapRef = useRef<Map<number, mapboxgl.Popup>>(new Map());
@@ -80,35 +82,103 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
         };
 
         const popup = new mapboxgl.Popup({
-          offset: 0,
+          offset: 15 + (pitch * 0.5),
           closeButton: false,
           closeOnClick: false,
-          className: 'no-tail-popup'
+          className: 'custom-popup',
+          anchor: 'bottom',
+          maxWidth: 'none'
         })
           .setLngLat(
             (f.geometry as GeoJSON.Point).coordinates as [number, number]
           )
           .setHTML(`
             <style>
-              .no-tail-popup .mapboxgl-popup-tip { display: none !important; }
+              .custom-popup .mapboxgl-popup-tip { display: none !important; }
+              .custom-popup {
+                z-index: 1;
+              }
+              .custom-popup:hover {
+                z-index: 9999 !important;
+              }
+              .custom-popup .mapboxgl-popup-content {
+                background: rgba(255, 255, 255, 0.25) !important;
+                backdrop-filter: blur(10px);
+                border-radius: 12px !important;
+                padding: 16px !important;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                transition: box-shadow 0.2s ease;
+              }
+              .custom-popup:hover .mapboxgl-popup-content {
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25) !important;
+              }
+              .popup-container {
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+              }
               .excerpt-text {
                 display: -webkit-box;
-                -webkit-line-clamp: 3;
                 -webkit-box-orient: vertical;
                 overflow: hidden;
                 text-overflow: ellipsis;
+                line-height: 1.5;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                -webkit-line-clamp: 2;
+                max-height: 42px;
+              }
+              .group:hover .excerpt-text {
+                -webkit-line-clamp: 4;
+                max-height: 84px;
+              }
+              .popup-title {
+                color: #1f2937;
+                margin-bottom: 8px;
+              }
+              .popup-date {
+                color: #6b7280;
+                font-size: 11px;
+                transition: opacity 0.3s ease;
+              }
+              .popup-excerpt {
+                color: #4b5563;
+                margin-bottom: 8px;
+              }
+              .popup-button {
+                background: #ff4444;
+                color: white;
+                padding: 8px 16px;
+                border-radius: 8px;
+                text-align: center;
+                font-size: 12px;
+                font-weight: 600;
+                cursor: pointer;
+                margin-top: 8px;
+                opacity: 0;
+                max-height: 0;
+                overflow: hidden;
+                transform: translateY(-10px);
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                text-decoration: none;
+                display: block;
+              }
+              .popup-button:hover {
+                background: #e63939;
+              }
+              .group:hover .popup-button {
+                opacity: 1;
+                max-height: 50px;
+                transform: translateY(0);
               }
             </style>
-            <div class="group flex flex-col gap-2 h-[40px] hover:h-[100px] transition-all duration-300 w-[180px]">
+            <div class="group popup-container flex flex-col w-[220px]">
               <div class="w-full">
-                <p class="text-md font-bold">${title}</p>
+                <p class="popup-title text-md font-bold">${title}</p>
               </div>
-              <p class="excerpt-text text-xs opacity-0 max-h-0 overflow-hidden 
-                group-hover:opacity-100 group-hover:max-h-40
-                transition-all duration-300">
+              <p class="popup-excerpt excerpt-text text-xs">
                 ${excerpt}
               </p>
-              <p class="absolute bottom-2 text-xs">${String(updatedAt).split('T')[0]}</p>
+              <p class="popup-date text-right mb-2">${String(updatedAt).split('T')[0]}</p>
+              <a href="/diary/${id}" class="popup-button">다이어리 보기 →</a>
             </div>
           `)
           .addTo(map);
@@ -159,7 +229,17 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
       },
       center,
       zoom,
-      pitch
+      pitch,
+      minZoom: 13,
+      maxZoom: 18
+    });
+
+    map.on('error', (e) => {
+      if (e.error?.message?.includes('meshes is not iterable')) {
+        console.debug('3D mesh error suppressed (map works fine)');
+        return;
+      }
+      console.error('Map error:', e);
     });
 
     mapRef.current = map;
@@ -170,12 +250,12 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
       map.setConfigProperty('basemap', 'showRoadLabels', false);
       map.setConfigProperty('basemap', 'showTransitLabels', false);
 
-      // 클러스터 활성화
+      // 클러스터 활성화 (pitch에 따라 동적 조정)
       map.addSource('posts', {
         type: 'geojson',
         data: makeFeatureCollection(),
         cluster: true,
-        clusterRadius: 200, // 묶이는 범위
+        clusterRadius: 270 + Math.round((90 - pitch) * 2),
         clusterMaxZoom: 18
       });
 
@@ -216,8 +296,19 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
         }
       });
 
-      // 클러스터 클릭 시 확대
+      map.on('mouseenter', 'cluster-circles', () => {
+        map.getCanvas().style.cursor = 'pointer';
+      });
+      map.on('mouseleave', 'cluster-circles', () => {
+        map.getCanvas().style.cursor = '';
+      });
+      
       map.on('click', 'cluster-circles', (e) => {
+        e.preventDefault();
+        if (e.originalEvent) {
+          e.originalEvent.stopPropagation();
+        }
+
         const features = map.queryRenderedFeatures(e.point, {
           layers: ['cluster-circles']
         });
@@ -245,6 +336,7 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
 
       map.once('idle', () => {
         syncAlwaysOnPopups();
+        setIsMapReady(true);
       });
 
     });
@@ -253,6 +345,12 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
       let currentMarker: mapboxgl.Marker | null = null;
 
       map.on('click', (e) => {
+        const features = map.queryRenderedFeatures(e.point, {
+          layers: ['cluster-circles']
+        });
+        
+        if (features.length > 0) return;
+
         if (currentMarker) currentMarker.remove();
 
         currentMarker = new mapboxgl.Marker({ color: '#ff4444' })
@@ -278,15 +376,32 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
 
       mapRef.current?.remove();
       mapRef.current = null;
+      setIsMapReady(false);
     };
-  }, [mapData]);
+  }, [mapData, isOpen]);
 
   return (
-    <div
-      ref={mapContainerRef}
-      id="map"
-      style={{ height: '100vh', width: '100vw' }}
-    />
+    <div style={{ 
+      position: 'relative', 
+      height: '100vh', 
+      width: '100vw', 
+      maxWidth: isOpen ? 'calc(100vw - 256px)' : 'calc(100vw - 64px)',
+      overflow: 'hidden'
+    }}>
+      <div
+        ref={mapContainerRef}
+        id="map"
+        style={{ height: '110vh', width: isOpen ? 'calc(100vw - 256px)' : 'calc(100vw - 64px)' }}
+      />
+      
+      {/* 로딩 오버레이 */}
+      {!isMapReady && (
+        <div className="pointer-events-none absolute inset-0 bg-white z-20 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-300 border-t-transparent" />
+          <span className="ml-3 text-gray-700 font-medium">지도 로딩 중…</span>
+        </div>
+      )}
+    </div>
   );
 };
 
