@@ -23,36 +23,7 @@ export const OnboardingPage = () => {
     }
   });
   const handleSubmit = () => {
-    // 백엔드 API 형식에 맞게 데이터 변환
-    const convertCostPreference = (cost: string) => {
-      const costMap: { [key: string]: string } = {
-        '1만원 이하': 'BELOW_10K',
-        '1 ~ 3만원': 'FROM_10k_TO_30k',
-        '3 ~ 5만원': 'FROM_30k_TO_50k',
-        '5 ~ 8만원': 'FROM_50k_TO_80k',
-        '8만원 이상': 'ABOVE_80K'
-      };
-      return costMap[cost] || 'FROM_30k_TO_50k';
-    };
-
-    const convertFoodCategories = (foods: string[]) => {
-      const foodMap: { [key: string]: string } = {
-        '한식': 'KOREAN',
-        '중식': 'CHINESE',
-        '양식': 'WESTERN',
-        '일식': 'JAPANESE',
-        '분식': 'SNACK'
-      };
-      return foods.map(food => foodMap[food] || food);
-    };
-
-    mutation.mutate({ 
-      alcoholPreference, 
-      activeBound, 
-      dateCostPreference: convertCostPreference(dataCostPreference), // 필드명 수정 및 값 변환
-      favoriteFoodCategories: convertFoodCategories(favoriteFoodCategories), // 값 변환
-      preferredAtmosphere: atmosphere // 필드명 수정
-    });
+    mutation.mutate({ alcoholPreference, activeBound, dataCostPreference, favoriteFoodCategories, atmosphere });
   };
   return (
     <div className="w-full flex justify-center">

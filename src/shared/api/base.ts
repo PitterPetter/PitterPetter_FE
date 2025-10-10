@@ -103,7 +103,6 @@ api.interceptors.response.use(
     original._retry = true;
 
     try {
-<<<<<<< Updated upstream
       // 서버가 Authorization 헤더에 refresh를 요구
       const refresh = refreshStore.get();
       if (!refresh) {
@@ -123,12 +122,6 @@ api.interceptors.response.use(
           headers: { Authorization: `Bearer ${refresh}` },
         }
       );
-=======
-      // 쿠키로 인증 → 본문 없이 호출
-      console.log("[auth] POST /api/auth/refresh");
-      console.log("[auth] cookies:", document.cookie);
-      const { data } = await raw.post("/api/auth/refresh", undefined, { withCredentials: true });
->>>>>>> Stashed changes
 
       const newAccess = (data as any)?.accessToken as string | undefined;
       const newRefresh = (data as any)?.refreshToken as string | undefined; // 토큰 회전 시 수신
