@@ -50,6 +50,7 @@ export const handlers = [
   http.post('https://api.loventure.us/api/couples/match', async (req) => {
     await delay(2000);
     return HttpResponse.json(coupleRoomCode);
+  }),
     
   // 온보딩 정보 저장 API
   http.post('https://api.loventure.us/api/onboarding/me', async (req) => {

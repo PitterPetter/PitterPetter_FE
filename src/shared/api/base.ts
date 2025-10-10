@@ -27,7 +27,9 @@ export const api = axios.create({
 
 // request: 토큰 자동 주입
 api.interceptors.request.use((config) => {
+  console.log('API 요청 인터셉터 실행', config.url);
   const access = tokenStore.getAccessToken();
+  console.log('토큰 값:', access ? '토큰 있음' : '토큰 없음');
   if (access) {
     config.headers = config.headers ?? {};
     (config.headers as Record<string, string>).authorization = `Bearer ${access}`;
