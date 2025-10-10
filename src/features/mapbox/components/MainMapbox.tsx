@@ -162,6 +162,14 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
       pitch
     });
 
+    map.on('error', (e) => {
+      if (e.error?.message?.includes('meshes is not iterable')) {
+        console.debug('3D mesh error suppressed (map works fine)');
+        return;
+      }
+      console.error('Map error:', e);
+    });
+
     mapRef.current = map;
 
     map.on('style.load', () => {

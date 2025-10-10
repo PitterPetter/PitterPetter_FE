@@ -40,6 +40,15 @@ const Mapbox: React.FC<MapboxProps> = ({
       pitch,
       interactive: false // 클릭 및 상호작용 비활성화
     });
+
+    map.on('error', (e) => {
+      if (e.error?.message?.includes('meshes is not iterable')) {
+        console.debug('3D mesh error suppressed (map works fine)');
+        return;
+      }
+      console.error('Map error:', e);
+    });
+
     mapRef.current = map;
 
     map.once('style.load', () => {
