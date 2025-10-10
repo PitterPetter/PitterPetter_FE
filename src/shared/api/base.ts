@@ -1,100 +1,136 @@
-// base axios instance
+// base axios instance with robust refresh handling and detailed logging
 
-import axios, { AxiosError, AxiosRequestConfig } from 'axios';
-import { ENV } from '../config/env';
-import { tokenStore } from '../lib/tokenStore';
-import { raw } from './raw';
+import axios, { AxiosError, AxiosRequestConfig } from "axios";
+import { ENV } from "../config/env";
+import { tokenStore } from "../lib/tokenStore";
+import { raw } from "./raw";
+
+type RetriableConfig = AxiosRequestConfig & { _retry?: boolean };
 
 let isRefreshing = false;
-let pendingQueue: {resolve: (token: string) => void; reject: (error: unknown) => void}[] = [];
+let pendingQueue: { resolve: (token: string) => void; reject: (error: unknown) => void }[] = [];
 
 const processQueue = (error: unknown, token: string | null) => {
+  console.log("[auth] processQueue: start, length =", pendingQueue.length, "token =", !!token);
   pendingQueue.forEach(({ resolve, reject }) => {
     if (token) resolve(token);
     else reject(error);
   });
   pendingQueue = [];
-}
+  console.log("[auth] processQueue: done");
+};
+
+const getPathname = (url?: string) => {
+  if (!url) return "";
+  try {
+    return new URL(url, ENV.API_BASE_URL).pathname;
+  } catch {
+    return url; // fallback
+  }
+};
+
+const PUBLIC_PATHS = ["/auth/login", "/auth/refresh"]; // 필요 시 추가
 
 export const api = axios.create({
   baseURL: ENV.API_BASE_URL,
   timeout: ENV.TIMEOUT_MS,
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  withCredentials: true,
+  headers: { "Content-Type": "application/json" },
+  withCredentials: true, // 쿠키 전송
 });
 
-// request: 토큰 자동 주입
+//  Request Interceptor - access 토큰이 있으면 Authorization 헤더 주입
 api.interceptors.request.use((config) => {
-  console.log('API 요청 인터셉터 실행:', config.url);
+  const path = getPathname(config.url);
+  const isPublic = PUBLIC_PATHS.includes(path);
   const access = tokenStore.getAccessToken();
-  if (access) {
-    config.headers = config.headers ?? {};
-    (config.headers as Record<string, string>).authorization = `Bearer ${access}`;
+
+  console.log("[req] url:", config.url, "| path:", path, "| public:", isPublic, "| access:", access ? "exists" : "none");
+
+  if (!isPublic && access) {
+    config.headers = { ...(config.headers as any), Authorization: `Bearer ${access}` };
+    console.log("[req] Authorization header attached");
+  } else {
+    console.log("[req] Authorization header skipped");
   }
-  console.log('요청 헤더:', config.headers);
-  console.log('Authorization 헤더:', (config.headers as any)?.authorization || '없음');
   return config;
 });
 
-// response: 401 에러 처리 + token refresh
+// Response Interceptor
 api.interceptors.response.use(
-  (response) => response,
+  (res) => {
+    console.log("[res] ok:", getPathname(res.config?.url), "| status:", res.status);
+    return res;
+  },
   async (error: AxiosError) => {
-    const original = error.config as AxiosRequestConfig & { _retry?: boolean };
-    if (error.response?.status === 401 && !original?._retry) {
-      // 이미 리프레시 중이면 큐에 대기
-      if (isRefreshing) {
+    const original = (error.config || {}) as RetriableConfig;
+    const status = error.response?.status;
+    const path = getPathname(original.url);
+
+    console.warn("[res] error:", path, "| status:", status, "| _retry:", original._retry);
+
+    // 인증 만료로 간주할 코드 모음 (백엔드 정책에 맞춰 확장 가능)
+    const isAuthExpired = status === 401 || status === 419 || status === 440;
+
+    // refresh 요청 자체이거나, 재시도 이미 했거나, 인증 만료가 아니면 패스
+    const isRefreshCall = path === "/auth/refresh";
+    if (!isAuthExpired || original._retry || isRefreshCall) {
+      console.warn("[auth] bypass refresh. isAuthExpired:", isAuthExpired, "isRefreshCall:", isRefreshCall, "alreadyRetried:", !!original._retry);
+      return Promise.reject(error);
+    }
+
+    // 이미 refresh 중이면 큐에 대기
+    if (isRefreshing) {
+      console.log("[auth] already refreshing. enqueue request:", path);
+      try {
         const newToken = await new Promise<string>((resolve, reject) => {
           pendingQueue.push({ resolve, reject });
         });
-        original.headers = original.headers ?? {};
-        (original.headers as Record<string, string>).Authorization = `Bearer ${newToken}`;
+        console.log("[auth] dequeued with new token. retry:", path);
+        original.headers = { ...(original.headers as any), Authorization: `Bearer ${newToken}` };
         original._retry = true;
         return api(original);
-      }
-
-      // refresh 진행
-      console.log('refresh 시도');
-      original._retry = true;
-      isRefreshing = true;
-      try {
-        const refresh = tokenStore.getRefresh();
-        console.log('Refresh 토큰:', refresh ? '있음' : '없음');
-        if (!refresh) {
-          console.log('Refresh 토큰 없음 → 로그인 페이지로 이동');
-          tokenStore.clear();
-          window.location.href = '/login';
-          return Promise.reject(error);
-        }
-
-        console.log('Refresh API 호출 중');
-        const {data} = await raw.post('/auth/refresh', { refreshToken: refresh });
-        const newAccess = data?.accessToken as string;
-        const newRefresh = data?.refreshToken as string | undefined;
-
-        if (!newAccess) throw new Error('No access token in refresh response');
-
-        console.log('새 토큰 발급 완료');
-        tokenStore.setTokens(newAccess, newRefresh);
-
-        processQueue(null, newAccess);
-
-        // retry
-        original.headers = original.headers ?? {};
-        (original.headers as Record<string, string>).Authorization = `Bearer ${newAccess}`;
-        return api(original);
-      } catch (refreshError) {
-        console.log('Refresh 실패:', refreshError);
-        processQueue(refreshError, null);
+      } catch (e) {
+        console.error("[auth] dequeue failed. redirect to /login");
         tokenStore.clear();
-        window.location.href = '/login';
-        return Promise.reject(refreshError);
-      } finally {
-        isRefreshing = false;
+        window.location.href = "/login";
+        return Promise.reject(e);
       }
     }
-    return Promise.reject(error);
+
+    // refresh 시도
+    console.log("[auth] start refresh. from:", path);
+    isRefreshing = true;
+    original._retry = true;
+
+    try {
+      // 쿠키로 인증 → 본문 없이 호출
+      console.log("[auth] POST /auth/refresh");
+      const { data } = await raw.post("/auth/refresh", undefined, { withCredentials: true });
+
+      const newAccess = (data as any)?.accessToken as string | undefined;
+      if (!newAccess) {
+        console.error("[auth] refresh response missing accessToken");
+        throw new Error("No accessToken in refresh response");
+      }
+
+      tokenStore.setAccessToken(newAccess);
+      console.log("[auth] refresh success. broadcasting to queue");
+      processQueue(null, newAccess);
+
+      // 원 요청 재시도
+      original.headers = { ...(original.headers as any), Authorization: `Bearer ${newAccess}` };
+      console.log("[auth] retry original:", path);
+      return api(original);
+    } catch (e) {
+      console.error("[auth] refresh failed:", e);
+      processQueue(e, null);
+      tokenStore.clear();
+      console.log("[auth] redirect -> /login");
+      window.location.href = "/login";
+      return Promise.reject(e);
+    } finally {
+      isRefreshing = false;
+      console.log("[auth] refresh finished");
+    }
   }
-)
+);
