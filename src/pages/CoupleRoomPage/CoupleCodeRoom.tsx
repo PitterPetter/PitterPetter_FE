@@ -14,11 +14,15 @@ export const CoupleCodeRoom = () => {
   const [copied, setCopied] = useState(false);
   let id = '';
   if (!coupleId) {
-    id = '123123';
+    id = '000000';
   };
+
   const handleCopy = () => {
     navigator.clipboard.writeText(coupleId ? coupleId : id);
     setCopied(true);
+    setTimeout(() => {
+      setCopied(false);
+    }, 2800);
     toast.success('복사되었습니다');
   };
   return (

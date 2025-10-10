@@ -4,32 +4,50 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TextField } from "@mui/material";
-import { postCoupleRoom } from "../../features/auth/api";
-import { GetId } from "../../features/auth/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
 import { useCoupleRoomStore } from "../../shared/store/CoupleRoom.store";
 import { CoupleRoomStore } from "../../shared/store/type";
+import { coupleRoomApi } from "../../features/coupleroom/api";
+import { PostCoupleRoom } from "../../features/auth/types";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from 'react-toastify';
 
 export const CreateCoupleRoom = () => {
   const navigate = useNavigate();
   const [coupleName, setCoupleName] = useState('');
   const [coupleDate, setCoupleDate] = useState(new Date());
-  const [response, setResponse] = useState<GetId | null>(null);
+  const { mutateAsync: createCoupleRoom, isPending } = useMutation({
+    mutationFn: async (coupleRoom: PostCoupleRoom) => {
+      const res = await coupleRoomApi.createCoupleRoom(coupleRoom);
+      return res.data;
+    },
+  });
 
   const handleSave = async () => {
-    const res = await postCoupleRoom({
-      name: coupleName,
-      date: coupleDate.toISOString(),
-    });
-    setResponse(res.data);
-    useCoupleRoomStore.getState().setCoupleRoom({
-      coupleId: res.data.coupleId,
-      coupleName: coupleName,
-      coupleDate: coupleDate.toISOString(),
-      setCoupleRoom: (coupleRoom: CoupleRoomStore) => useCoupleRoomStore.getState().setCoupleRoom(coupleRoom),
-    });
+    try {
+      const res = await createCoupleRoom({
+        name: coupleName,
+        date: coupleDate.toISOString(),
+      });
+      console.log('res:', res);
+      
+      if (res.status === 'success') {
+        useCoupleRoomStore.setState({
+          coupleId: res.data.coupleId,
+          coupleName: coupleName,
+          coupleDate: coupleDate.toISOString(),
+          coupleCode: res.data.coupleCode,
+        });
+        toast.success('커플 정보 생성에 성공했습니다');
+        navigate(`/home/coupleroom/create/${res.data.coupleCode}`);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('커플 정보 생성에 실패했습니다');
+      throw error;
+    }
   };
 
   return (
@@ -84,7 +102,6 @@ export const CreateCoupleRoom = () => {
             disabled={coupleName === '' || coupleDate === null}
             onClick={() => {
               handleSave();
-              navigate(`/home/coupleroom/create/${response?.coupleId}`);
             }}
             sx={{
               backgroundColor: '#662B2B',
@@ -97,7 +114,7 @@ export const CreateCoupleRoom = () => {
               text: 'white',
             }}
           >
-            입장하기
+            {isPending ? '생성중...' : '입장하기'}
           </Button>
         </div>
         <FontAwesomeIcon icon={faChevronLeft} className="absolute w-[18px] h-[18px] top-6 left-5 cursor-pointer" onClick={() => navigate('/home/coupleroom')} />
