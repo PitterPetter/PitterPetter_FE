@@ -82,10 +82,12 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
         };
 
         const popup = new mapboxgl.Popup({
-          offset: 15,
+          offset: 15 + (pitch * 0.5),
           closeButton: false,
           closeOnClick: false,
-          className: 'custom-popup'
+          className: 'custom-popup',
+          anchor: 'bottom',
+          maxWidth: 'none'
         })
           .setLngLat(
             (f.geometry as GeoJSON.Point).coordinates as [number, number]
@@ -93,13 +95,23 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
           .setHTML(`
             <style>
               .custom-popup .mapboxgl-popup-tip { display: none !important; }
+              .custom-popup {
+                z-index: 1;
+              }
+              .custom-popup:hover {
+                z-index: 9999 !important;
+              }
               .custom-popup .mapboxgl-popup-content {
-                background: rgba(255, 255, 255, 0.95) !important;
+                background: rgba(255, 255, 255, 0.25) !important;
                 backdrop-filter: blur(10px);
                 border-radius: 12px !important;
                 padding: 16px !important;
                 box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
                 border: 1px solid rgba(255, 255, 255, 0.3);
+                transition: box-shadow 0.2s ease;
+              }
+              .custom-popup:hover .mapboxgl-popup-content {
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.25) !important;
               }
               .popup-container {
                 transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
@@ -238,12 +250,12 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
       map.setConfigProperty('basemap', 'showRoadLabels', false);
       map.setConfigProperty('basemap', 'showTransitLabels', false);
 
-      // 클러스터 활성화
+      // 클러스터 활성화 (pitch에 따라 동적 조정)
       map.addSource('posts', {
         type: 'geojson',
         data: makeFeatureCollection(),
         cluster: true,
-        clusterRadius: 200, // 묶이는 범위
+        clusterRadius: 270 + Math.round((90 - pitch) * 2),
         clusterMaxZoom: 18
       });
 
