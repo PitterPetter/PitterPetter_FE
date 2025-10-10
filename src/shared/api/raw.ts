@@ -8,5 +8,6 @@ export const raw = axios.create({
   timeout: ENV.TIMEOUT_MS,
   headers: {
     'Content-Type': 'application/json',
-  }
+  },
+  withCredentials: true,
 });

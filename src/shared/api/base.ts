@@ -56,22 +56,27 @@ api.interceptors.response.use(
       }
 
       // refresh 진행
+      console.log('refresh 시도');
       original._retry = true;
       isRefreshing = true;
       try {
         const refresh = tokenStore.getRefresh();
+        console.log('Refresh 토큰:', refresh ? '있음' : '없음');
         if (!refresh) {
+          console.log('Refresh 토큰 없음 → 로그인 페이지로 이동');
           tokenStore.clear();
           window.location.href = '/login';
           return Promise.reject(error);
         }
 
+        console.log('Refresh API 호출 중');
         const {data} = await raw.post('/auth/refresh', { refreshToken: refresh });
         const newAccess = data?.accessToken as string;
         const newRefresh = data?.refreshToken as string | undefined;
 
         if (!newAccess) throw new Error('No access token in refresh response');
 
+        console.log('새 토큰 발급 완료');
         tokenStore.setTokens(newAccess, newRefresh);
 
         processQueue(null, newAccess);
@@ -81,6 +86,7 @@ api.interceptors.response.use(
         (original.headers as Record<string, string>).Authorization = `Bearer ${newAccess}`;
         return api(original);
       } catch (refreshError) {
+        console.log('Refresh 실패:', refreshError);
         processQueue(refreshError, null);
         tokenStore.clear();
         window.location.href = '/login';
