@@ -11,13 +11,20 @@ let isRefreshing = false;
 let pendingQueue: { resolve: (token: string) => void; reject: (error: unknown) => void }[] = [];
 
 const processQueue = (error: unknown, token: string | null) => {
-  console.log("[auth] processQueue: start, length =", pendingQueue.length, "token =", !!token);
+  if (pendingQueue.length === 0) return;
+  
+  console.log("[auth] Processing", pendingQueue.length, "queued requests");
   pendingQueue.forEach(({ resolve, reject }) => {
-    if (token) resolve(token);
-    else reject(error);
+    if (token) {
+      console.log("[auth] Resolving queued request with new token");
+      resolve(token);
+    } else {
+      console.log("[auth] Rejecting queued request");
+      reject(error);
+    }
   });
   pendingQueue = [];
-  console.log("[auth] processQueue: done");
+  console.log("[auth] Queue cleared");
 };
 
 const getPathname = (url?: string) => {
@@ -46,13 +53,13 @@ api.interceptors.request.use((config) => {
   const isPublic = PUBLIC_PATHS.includes(path);
   const access = tokenStore.getAccessToken();
 
-  console.log("[req] url:", config.url, "| path:", path, "| public:", isPublic, "| access:", access ? "exists" : "none");
-
   if (!isPublic && access) {
     config.headers = { ...(config.headers as any), Authorization: `Bearer ${access}` };
-    console.log("[req] Authorization header attached");
+    console.log("[req]", config.method?.toUpperCase(), path, "| with auth");
+  } else if (isPublic) {
+    console.log("[req]", config.method?.toUpperCase(), path, "| public endpoint");
   } else {
-    console.log("[req] Authorization header skipped");
+    console.log("[req]", config.method?.toUpperCase(), path, "| no token available");
   }
   return config;
 });
@@ -60,49 +67,59 @@ api.interceptors.request.use((config) => {
 // Response: 401/419/440 → refresh 진행
 api.interceptors.response.use(
   (res) => {
-    console.log("[res] ok:", getPathname(res.config?.url), "| status:", res.status);
+    console.log("[res]", res.config?.method?.toUpperCase(), getPathname(res.config?.url), "| status:", res.status);
     return res;
   },
   async (error: AxiosError) => {
     const original = (error.config || {}) as RetriableConfig;
     const status = error.response?.status;
     const path = getPathname(original.url);
+    const errorData = error.response?.data as any;
 
-    console.warn("[res] error:", path, "| status:", status, "| _retry:", original._retry);
+    console.warn("[res]", original.method?.toUpperCase(), path, "| status:", status);
+    if (errorData?.message) {
+      console.warn("[res] Server message:", errorData.message);
+    }
 
     const isAuthExpired = status === 401 || status === 419 || status === 440;
     const isRefreshCall = path === REFRESH_PATH;
 
     if (!isAuthExpired || original._retry || isRefreshCall) {
-      console.warn("[auth] bypass refresh. isAuthExpired:", isAuthExpired, "isRefreshCall:", isRefreshCall, "alreadyRetried:", !!original._retry);
+      if (isRefreshCall) {
+        console.error("[auth] Refresh endpoint failed - cannot retry");
+      } else if (original._retry) {
+        console.error("[auth] Already retried - giving up");
+      } else {
+        console.log("[auth] Not an auth error - passing through");
+      }
       return Promise.reject(error);
     }
 
     if (isRefreshing) {
-      console.log("[auth] already refreshing. enqueue request:", path);
+      console.log("[auth] Refresh in progress, queueing request:", path);
       try {
         const newToken = await new Promise<string>((resolve, reject) => {
           pendingQueue.push({ resolve, reject });
         });
-        console.log("[auth] dequeued with new token. retry:", path);
+        console.log("[auth] Got new token from queue, retrying:", path);
         original.headers = { ...(original.headers as any), Authorization: `Bearer ${newToken}` };
         original._retry = true;
         return api(original);
       } catch (e) {
-        console.error("[auth] dequeue failed. redirect to /login");
+        console.error("[auth] Queue failed - session ended");
         tokenStore.clear();
         window.location.href = "/login";
         return Promise.reject(e);
       }
     }
 
-    console.log("[auth] start refresh. from:", path);
+    console.log("[auth] Starting refresh flow from:", path);
     isRefreshing = true;
     original._retry = true;
 
     try {
       // refresh 토큰은 httpOnly 쿠키로 자동 전송됨
-      console.log("[auth] POST", REFRESH_PATH, "with httpOnly cookie");
+      console.log("[auth] Requesting token refresh with httpOnly cookie");
 
       const { data } = await raw.post(
         REFRESH_PATH,
@@ -115,28 +132,50 @@ api.interceptors.response.use(
       const newAccess = (data as any)?.accessToken as string | undefined;
 
       if (!newAccess) {
-        console.error("[auth] refresh response missing accessToken");
+        console.error("[auth] Refresh response missing accessToken");
         throw new Error("No accessToken in refresh response");
       }
 
       tokenStore.setAccessToken(newAccess);
-
-      console.log("[auth] refresh success. broadcasting to queue");
+      console.log("[auth] Token refresh successful");
+      console.log("[auth] Broadcasting new token to", pendingQueue.length, "pending requests");
       processQueue(null, newAccess);
 
       original.headers = { ...(original.headers as any), Authorization: `Bearer ${newAccess}` };
-      console.log("[auth] retry original:", path);
+      console.log("[auth] Retrying original request:", path);
       return api(original);
     } catch (e) {
-      console.error("[auth] refresh failed:", e);
+      const axiosError = e as AxiosError;
+      const status = axiosError.response?.status;
+      const errorData = axiosError.response?.data as any;
+      
+      console.error("[auth] Token refresh failed");
+      console.error("[auth] Error details:", {
+        status,
+        code: errorData?.code,
+        message: errorData?.message || axiosError.message,
+        detail: errorData?.error?.detail,
+      });
+
       processQueue(e, null);
-      tokenStore.clear();
-      console.log("[auth] redirect -> /login");
-      window.location.href = "/login";
+
+      // 인증 에러(401, 403)만 로그인으로 리다이렉트
+      if (status === 401 || status === 403) {
+        console.warn("[auth] Authentication failed - redirect to login");
+        console.warn("[auth] Reason:", errorData?.message || "Token expired or invalid");
+        tokenStore.clear();
+        window.location.href = "/login";
+      } else {
+        // 네트워크 오류, 서버 오류 등은 그냥 에러 전달
+        console.error("[auth] Network or server error - not redirecting");
+        console.error("[auth] Status:", status || "No response");
+        console.error("[auth] This might be temporary. User can retry.");
+      }
+      
       return Promise.reject(e);
     } finally {
       isRefreshing = false;
-      console.log("[auth] refresh finished");
+      console.log("[auth] Refresh process finished");
     }
   }
 );
