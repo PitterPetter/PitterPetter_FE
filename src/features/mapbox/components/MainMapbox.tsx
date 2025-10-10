@@ -81,35 +81,91 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
         };
 
         const popup = new mapboxgl.Popup({
-          offset: 0,
+          offset: 15,
           closeButton: false,
           closeOnClick: false,
-          className: 'no-tail-popup'
+          className: 'custom-popup'
         })
           .setLngLat(
             (f.geometry as GeoJSON.Point).coordinates as [number, number]
           )
           .setHTML(`
             <style>
-              .no-tail-popup .mapboxgl-popup-tip { display: none !important; }
+              .custom-popup .mapboxgl-popup-tip { display: none !important; }
+              .custom-popup .mapboxgl-popup-content {
+                background: rgba(255, 255, 255, 0.95) !important;
+                backdrop-filter: blur(10px);
+                border-radius: 12px !important;
+                padding: 16px !important;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15) !important;
+                border: 1px solid rgba(255, 255, 255, 0.3);
+              }
+              .popup-container {
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+              }
               .excerpt-text {
                 display: -webkit-box;
-                -webkit-line-clamp: 3;
                 -webkit-box-orient: vertical;
                 overflow: hidden;
                 text-overflow: ellipsis;
+                line-height: 1.5;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                -webkit-line-clamp: 2;
+                max-height: 42px;
+              }
+              .group:hover .excerpt-text {
+                -webkit-line-clamp: 4;
+                max-height: 84px;
+              }
+              .popup-title {
+                color: #1f2937;
+                margin-bottom: 8px;
+              }
+              .popup-date {
+                color: #6b7280;
+                font-size: 11px;
+                transition: opacity 0.3s ease;
+              }
+              .popup-excerpt {
+                color: #4b5563;
+                margin-bottom: 8px;
+              }
+              .popup-button {
+                background: #ff4444;
+                color: white;
+                padding: 8px 16px;
+                border-radius: 8px;
+                text-align: center;
+                font-size: 12px;
+                font-weight: 600;
+                cursor: pointer;
+                margin-top: 8px;
+                opacity: 0;
+                max-height: 0;
+                overflow: hidden;
+                transform: translateY(-10px);
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                text-decoration: none;
+                display: block;
+              }
+              .popup-button:hover {
+                background: #e63939;
+              }
+              .group:hover .popup-button {
+                opacity: 1;
+                max-height: 50px;
+                transform: translateY(0);
               }
             </style>
-            <div class="group flex flex-col gap-2 h-[40px] hover:h-[100px] transition-all duration-300 w-[180px]">
+            <div class="group popup-container flex flex-col w-[220px]">
               <div class="w-full">
-                <p class="text-md font-bold">${title}</p>
+                <p class="popup-title text-md font-bold">${title}</p>
               </div>
-              <p class="excerpt-text text-xs opacity-0 max-h-0 overflow-hidden 
-                group-hover:opacity-100 group-hover:max-h-40
-                transition-all duration-300">
+              <p class="popup-excerpt excerpt-text text-xs">
                 ${excerpt}
               </p>
-              <p class="absolute bottom-2 text-xs">${String(updatedAt).split('T')[0]}</p>
+              <p class="popup-date text-right mb-2">${String(updatedAt).split('T')[0]}</p>
+              <a href="/diary/${id}" class="popup-button">다이어리 보기 →</a>
             </div>
           `)
           .addTo(map);
