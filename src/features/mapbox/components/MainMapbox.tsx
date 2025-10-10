@@ -5,6 +5,7 @@ import { useMarkerStore } from '../../../shared/store/mapbox.store';
 import { MapboxProps, MapRefs, TimeOfDay } from '../types';
 import { mapboxApi } from '../api';
 import { useStartStore } from '../../../shared/store/recommend.store';
+import { useHeaderStore } from '../../../shared/store/header.store';
 
 const MapboxMainPage: React.FC<MapboxProps> = ({
   center = [127.104, 37.505],
@@ -15,7 +16,7 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
   const mapRef = useRef<MapRefs['map']>(null);
   const [mapData, setMapData] = useState<any>(null);
   const [isMapReady, setIsMapReady] = useState(false);
-
+  const { isOpen } = useHeaderStore();
   const { setIsMarkers } = useMarkerStore();
 
   const popupMapRef = useRef<Map<number, mapboxgl.Popup>>(new Map());
@@ -348,14 +349,20 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
       mapRef.current = null;
       setIsMapReady(false);
     };
-  }, [mapData]);
+  }, [mapData, isOpen]);
 
   return (
-    <div style={{ position: 'relative', height: '100vh', width: '100vw' }}>
+    <div style={{ 
+      position: 'relative', 
+      height: '100vh', 
+      width: '100vw', 
+      maxWidth: isOpen ? 'calc(100vw - 256px)' : 'calc(100vw - 64px)',
+      overflow: 'hidden'
+    }}>
       <div
         ref={mapContainerRef}
         id="map"
-        style={{ height: '100%', width: '100%' }}
+        style={{ height: '110vh', width: isOpen ? 'calc(100vw - 256px)' : 'calc(100vw - 64px)' }}
       />
       
       {/* 로딩 오버레이 */}
