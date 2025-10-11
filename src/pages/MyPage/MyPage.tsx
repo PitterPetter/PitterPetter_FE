@@ -98,6 +98,7 @@ export const MyPage = () => {
       favoriteFoodCategories,
       atmosphere
     });
+    console.log('body data: ',{nickname, birthdate, alcoholPreference, activeBound, dateCostPreference: convertCostPreference(dateCostPreference), favoriteFoodCategories, atmosphere});
   };
   
   return (

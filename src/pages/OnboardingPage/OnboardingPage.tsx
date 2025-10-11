@@ -42,7 +42,7 @@ export const OnboardingPage = () => {
       favoriteFoodCategories: favoriteFoodCategories,
       preferredAtmosphere: atmosphere
     });
-    console.log({alcoholPreference, activeBound, dateCostPreference: convertCostPreference(dateCostPreference), favoriteFoodCategories, atmosphere});
+    console.log('body data: ', {alcoholPreference, activeBound, dateCostPreference: convertCostPreference(dateCostPreference), favoriteFoodCategories, atmosphere});
   };
   return (
     <div className="w-full flex justify-center">

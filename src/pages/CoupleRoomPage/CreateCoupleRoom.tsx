@@ -34,6 +34,7 @@ export const CreateCoupleRoom = () => {
 
   const handleSave = async () => {
     try {
+      console.log('body data: ', {name: coupleName, date: formatDate(coupleDate)});
       const res = await createCoupleRoom({
         name: coupleName,
         date: formatDate(coupleDate),
