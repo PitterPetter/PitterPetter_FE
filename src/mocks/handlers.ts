@@ -3,6 +3,7 @@ import diary from '../features/diary/mocks/diary.json';
 import course from '../features/course/mocks/getCourse.json';
 import diaryDetail from '../features/diary/mocks/diaryDetail.json';
 import coupleRoomCode from '../features/coupleroom/mocks/coupleCodeMock.json';
+import mypage from '../features/mypage/mocks/mypageMock.json';
 
 export const handlers = [
   // 맵박스 조회 API
@@ -56,5 +57,17 @@ export const handlers = [
   http.post('https://api.loventure.us/api/onboarding/me', async (req) => {
     await delay(2000);
     return HttpResponse.json({ status: 'success', message: 'Onboarding endpoint' });
+  }),
+
+  // 마이페이지 조회 API
+  http.get('https://api.loventure.us/api/auth/mypage', async (req) => {
+    await delay(2000);
+    return HttpResponse.json(mypage);
+  }),
+
+  // 마이페이지 수정 API
+  http.patch('https://api.loventure.us/api/auth/mypage', async (req) => {
+    await delay(2000);
+    return HttpResponse.json(mypage);
   }),
 ];

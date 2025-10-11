@@ -2,10 +2,84 @@ import { Profile } from "../../features/mypage/components/Profile";
 import { CoupleHome } from "../../features/mypage/components/CoupleHome";
 import { PersonalOnboarding } from "../../features/onboarding/PersonalOnboarding";
 import { useHeaderStore } from "../../shared/store/header.store";
+import { useMypageStore } from "../../shared/store/mypage.store";
+import { useOnboardingStore } from "../../shared/store/onboarding.store";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { mypageApi } from "../../features/mypage/api";
+import { Spinner } from "../../shared/ui/spinner";
+import { toast } from 'react-toastify';
 
 export const MyPage = () => {
   const isOpen = useHeaderStore((s) => s.isOpen);
+  const queryClient = useQueryClient();
+  const {
+    isProfileLoading, setIsProfileLoading,
+    isProfileError, setIsProfileError,
+    setName, setNickname, setEmail, setBirthdate,
+    nickname,
+  } = useMypageStore();
+  const {
+    setAlcoholPreference, setActiveBound, setDataCostPreference, setFavoriteFoodCategories, setAtmosphere,
+    alcoholPreference, activeBound, dataCostPreference, favoriteFoodCategories, atmosphere
+   } = useOnboardingStore();
 
+  const { data: mypage } = useQuery({
+    queryKey: ['mypage'],
+    queryFn: async () => {
+      try {
+        setIsProfileLoading(true);
+        const response = await mypageApi.getMypage();
+        setName(response.data.data.name);
+        setNickname(response.data.data.nickname);
+        setEmail(response.data.data.email);
+        setBirthdate(response.data.data.birthdate);
+        setAlcoholPreference(response.data.data.alcoholPreference);
+        setActiveBound(response.data.data.activeBound);
+        setDataCostPreference(response.data.data.dataCostPreference);
+        setFavoriteFoodCategories(response.data.data.favoriteFoodCategories);
+        setAtmosphere(response.data.data.atmosphere);
+        setIsProfileError(false);
+        return response.data.data;
+      } catch (error) {
+        console.error("mypage 불러오기 실패:", error);
+        setIsProfileError(true);
+        throw error;
+      } finally {
+        setIsProfileLoading(false);
+      }
+    },
+  });
+  
+  const patchMypage = useMutation({
+    mutationFn: (data: {
+      nickname: string,
+      alcoholPreference: number,
+      activeBound: number,
+      dataCostPreference: string,
+      favoriteFoodCategories: string[],
+      atmosphere: string
+    }) => mypageApi.patchMypage(data),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['mypage'] });
+      toast.success("프로필 저장 성공");
+    },
+    onError: (error) => {
+      toast.error("프로필 저장 실패");
+      console.error("프로필 저장 실패:", error);
+    },
+  });
+
+  const handleSubmit = () => {
+    patchMypage.mutate({
+      nickname,
+      alcoholPreference,
+      activeBound,
+      dataCostPreference,
+      favoriteFoodCategories,
+      atmosphere
+    });
+  };
+  
   return (
     <div
       className="
@@ -20,18 +94,33 @@ export const MyPage = () => {
         {/* 프로필 카드 */}
         <div className="p-8 border border-primary/10 rounded-2xl shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md">
           <Profile />
+          {!isProfileLoading && !isProfileError && (
           <div className="flex justify-end mt-12 px-0">
-            <div className="bg-third/60 text-white w-[120px] h-[40px] text-center py-2 rounded-md cursor-pointer border border-primary/10 text-gray-500 mt-4 hover:bg-third/80 transition-all duration-300">저장</div>
+            <div className="bg-third/60 text-white w-[120px] h-[40px] text-center py-2 rounded-md cursor-pointer border border-primary/10 text-gray-500 mt-4 hover:bg-third/80 transition-all duration-300"
+              onClick={handleSubmit}
+            >
+              {patchMypage.isPending ? '저장하는 중...' : "저장"}
+            </div>
           </div>
+          )}
         </div>
 
         {/* 개인 온보딩 카드 */}
         <div className="p-8 px-2 md:px-0 border border-primary/10 rounded-2xl shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md">
           <h2 className="text-2xl mb-4 text-gray-800 px-2 md:px-8">개인 온보딩</h2>
-          <PersonalOnboarding />
-          <div className="flex justify-end mt-12 px-8">
-            <div className="bg-third/60 text-white w-[120px] h-[40px] text-center py-2 rounded-md cursor-pointer border border-primary/10 text-gray-500 mt-4 hover:bg-third/80 transition-all duration-300">저장</div>
-          </div>
+          {isProfileLoading && <Spinner />}
+          {!isProfileLoading && !isProfileError && (
+          <>
+            <PersonalOnboarding />
+            <div className="flex justify-end mt-12 px-8">
+              <div className="bg-third/60 text-white w-[120px] h-[40px] text-center py-2 rounded-md cursor-pointer border border-primary/10 text-gray-500 mt-4 hover:bg-third/80 transition-all duration-300"
+                onClick={handleSubmit}
+              >
+                {patchMypage.isPending ? '저장하는 중...' : "저장"}
+              </div>
+            </div>
+          </>
+          )}
         </div>
       </div>
 

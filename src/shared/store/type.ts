@@ -80,3 +80,19 @@ export type DiaryStore = {
   diaryImage: string;
   setDiaryImage: (diaryImage: string) => void;
 };
+
+// MypageStore
+export type MypageStore = {
+  isProfileLoading: boolean;
+  setIsProfileLoading: (isProfileLoading: boolean) => void;
+  isProfileError: boolean;
+  setIsProfileError: (isProfileError: boolean) => void;
+  name: string;
+  setName: (name: string) => void;
+  nickname: string;
+  setNickname: (nickname: string) => void;
+  email: string;
+  setEmail: (email: string) => void;
+  birthdate: string;
+  setBirthdate: (birthdate: string) => void;
+};
