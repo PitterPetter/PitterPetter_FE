@@ -7,11 +7,21 @@ import { useOnboardingStore } from "../../shared/store/onboarding.store";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { mypageApi } from "../../features/mypage/api";
 import { Spinner } from "../../shared/ui/spinner";
+import { toast } from 'react-toastify';
 
 export const MyPage = () => {
   const isOpen = useHeaderStore((s) => s.isOpen);
-  const { isProfileLoading, setIsProfileLoading, isProfileError, setIsProfileError, setName, setNickname, setEmail, setBirthdate } = useMypageStore();
-  const { setAlcoholPreference, setActiveBound, setDataCostPreference, setFavoriteFoodCategories, setAtmosphere } = useOnboardingStore();
+  const queryClient = useQueryClient();
+  const {
+    isProfileLoading, setIsProfileLoading,
+    isProfileError, setIsProfileError,
+    setName, setNickname, setEmail, setBirthdate,
+    nickname,
+  } = useMypageStore();
+  const {
+    setAlcoholPreference, setActiveBound, setDataCostPreference, setFavoriteFoodCategories, setAtmosphere,
+    alcoholPreference, activeBound, dataCostPreference, favoriteFoodCategories, atmosphere
+   } = useOnboardingStore();
 
   const { data: mypage } = useQuery({
     queryKey: ['mypage'],
@@ -40,13 +50,35 @@ export const MyPage = () => {
     },
   });
   
-  const queryClient = useQueryClient();
-  const mutation = useMutation({
-    mutationFn: mypageApi.patchMypage,
+  const patchMypage = useMutation({
+    mutationFn: (data: {
+      nickname: string,
+      alcoholPreference: number,
+      activeBound: number,
+      dataCostPreference: string,
+      favoriteFoodCategories: string[],
+      atmosphere: string
+    }) => mypageApi.patchMypage(data),
     onSuccess: (data) => {
-      console.log(data);
+      queryClient.invalidateQueries({ queryKey: ['mypage'] });
+      toast.success("프로필 저장 성공");
+    },
+    onError: (error) => {
+      toast.error("프로필 저장 실패");
+      console.error("프로필 저장 실패:", error);
     },
   });
+
+  const handleSubmit = () => {
+    patchMypage.mutate({
+      nickname,
+      alcoholPreference,
+      activeBound,
+      dataCostPreference,
+      favoriteFoodCategories,
+      atmosphere
+    });
+  };
   
   return (
     <div
@@ -64,7 +96,11 @@ export const MyPage = () => {
           <Profile />
           {!isProfileLoading && !isProfileError && (
           <div className="flex justify-end mt-12 px-0">
-            <div className="bg-third/60 text-white w-[120px] h-[40px] text-center py-2 rounded-md cursor-pointer border border-primary/10 text-gray-500 mt-4 hover:bg-third/80 transition-all duration-300">저장</div>
+            <div className="bg-third/60 text-white w-[120px] h-[40px] text-center py-2 rounded-md cursor-pointer border border-primary/10 text-gray-500 mt-4 hover:bg-third/80 transition-all duration-300"
+              onClick={handleSubmit}
+            >
+              {patchMypage.isPending ? '저장하는 중...' : "저장"}
+            </div>
           </div>
           )}
         </div>
@@ -77,7 +113,11 @@ export const MyPage = () => {
           <>
             <PersonalOnboarding />
             <div className="flex justify-end mt-12 px-8">
-              <div className="bg-third/60 text-white w-[120px] h-[40px] text-center py-2 rounded-md cursor-pointer border border-primary/10 text-gray-500 mt-4 hover:bg-third/80 transition-all duration-300">저장</div>
+              <div className="bg-third/60 text-white w-[120px] h-[40px] text-center py-2 rounded-md cursor-pointer border border-primary/10 text-gray-500 mt-4 hover:bg-third/80 transition-all duration-300"
+                onClick={handleSubmit}
+              >
+                {patchMypage.isPending ? '저장하는 중...' : "저장"}
+              </div>
             </div>
           </>
           )}
