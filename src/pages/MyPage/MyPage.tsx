@@ -68,7 +68,7 @@ export const MyPage = () => {
     },
   });
   
-  const patchMypage = useMutation({
+  const putMypage = useMutation({
     mutationFn: (data: {
       nickname: string,
       birthdate: string,
@@ -77,7 +77,7 @@ export const MyPage = () => {
       dateCostPreference: string,
       favoriteFoodCategories: string[],
       atmosphere: string
-    }) => mypageApi.patchMypage(data),
+    }) => mypageApi.putMypage(data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['mypage'] });
       toast.success("프로필 저장 성공");
@@ -89,7 +89,7 @@ export const MyPage = () => {
   });
 
   const handleSubmit = () => {
-    patchMypage.mutate({
+    putMypage.mutate({
       nickname,
       birthdate,
       alcoholPreference,
@@ -119,7 +119,7 @@ export const MyPage = () => {
             <div className="bg-third/60 text-white w-[120px] h-[40px] text-center py-2 rounded-md cursor-pointer border border-primary/10 text-gray-500 mt-4 hover:bg-third/80 transition-all duration-300"
               onClick={handleSubmit}
             >
-              {patchMypage.isPending ? '저장하는 중...' : "저장"}
+              {putMypage.isPending ? '저장하는 중...' : "저장"}
             </div>
           </div>
           )}
@@ -136,7 +136,7 @@ export const MyPage = () => {
               <div className="bg-third/60 text-white w-[120px] h-[40px] text-center py-2 rounded-md cursor-pointer border border-primary/10 text-gray-500 mt-4 hover:bg-third/80 transition-all duration-300"
                 onClick={handleSubmit}
               >
-                {patchMypage.isPending ? '저장하는 중...' : "저장"}
+                {putMypage.isPending ? '저장하는 중...' : "저장"}
               </div>
             </div>
           </>
