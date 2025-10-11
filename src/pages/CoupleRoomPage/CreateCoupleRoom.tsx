@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { useCoupleRoomStore } from "../../shared/store/CoupleRoom.store";
 import { CoupleRoomStore } from "../../shared/store/type";
 import { coupleRoomApi } from "../../features/coupleroom/api";
-import { PostCoupleRoom } from "../../features/auth/types";
+import { PostCoupleRoom } from "../../features/coupleroom/types";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from 'react-toastify';
 
@@ -34,22 +34,22 @@ export const CreateCoupleRoom = () => {
 
   const handleSave = async () => {
     try {
-      console.log('body data: ', {name: coupleName, date: formatDate(coupleDate)});
+      console.log('body data: ', {coupleHomeName: coupleName, datingStartDate: formatDate(coupleDate)});
       const res = await createCoupleRoom({
-        name: coupleName,
-        date: formatDate(coupleDate),
+        coupleHomeName: coupleName,
+        datingStartDate: formatDate(coupleDate),
       });
       console.log('res:', res);
       
       if (res.status === 'success') {
         useCoupleRoomStore.setState({
-          coupleId: res.data.coupleId,
+          coupleId: res.data.inviteId,
           coupleName: coupleName,
           coupleDate: formatDate(coupleDate),
-          coupleCode: res.data.coupleCode,
+          coupleCode: res.data.inviteCode,
         });
         toast.success('커플 정보 생성에 성공했습니다');
-        navigate(`/home/coupleroom/create/${res.data.coupleCode}`);
+        navigate(`/home/coupleroom/create/${res.data.inviteCode}`);
       }
     } catch (error) {
       console.error(error);

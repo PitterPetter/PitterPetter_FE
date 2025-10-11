@@ -2,6 +2,6 @@
   "status": "success",
   "data": {
     "coupleId": 123456,
-    "coupleCode": "123456"
+    "inviteCode": "123456"
   }
 }
