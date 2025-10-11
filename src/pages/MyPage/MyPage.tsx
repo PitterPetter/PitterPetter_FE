@@ -2,10 +2,12 @@ import { Profile } from "../../features/mypage/components/Profile";
 import { CoupleHome } from "../../features/mypage/components/CoupleHome";
 import { PersonalOnboarding } from "../../features/onboarding/PersonalOnboarding";
 import { useHeaderStore } from "../../shared/store/header.store";
+import { useMypageStore } from "../../shared/store/mypage.store";
 
 export const MyPage = () => {
   const isOpen = useHeaderStore((s) => s.isOpen);
-
+  const { isProfileLoading, isProfileError } = useMypageStore();
+  
   return (
     <div
       className="
@@ -20,9 +22,11 @@ export const MyPage = () => {
         {/* 프로필 카드 */}
         <div className="p-8 border border-primary/10 rounded-2xl shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md">
           <Profile />
+          {!isProfileLoading && !isProfileError && (
           <div className="flex justify-end mt-12 px-0">
             <div className="bg-third/60 text-white w-[120px] h-[40px] text-center py-2 rounded-md cursor-pointer border border-primary/10 text-gray-500 mt-4 hover:bg-third/80 transition-all duration-300">저장</div>
           </div>
+          )}
         </div>
 
         {/* 개인 온보딩 카드 */}
