@@ -9,7 +9,7 @@ const FOOD_CATEGORIES = ['한식', '중식', '양식', '일식', '분식'];
 const COST_PREFERENCE = ['1만원 이하', '1 ~ 3만원', '3 ~ 5만원', '5 ~ 8만원', '8만원 이상'];
 
 export const PersonalOnboarding = () => {
-  const { alcoholPreference, activeBound, dataCostPreference, favoriteFoodCategories, atmosphere, setAlcoholPreference, setActiveBound, setDataCostPreference, setFavoriteFoodCategories, setAtmosphere } = useOnboardingStore();
+  const { alcoholPreference, activeBound, dateCostPreference, favoriteFoodCategories, atmosphere, setAlcoholPreference, setActiveBound, setDateCostPreference, setFavoriteFoodCategories, setAtmosphere } = useOnboardingStore();
   const circleStyle = "border border-gray-300 rounded-full transition-all duration-250 flex justify-center items-center text-white";
   const boxStyle = "w-full h-12 rounded-md transition-all duration-250 flex justify-center items-center border border-gray-300";
   
@@ -114,7 +114,7 @@ export const PersonalOnboarding = () => {
           <p className="text-black">데이트 비용은 얼마를 선호하시나요?</p>
           <div className="flex gap-2 w-full justify-between w-full">
             {COST_PREFERENCE.map((preference) => (
-              <span key={preference} className={`${boxStyle} ${dataCostPreference===preference ? "bg-[#93000A]/60 text-white" : "text-[#121920]"}`} onClick={() => setDataCostPreference(preference as CostList)}>{preference}</span>
+              <span key={preference} className={`${boxStyle} ${dateCostPreference===preference ? "bg-[#93000A]/60 text-white" : "text-[#121920]"}`} onClick={() => setDateCostPreference(preference as CostList)}>{preference}</span>
             ))}
           </div>
         </div>

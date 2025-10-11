@@ -9,7 +9,7 @@ export const OnboardingPage = () => {
   const navigate = useNavigate();
 
   // API 연결 후에 호출 코드 추가 예정
-  const { alcoholPreference, activeBound, dataCostPreference, favoriteFoodCategories, atmosphere } = useOnboardingStore();
+  const { alcoholPreference, activeBound, dateCostPreference, favoriteFoodCategories, atmosphere } = useOnboardingStore();
   const mutation = useMutation({
     mutationFn: onboardingApi.saveOnboarding,
     onSuccess: (data) => {
@@ -26,33 +26,23 @@ export const OnboardingPage = () => {
     // 백엔드 API 형식에 맞게 데이터 변환
     const convertCostPreference = (cost: string) => {
       const costMap: { [key: string]: string } = {
-        '1만원 이하': 'BELOW_10K',
-        '1 ~ 3만원': 'FROM_10k_TO_30k',
-        '3 ~ 5만원': 'FROM_30k_TO_50k',
-        '5 ~ 8만원': 'FROM_50k_TO_80k',
-        '8만원 이상': 'ABOVE_80K'
+        '1만원 이하': '만원 미만',
+        '1 ~ 3만원': '만원 3만원',
+        '3 ~ 5만원': '삼만원 5만원',
+        '5 ~ 8만원': '오만원 5만원',
+        '8만원 이상': '팔만원 이상',
       };
-      return costMap[cost] || 'FROM_30k_TO_50k';
-    };
-
-    const convertFoodCategories = (foods: string[]) => {
-      const foodMap: { [key: string]: string } = {
-        '한식': 'KOREAN',
-        '중식': 'CHINESE',
-        '양식': 'WESTERN',
-        '일식': 'JAPANESE',
-        '분식': 'SNACK'
-      };
-      return foods.map(food => foodMap[food] || food);
+      return costMap[cost] || '삼만원 5만원';
     };
 
     mutation.mutate({ 
       alcoholPreference, 
       activeBound, 
-      dateCostPreference: convertCostPreference(dataCostPreference),
-      favoriteFoodCategories: convertFoodCategories(favoriteFoodCategories),
+      dateCostPreference: convertCostPreference(dateCostPreference),
+      favoriteFoodCategories: favoriteFoodCategories,
       preferredAtmosphere: atmosphere
     });
+    console.log(convertCostPreference(dateCostPreference));
   };
   return (
     <div className="w-full flex justify-center">

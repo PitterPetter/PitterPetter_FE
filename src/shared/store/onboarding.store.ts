@@ -4,12 +4,12 @@ import { Onboarding, DrinkingList, ActiveList, AtmosphereList, FoodList, CostLis
 export const useOnboardingStore = create<Onboarding>((set) => ({
   alcoholPreference: 0,
   activeBound: 0,
-  dataCostPreference: '',
+  dateCostPreference: '',
   favoriteFoodCategories: [],
   atmosphere: '',
   setAlcoholPreference: (value: DrinkingList) => set({ alcoholPreference: value }),
   setActiveBound: (value: ActiveList) => set({ activeBound: value }),
-  setDataCostPreference: (value: CostList) => set({ dataCostPreference: value }),
+  setDateCostPreference: (value: CostList) => set({ dateCostPreference: value }),
   setFavoriteFoodCategories: (value: FoodList[] | ((prev: FoodList[]) => FoodList[])) => set((state) => ({ favoriteFoodCategories: typeof value === 'function' ? value(state.favoriteFoodCategories) : value })),
   setAtmosphere: (value: AtmosphereList) => set({ atmosphere: value }),
 }));
