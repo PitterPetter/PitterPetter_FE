@@ -80,3 +80,11 @@ export type DiaryStore = {
   diaryImage: string;
   setDiaryImage: (diaryImage: string) => void;
 };
+
+// MypageStore
+export type MypageStore = {
+  isLoading: boolean;
+  setIsLoading: (isLoading: boolean) => void;
+  isError: boolean;
+  setIsError: (isError: boolean) => void;
+};
