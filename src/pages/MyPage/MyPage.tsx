@@ -8,6 +8,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { mypageApi } from "../../features/mypage/api";
 import { Spinner } from "../../shared/ui/spinner";
 import { toast } from 'react-toastify';
+import { CostList } from "../../features/onboarding/types";
 
 export const MyPage = () => {
   const isOpen = useHeaderStore((s) => s.isOpen);
@@ -19,9 +20,25 @@ export const MyPage = () => {
     nickname,
   } = useMypageStore();
   const {
-    setAlcoholPreference, setActiveBound, setDataCostPreference, setFavoriteFoodCategories, setAtmosphere,
-    alcoholPreference, activeBound, dataCostPreference, favoriteFoodCategories, atmosphere
+    setAlcoholPreference, setActiveBound, setDateCostPreference, setFavoriteFoodCategories, setAtmosphere,
+    alcoholPreference, activeBound, dateCostPreference, favoriteFoodCategories, atmosphere
    } = useOnboardingStore();
+
+   const convertCostPreference = (cost: string) => {
+    const costMap: { [key: string]: string } = {
+      '1만원 이하': '만원 미만',
+      '1 ~ 3만원': '만원 3만원',
+      '3 ~ 5만원': '삼만원 5만원',
+      '5 ~ 8만원': '오만원 8만원',
+      '8만원 이상': '팔만원 이상',
+      '만원 미만': '1만원 이하',
+      '만원 3만원': '1 ~ 3만원',
+      '삼만원 5만원': '3 ~ 5만원',
+      '오만원 8만원': '5 ~ 8만원',
+      '팔만원 이상': '8만원 이상',
+    };
+    return costMap[cost];
+  };
 
   const { data: mypage } = useQuery({
     queryKey: ['mypage'],
@@ -29,13 +46,14 @@ export const MyPage = () => {
       try {
         setIsProfileLoading(true);
         const response = await mypageApi.getMypage();
+        console.log(convertCostPreference(response.data.data.dateCostPreference));
         setName(response.data.data.name);
         setNickname(response.data.data.nickname);
         setEmail(response.data.data.email);
         setBirthdate(response.data.data.birthdate);
         setAlcoholPreference(response.data.data.alcoholPreference);
         setActiveBound(response.data.data.activeBound);
-        setDataCostPreference(response.data.data.dataCostPreference);
+        setDateCostPreference(convertCostPreference(response.data.data.dateCostPreference) as CostList);
         setFavoriteFoodCategories(response.data.data.favoriteFoodCategories);
         setAtmosphere(response.data.data.atmosphere);
         setIsProfileError(false);
@@ -55,7 +73,7 @@ export const MyPage = () => {
       nickname: string,
       alcoholPreference: number,
       activeBound: number,
-      dataCostPreference: string,
+      dateCostPreference: string,
       favoriteFoodCategories: string[],
       atmosphere: string
     }) => mypageApi.patchMypage(data),
@@ -74,7 +92,7 @@ export const MyPage = () => {
       nickname,
       alcoholPreference,
       activeBound,
-      dataCostPreference,
+      dateCostPreference: convertCostPreference(dateCostPreference),
       favoriteFoodCategories,
       atmosphere
     });

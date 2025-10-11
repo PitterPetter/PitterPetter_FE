@@ -1,12 +1,12 @@
 export type Onboarding = {
     alcoholPreference: DrinkingList;
     activeBound: ActiveList;
-    dataCostPreference: CostList;
+    dateCostPreference: CostList;
     favoriteFoodCategories: FoodList[];
     atmosphere: AtmosphereList;
     setAlcoholPreference: (value: DrinkingList) => void;
     setActiveBound: (value: ActiveList) => void;
-    setDataCostPreference: (value: CostList) => void;
+    setDateCostPreference: (value: CostList) => void;
     setFavoriteFoodCategories: (value: FoodList[] | ((prev: FoodList[]) => FoodList[])) => void;
     setAtmosphere: (value: AtmosphereList) => void;
 };

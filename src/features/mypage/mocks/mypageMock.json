@@ -12,7 +12,7 @@
     "newUser": false,
     "alcoholPreference": 2,
     "activeBound": 3,
-    "dataCostPreference": "5 ~ 8만원",
+    "dateCostPreference": "오만원 8만원",
     "favoriteFoodCategories": ["한식", "일식", "분식"],
     "atmosphere": "COZY"
   }
