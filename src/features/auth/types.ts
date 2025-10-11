@@ -1,6 +1,6 @@
 export type PostCoupleRoom = {
-  name: string;
-  date: string;
+  coupleHomeName: string;
+  datingStartDate: string;
 };
 
 export type GetId = {

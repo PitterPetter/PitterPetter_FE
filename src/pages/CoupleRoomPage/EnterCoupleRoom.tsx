@@ -13,10 +13,10 @@ export const EnterCoupleRoom = () => {
   const [isError, setIsError] = useState(false);
 
   const { mutateAsync: validateCoupleCode, isPending } = useMutation({
-    mutationFn: async (coupleCode: string) => {
+    mutationFn: async (inviteCode: string) => {
       try {
-        const res = await coupleRoomApi.validateCoupleCode(coupleCode);
-        console.log("coupleCode: ", coupleCode);
+        console.log("inviteCode: ", inviteCode);
+        const res = await coupleRoomApi.validateCoupleCode(inviteCode);
         if (res.data.status === 'error') {
           throw new Error('커플 인증에 실패했습니다');
         }
