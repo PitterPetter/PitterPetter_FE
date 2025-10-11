@@ -83,8 +83,8 @@ export type DiaryStore = {
 
 // MypageStore
 export type MypageStore = {
-  isLoading: boolean;
-  setIsLoading: (isLoading: boolean) => void;
-  isError: boolean;
-  setIsError: (isError: boolean) => void;
+  isProfileLoading: boolean;
+  setIsProfileLoading: (isProfileLoading: boolean) => void;
+  isProfileError: boolean;
+  setIsProfileError: (isProfileError: boolean) => void;
 };
