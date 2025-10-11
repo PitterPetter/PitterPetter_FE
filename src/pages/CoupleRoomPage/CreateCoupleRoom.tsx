@@ -43,7 +43,7 @@ export const CreateCoupleRoom = () => {
       
       if (res.status === 'success') {
         useCoupleRoomStore.setState({
-          coupleId: res.data.inviteId,
+          coupleId: res.data.inviteCode,
           coupleName: coupleName,
           coupleDate: formatDate(coupleDate),
           coupleCode: res.data.inviteCode,
