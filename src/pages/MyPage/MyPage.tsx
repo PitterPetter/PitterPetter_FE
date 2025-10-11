@@ -17,7 +17,7 @@ export const MyPage = () => {
     isProfileLoading, setIsProfileLoading,
     isProfileError, setIsProfileError,
     setName, setNickname, setEmail, setBirthdate,
-    nickname,
+    nickname, birthdate,
   } = useMypageStore();
   const {
     setAlcoholPreference, setActiveBound, setDateCostPreference, setFavoriteFoodCategories, setAtmosphere,
@@ -71,6 +71,7 @@ export const MyPage = () => {
   const patchMypage = useMutation({
     mutationFn: (data: {
       nickname: string,
+      birthdate: string,
       alcoholPreference: number,
       activeBound: number,
       dateCostPreference: string,
@@ -90,6 +91,7 @@ export const MyPage = () => {
   const handleSubmit = () => {
     patchMypage.mutate({
       nickname,
+      birthdate,
       alcoholPreference,
       activeBound,
       dateCostPreference: convertCostPreference(dateCostPreference),

@@ -25,11 +25,18 @@ export const CreateCoupleRoom = () => {
     },
   });
 
+  const formatDate = (date: Date) => {
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+    return `${year}-${month}-${day}`;
+  };
+
   const handleSave = async () => {
     try {
       const res = await createCoupleRoom({
         name: coupleName,
-        date: coupleDate.toISOString(),
+        date: formatDate(coupleDate),
       });
       console.log('res:', res);
       
@@ -37,7 +44,7 @@ export const CreateCoupleRoom = () => {
         useCoupleRoomStore.setState({
           coupleId: res.data.coupleId,
           coupleName: coupleName,
-          coupleDate: coupleDate.toISOString(),
+          coupleDate: formatDate(coupleDate),
           coupleCode: res.data.coupleCode,
         });
         toast.success('커플 정보 생성에 성공했습니다');
