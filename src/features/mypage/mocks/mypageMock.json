@@ -1,12 +1,12 @@
 {
-  "Success": true,
-  "User": {
+  "success": true,
+  "user": {
     "userId": "7610272898923",
-    "Email": "dyddhks@naver.com",
-    "Name": "signs",
+    "email": "dyddhks@naver.com",
+    "name": "signs",
     "providerType": "KAKAO",
     "providerId": "12413",
-    "Status": "ACTIVE",
+    "status": "ACTIVE",
     "newUser": false
   }
 }
