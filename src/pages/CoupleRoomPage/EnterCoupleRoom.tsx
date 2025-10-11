@@ -16,6 +16,7 @@ export const EnterCoupleRoom = () => {
     mutationFn: async (coupleCode: string) => {
       try {
         const res = await coupleRoomApi.validateCoupleCode(coupleCode);
+        console.log("coupleCode: ", coupleCode);
         if (res.data.status === 'error') {
           throw new Error('커플 인증에 실패했습니다');
         }

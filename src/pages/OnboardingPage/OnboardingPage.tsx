@@ -26,13 +26,13 @@ export const OnboardingPage = () => {
     // 백엔드 API 형식에 맞게 데이터 변환
     const convertCostPreference = (cost: string) => {
       const costMap: { [key: string]: string } = {
-        '1만원 이하': '만원 미만',
-        '1 ~ 3만원': '만원 3만원',
-        '3 ~ 5만원': '삼만원 5만원',
-        '5 ~ 8만원': '오만원 5만원',
-        '8만원 이상': '팔만원 이상',
+        '1만원 이하': '만원_미만',
+        '1 ~ 3만원': '만원_삼만원',
+        '3 ~ 5만원': '삼만원_오만원',
+        '5 ~ 8만원': '오만원_팔만원',
+        '8만원 이상': '팔만원_이상',
       };
-      return costMap[cost] || '삼만원 5만원';
+      return costMap[cost];
     };
 
     mutation.mutate({ 
@@ -42,14 +42,14 @@ export const OnboardingPage = () => {
       favoriteFoodCategories: favoriteFoodCategories,
       preferredAtmosphere: atmosphere
     });
-    console.log(convertCostPreference(dateCostPreference));
+    console.log('body data: ', {alcoholPreference, activeBound, dateCostPreference: convertCostPreference(dateCostPreference), favoriteFoodCategories, atmosphere});
   };
   return (
     <div className="w-full flex justify-center">
       <div className="flex flex-col gap-4 p-4 pt-0 max-w-[450px] md:max-w-[800px]">
         <div className="h-full p-4 pb-6 flex flex-col gap-4 items-center justify-center">
           {/* 개인 온보딩 */}
-          <h1 className="text-2xl">혜준 님의 취향을 알려주세요</h1>
+          <h1 className="text-2xl">취향을 알려주세요</h1>
           <p className="text-gray-500 pb-8">정보를 입력해 주시면 더 정확한 추천을 해드릴 수 있어요</p>
           <PersonalOnboarding />
           {/* Button - API 연결 후 Post하고 메인 페이지로 이동 추가 예정 */}

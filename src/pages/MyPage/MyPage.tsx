@@ -26,16 +26,16 @@ export const MyPage = () => {
 
    const convertCostPreference = (cost: string) => {
     const costMap: { [key: string]: string } = {
-      '1만원 이하': '만원 미만',
-      '1 ~ 3만원': '만원 3만원',
-      '3 ~ 5만원': '삼만원 5만원',
-      '5 ~ 8만원': '오만원 8만원',
-      '8만원 이상': '팔만원 이상',
-      '만원 미만': '1만원 이하',
-      '만원 3만원': '1 ~ 3만원',
-      '삼만원 5만원': '3 ~ 5만원',
-      '오만원 8만원': '5 ~ 8만원',
-      '팔만원 이상': '8만원 이상',
+      '1만원 이하': '만원_미만',
+      '1 ~ 3만원': '만원_삼만원',
+      '3 ~ 5만원': '삼만원_오만원',
+      '5 ~ 8만원': '오만원_팔만원',
+      '8만원 이상': '팔만원_이상',
+      '만원 미만': '1만원_미만',
+      '만원_삼만원': '1 ~ 3만원',
+      '삼만원_오만원': '3 ~ 5만원',
+      '오만원_팔만원': '5 ~ 8만원',
+      '팔만원_이상': '8만원 이상',
     };
     return costMap[cost];
   };
@@ -68,7 +68,7 @@ export const MyPage = () => {
     },
   });
   
-  const patchMypage = useMutation({
+  const putMypage = useMutation({
     mutationFn: (data: {
       nickname: string,
       birthdate: string,
@@ -77,7 +77,7 @@ export const MyPage = () => {
       dateCostPreference: string,
       favoriteFoodCategories: string[],
       atmosphere: string
-    }) => mypageApi.patchMypage(data),
+    }) => mypageApi.putMypage(data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['mypage'] });
       toast.success("프로필 저장 성공");
@@ -89,7 +89,7 @@ export const MyPage = () => {
   });
 
   const handleSubmit = () => {
-    patchMypage.mutate({
+    putMypage.mutate({
       nickname,
       birthdate,
       alcoholPreference,
@@ -98,6 +98,7 @@ export const MyPage = () => {
       favoriteFoodCategories,
       atmosphere
     });
+    console.log('body data: ',{nickname, birthdate, alcoholPreference, activeBound, dateCostPreference: convertCostPreference(dateCostPreference), favoriteFoodCategories, atmosphere});
   };
   
   return (
@@ -119,7 +120,7 @@ export const MyPage = () => {
             <div className="bg-third/60 text-white w-[120px] h-[40px] text-center py-2 rounded-md cursor-pointer border border-primary/10 text-gray-500 mt-4 hover:bg-third/80 transition-all duration-300"
               onClick={handleSubmit}
             >
-              {patchMypage.isPending ? '저장하는 중...' : "저장"}
+              {putMypage.isPending ? '저장하는 중...' : "저장"}
             </div>
           </div>
           )}
@@ -136,7 +137,7 @@ export const MyPage = () => {
               <div className="bg-third/60 text-white w-[120px] h-[40px] text-center py-2 rounded-md cursor-pointer border border-primary/10 text-gray-500 mt-4 hover:bg-third/80 transition-all duration-300"
                 onClick={handleSubmit}
               >
-                {patchMypage.isPending ? '저장하는 중...' : "저장"}
+                {putMypage.isPending ? '저장하는 중...' : "저장"}
               </div>
             </div>
           </>
