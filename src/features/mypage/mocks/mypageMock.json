@@ -9,6 +9,11 @@
     "providerType": "KAKAO",
     "providerId": "12413",
     "status": "ACTIVE",
-    "newUser": false
+    "newUser": false,
+    "alcoholPreference": 2,
+    "activeBound": 3,
+    "dataCostPreference": "5 ~ 8만원",
+    "favoriteFoodCategories": ["한식", "일식", "분식"],
+    "atmosphere": "COZY"
   }
 }
