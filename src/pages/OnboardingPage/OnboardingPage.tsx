@@ -26,13 +26,13 @@ export const OnboardingPage = () => {
     // 백엔드 API 형식에 맞게 데이터 변환
     const convertCostPreference = (cost: string) => {
       const costMap: { [key: string]: string } = {
-        '1만원 이하': '만원 미만',
-        '1 ~ 3만원': '만원 3만원',
-        '3 ~ 5만원': '삼만원 5만원',
-        '5 ~ 8만원': '오만원 5만원',
-        '8만원 이상': '팔만원 이상',
+        '1만원 이하': '만원_미만',
+        '1 ~ 3만원': '만원_삼만원',
+        '3 ~ 5만원': '삼만원_오만원',
+        '5 ~ 8만원': '오만원_팔만원',
+        '8만원 이상': '팔만원_이상',
       };
-      return costMap[cost] || '삼만원 5만원';
+      return costMap[cost];
     };
 
     mutation.mutate({ 
@@ -42,7 +42,7 @@ export const OnboardingPage = () => {
       favoriteFoodCategories: favoriteFoodCategories,
       preferredAtmosphere: atmosphere
     });
-    console.log(convertCostPreference(dateCostPreference));
+    console.log({alcoholPreference, activeBound, dateCostPreference: convertCostPreference(dateCostPreference), favoriteFoodCategories, atmosphere});
   };
   return (
     <div className="w-full flex justify-center">
