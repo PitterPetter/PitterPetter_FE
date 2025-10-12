@@ -3,6 +3,7 @@ import { CoupleHome } from "../../features/mypage/components/CoupleHome";
 import { PersonalOnboarding } from "../../features/onboarding/PersonalOnboarding";
 import { useHeaderStore } from "../../shared/store/header.store";
 import { useMypageStore } from "../../shared/store/mypage.store";
+import { CoupleInfoStore } from "../../shared/store/type";
 import { useOnboardingStore } from "../../shared/store/onboarding.store";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { mypageApi } from "../../features/mypage/api";
@@ -18,6 +19,15 @@ export const MyPage = () => {
     isProfileError, setIsProfileError,
     setName, setNickname, setEmail, setBirthdate,
     nickname, birthdate,
+    setCoupleId,
+    setCoupleHomeName,
+    setDatingStartDate,
+    setPartnerName,
+    setPartnerEmail,
+    coupleHomeName,
+    datingStartDate,
+    partnerName,
+    partnerEmail,
   } = useMypageStore();
   const {
     setAlcoholPreference, setActiveBound, setDateCostPreference, setFavoriteFoodCategories, setAtmosphere,
@@ -44,6 +54,7 @@ export const MyPage = () => {
     queryKey: ['mypage'],
     queryFn: async () => {
       try {
+        setIsProfileError(false);
         setIsProfileLoading(true);
         const response = await mypageApi.getMypage();
         console.log(convertCostPreference(response.data.data.dateCostPreference));
@@ -56,7 +67,11 @@ export const MyPage = () => {
         setDateCostPreference(convertCostPreference(response.data.data.dateCostPreference) as CostList);
         setFavoriteFoodCategories(response.data.data.favoriteFoodCategories);
         setAtmosphere(response.data.data.atmosphere);
-        setIsProfileError(false);
+        setCoupleId(response.data.data.coupleInfo.coupleId);
+        setCoupleHomeName(response.data.data.coupleInfo.coupleHomeName);
+        setDatingStartDate(response.data.data.coupleInfo.datingStartDate);
+        setPartnerName(response.data.data.coupleInfo.partnerName);
+        setPartnerEmail(response.data.data.coupleInfo.partnerEmail);
         return response.data.data;
       } catch (error) {
         console.error("mypage 불러오기 실패:", error);
@@ -76,7 +91,11 @@ export const MyPage = () => {
       activeBound: number,
       dateCostPreference: string,
       favoriteFoodCategories: string[],
-      atmosphere: string
+      atmosphere: string,
+      coupleHomeName: string,
+      datingStartDate: string,
+      partnerName: string,
+      partnerEmail: string
     }) => mypageApi.putMypage(data),
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['mypage'] });
@@ -96,11 +115,38 @@ export const MyPage = () => {
       activeBound,
       dateCostPreference: convertCostPreference(dateCostPreference),
       favoriteFoodCategories,
-      atmosphere
+      atmosphere,
+      coupleHomeName,
+      datingStartDate,
+      partnerName,
+      partnerEmail
     });
     console.log('body data: ',{nickname, birthdate, alcoholPreference, activeBound, dateCostPreference: convertCostPreference(dateCostPreference), favoriteFoodCategories, atmosphere});
   };
-  
+
+  const putCoupleHome = useMutation({
+    mutationFn: (data: {
+      coupleHomeName: string,
+      datingStartDate: string
+    }) => mypageApi.putCoupleHome(data),
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['mypage'] });
+      toast.success("커플 홈 저장 성공");
+    },
+    onError: (error) => {
+      toast.error("커플 홈 저장 실패");
+      console.error("커플 홈 저장 실패:", error);
+    },
+  });
+
+  const handleSubmitCoupleHome = () => {
+    console.log("body data: ", {coupleHomeName, datingStartDate});
+    putCoupleHome.mutate({
+      coupleHomeName,
+      datingStartDate
+    });
+  };
+
   return (
     <div
       className="
@@ -110,21 +156,8 @@ export const MyPage = () => {
         px-0
       ">
       {/* 왼쪽 섹션 */}
-      <div className={`flex flex-col gap-8 w-full ${isOpen ? "min-w-[720px] max-w-[720px]" : "min-w-[720px] max-w-[720px] 2xl:min-w-[850px] 2xl:max-w-[850px]"}`
+      <div className={`flex flex-col gap-8 w-full ${isOpen ? "min-w-[720px] max-w-[720px]" : "min-w-[720px] max-w-[720px] 2xl:min-w-[720px] 2xl:max-w-[850px]"}`
       }>
-        {/* 프로필 카드 */}
-        <div className="p-8 border border-primary/10 rounded-2xl shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md">
-          <Profile />
-          {!isProfileLoading && !isProfileError && (
-          <div className="flex justify-end mt-12 px-0">
-            <div className="bg-third/60 text-white w-[120px] h-[40px] text-center py-2 rounded-md cursor-pointer border border-primary/10 text-gray-500 mt-4 hover:bg-third/80 transition-all duration-300"
-              onClick={handleSubmit}
-            >
-              {putMypage.isPending ? '저장하는 중...' : "저장"}
-            </div>
-          </div>
-          )}
-        </div>
 
         {/* 개인 온보딩 카드 */}
         <div className="p-8 px-2 md:px-0 border border-primary/10 rounded-2xl shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md">
@@ -145,15 +178,42 @@ export const MyPage = () => {
         </div>
       </div>
 
-      {/* 커플 홈 섹션 */}
-      <div className={`
-        flex justify-center items-center w-full px-2 md:px-0
-        2xl:max-h-[600px]
-        border border-primary/10 rounded-2xl shadow-sm bg-white/80 
-        backdrop-blur-sm p-6 transition-all hover:shadow-md
-        ${isOpen ? "min-w-[720px] max-w-[720px] 2xl:max-w-[720px] 2xl:min-w-[400px]" : "min-w-[720px] max-w-[720px] 2xl:max-w-[850px] 2xl:min-w-[400px]"}
-      `}>
-        <CoupleHome />
+
+      {/* 왼쪽 섹션 */}
+      <div className={`flex flex-col gap-8 w-full ${isOpen ? "min-w-[400px] max-w-[720px]" : "min-w-[720px] max-w-[720px] 2xl:max-w-[850px] 2xl:min-w-[400px]"}`
+      }>
+        {/* 프로필 카드 */}
+        <div className="p-8 border border-primary/10 rounded-2xl shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md">
+          <Profile />
+          {!isProfileLoading && !isProfileError && (
+          <div className="flex justify-end mt-12 px-0">
+            <div className="bg-third/60 text-white w-[120px] h-[40px] text-center py-2 rounded-md cursor-pointer border border-primary/10 text-gray-500 mt-4 hover:bg-third/80 transition-all duration-300"
+              onClick={handleSubmit}
+            >
+              {putMypage.isPending ? '저장하는 중...' : "저장"}
+            </div>
+          </div>
+          )}
+        </div>
+        {/* 커플 홈 섹션 */}
+        <div className={`
+          flex flex-col justify-center items-center w-full px-2 md:px-0
+          2xl:max-h-[600px]
+          border border-primary/10 rounded-2xl shadow-sm bg-white/80 
+          backdrop-blur-sm p-6 transition-all hover:shadow-md
+          ${isOpen ? "min-w-[720px] max-w-[720px] 2xl:max-w-[720px] 2xl:min-w-[400px]" : "min-w-[720px] max-w-[720px] 2xl:max-w-[850px] 2xl:min-w-[400px]"}
+        `}>
+          <CoupleHome />
+          {!isProfileLoading && !isProfileError && (
+          <div className="flex justify-end mt-12 px-8 w-full pb-2">
+            <div className="bg-third/60 text-white w-[120px] h-[40px] text-center py-2 rounded-md cursor-pointer border border-primary/10 text-gray-500 mt-4 hover:bg-third/80 transition-all duration-300"
+              onClick={handleSubmitCoupleHome}
+            >
+              {putCoupleHome.isPending ? '저장하는 중...' : "저장"}
+            </div>
+          </div>
+          )}
+        </div>
       </div>
     </div>
   );

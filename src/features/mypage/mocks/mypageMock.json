@@ -14,6 +14,16 @@
     "activeBound": 3,
     "dateCostPreference": "오만원_팔만원",
     "favoriteFoodCategories": ["한식", "일식", "분식"],
-    "atmosphere": "COZY"
+    "atmosphere": "COZY",
+    "coupleInfo": {
+      "coupleId": "123456",
+      "coupleHomeName": "JJ",
+      "datingStartDate": "2025-01-01",
+      "partnerName": "지지",
+      "partnerEmail": "지지@naver.com",
+      "partnerProviderId": "지지",
+      "status": "ACTIVE",
+      "coupleCreatedAt": "2025-01-01"
+    }
   }
 }

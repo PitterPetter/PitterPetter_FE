@@ -70,4 +70,11 @@ export const handlers = [
     await delay(2000);
     return HttpResponse.json(mypage);
   }),
+
+  // 커플 헤어지기 API
+  http.delete('https://api.loventure.us/api/couples/room/:coupleId', async (req) => {
+    await delay(2000);
+    return HttpResponse.json(mypage);
+  }),
 ];
+  
