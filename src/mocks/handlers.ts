@@ -72,7 +72,7 @@ export const handlers = [
   }),
 
   // 커플 헤어지기 API
-  http.delete('https://api.loventure.us/api/couples/room/:coupleId', async (req) => {
+  http.delete('https://api.loventure.us/api/couples/cancel', async (req) => {
     await delay(2000);
     return HttpResponse.json(mypage);
   }),
