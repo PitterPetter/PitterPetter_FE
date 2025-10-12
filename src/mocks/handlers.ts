@@ -66,7 +66,7 @@ export const handlers = [
   }),
 
   // 마이페이지 수정 API
-  http.put('https://api.loventure.us/api/auth/mypage', async (req) => {
+  http.put('https://api.loventure.us/api/auth/profile', async (req) => {
     await delay(2000);
     return HttpResponse.json(mypage);
   }),
