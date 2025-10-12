@@ -96,3 +96,17 @@ export type MypageStore = {
   birthdate: string;
   setBirthdate: (birthdate: string) => void;
 };
+
+// CoupleInfoStore
+export type CoupleInfoStore = {
+  coupleId: string;
+  setCoupleId: (coupleId: string) => void;
+  coupleHomeName: string;
+  setCoupleHomeName: (coupleHomeName: string) => void;
+  datingStartDate: string;
+  setDatingStartDate: (datingStartDate: string) => void;
+  partnerName: string;
+  setPartnerName: (partnerName: string) => void;
+  partnerEmail: string;
+  setPartnerEmail: (partnerEmail: string) => void;
+};
