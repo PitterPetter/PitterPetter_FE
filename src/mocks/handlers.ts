@@ -76,5 +76,11 @@ export const handlers = [
     await delay(2000);
     return HttpResponse.json(mypage);
   }),
+
+  // 커플 정보 수정 API
+  http.put('https://api.loventure.us/api/couples', async (req) => {
+    await delay(2000);
+    return HttpResponse.json(mypage);
+  }),
 ];
   
