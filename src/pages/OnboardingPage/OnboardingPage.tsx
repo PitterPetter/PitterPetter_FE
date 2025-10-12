@@ -15,7 +15,7 @@ export const OnboardingPage = () => {
     onSuccess: (data) => {
       console.log(data);
       toast.success('온보딩 정보가 성공적으로 저장되었습니다.');
-      navigate("/home");
+      navigate("/home/coupleroom");
     },
     onError: (error: any) => {
       console.log('error:',error);
