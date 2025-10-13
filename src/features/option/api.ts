@@ -5,6 +5,7 @@ import { Option } from "./types";
 
 export const postOption = async (data: { user_choice: Option }) => {
   try {
+    console.log('body data: ', data);
     const response = await api.post('/api/recommends', data);
     return response.data;
   } catch (error) {
