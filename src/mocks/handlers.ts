@@ -82,5 +82,11 @@ export const handlers = [
     await delay(2000);
     return HttpResponse.json(mypage);
   }),
+
+  // 옵션 전송 API
+  http.post('https://api.loventure.us/api/recommends', async (req) => {
+    await delay(2000);
+    return HttpResponse.json(mypage);
+  }),
 ];
   
