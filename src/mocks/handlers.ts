@@ -66,13 +66,19 @@ export const handlers = [
   }),
 
   // 마이페이지 수정 API
-  http.put('https://api.loventure.us/api/auth/mypage', async (req) => {
+  http.put('https://api.loventure.us/api/auth/profile', async (req) => {
     await delay(2000);
     return HttpResponse.json(mypage);
   }),
 
   // 커플 헤어지기 API
-  http.delete('https://api.loventure.us/api/couples/room/:coupleId', async (req) => {
+  http.delete('https://api.loventure.us/api/couples/cancel', async (req) => {
+    await delay(2000);
+    return HttpResponse.json(mypage);
+  }),
+
+  // 커플 정보 수정 API
+  http.put('https://api.loventure.us/api/couples', async (req) => {
     await delay(2000);
     return HttpResponse.json(mypage);
   }),

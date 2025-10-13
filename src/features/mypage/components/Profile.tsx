@@ -1,21 +1,102 @@
-import { useState } from "react";
+import { useRef, useCallback } from "react";
 import { mypageApi } from "../api";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Spinner } from "../../../shared/ui/spinner";
 import { useMypageStore } from "../../../shared/store/mypage.store";
+import { useOnboardingStore } from "../../../shared/store/onboarding.store";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TextField } from "@mui/material";
+import { toast } from 'react-toastify';
 
 export const Profile = () => {
   const { isProfileLoading, isProfileError, name, nickname, setNickname, email, birthdate, setBirthdate } = useMypageStore();
+  const { alcoholPreference, activeBound, dateCostPreference, favoriteFoodCategories, atmosphere } = useOnboardingStore();
+  
+  const originalNickname = useRef<string>('');
+  const originalBirthdate = useRef<string>('');
   
   const formatDate = (date: Date) => {
     const year = date.getFullYear();
-    const month = date.getMonth() + 1;
-    const day = date.getDate();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
+  };
+
+  const convertCostPreference = (cost: string) => {
+    const costMap: { [key: string]: string } = {
+      '1만원 이하': '만원_미만',
+      '1 ~ 3만원': '만원_삼만원',
+      '3 ~ 5만원': '삼만원_오만원',
+      '5 ~ 8만원': '오만원_팔만원',
+      '8만원 이상': '팔만원_이상',
+    };
+    return costMap[cost] || cost;
+  };
+
+  const putMypage = useMutation({
+    mutationFn: (data: {
+      nickname: string,
+      birthdate: string,
+      alcoholPreference: number,
+      activeBound: number,
+      dateCostPreference: string,
+      favoriteFoodCategories: string[],
+      atmosphere: string
+    }) => mypageApi.putMypage(data),
+    onSuccess: () => {
+      toast.success('프로필이 저장되었습니다');
+    },
+    onError: () => {
+      toast.error('저장에 실패했습니다');
+    },
+  });
+
+  const handleSaveProfile = useCallback(() => {
+    putMypage.mutate({
+      nickname,
+      birthdate,
+      alcoholPreference,
+      activeBound,
+      dateCostPreference: convertCostPreference(dateCostPreference),
+      favoriteFoodCategories,
+      atmosphere
+    });
+  }, [nickname, birthdate, alcoholPreference, activeBound, dateCostPreference, favoriteFoodCategories, atmosphere]);
+
+  const handleNicknameBlur = () => {
+    // 빈 값이면 저장 안함
+    if (!nickname.trim()) {
+      setNickname(originalNickname.current);
+      return;
+    }
+    
+    if (nickname !== originalNickname.current) {
+      originalNickname.current = nickname;
+      handleSaveProfile();
+    }
+  };
+
+  const handleBirthdateChange = (date: Date | null) => {
+    if (date) {
+      const formattedDate = formatDate(date);
+      if (formattedDate !== originalBirthdate.current) {
+        originalBirthdate.current = formattedDate;
+        setBirthdate(formattedDate);
+        
+        // state 업데이트는 비동기이므로 직접 새 값으로 API 호출
+        putMypage.mutate({
+          nickname,
+          birthdate: formattedDate,
+          alcoholPreference,
+          activeBound,
+          dateCostPreference: convertCostPreference(dateCostPreference),
+          favoriteFoodCategories,
+          atmosphere
+        });
+      }
+    }
   };
 
   return (
@@ -40,6 +121,13 @@ export const Profile = () => {
               type="text" 
               value={nickname} 
               onChange={(e) => setNickname(e.target.value)}
+              onFocus={() => originalNickname.current = nickname}
+              onBlur={handleNicknameBlur}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
+                  e.currentTarget.blur();
+                }
+              }}
               className="w-full h-[42px] rounded-md p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-transparent"
               placeholder="닉네임을 입력하세요"
             />
@@ -55,12 +143,9 @@ export const Profile = () => {
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
                 value={birthdate ? new Date(birthdate) : null}
-                onChange={(date) => {
-                  if (date) {
-                    setBirthdate(formatDate(date));
-                  }
-                }}
-                format="yyyy-M-d"
+                onChange={handleBirthdateChange}
+                onOpen={() => originalBirthdate.current = birthdate}
+                format="yyyy-MM-dd"
                 enableAccessibleFieldDOMStructure={false}
                 slots={{
                   textField: TextField,
