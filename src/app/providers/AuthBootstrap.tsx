@@ -59,7 +59,7 @@ export default function AuthBootstrap() {
     let targetPath = "";
     if (status === "ONBOARDING_REQUIRED") {
       targetPath = "/onboarding";
-    } else if (status === "ONBOARDING_COMPLETE") {
+    } else if (status === "COUPLE_MATCHING_REQUIRED") {
       targetPath = "/home/coupleroom";
     } else if (status === "COMPLETED") {
       targetPath = "/home";
