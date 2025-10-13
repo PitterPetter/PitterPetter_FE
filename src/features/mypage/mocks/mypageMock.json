@@ -16,7 +16,6 @@
     "favoriteFoodCategories": ["한식", "일식", "분식"],
     "atmosphere": "COZY",
     "coupleInfo": {
-      "coupleId": "123456",
       "coupleHomeName": "JJ",
       "datingStartDate": "2025-01-01",
       "partnerName": "지지",

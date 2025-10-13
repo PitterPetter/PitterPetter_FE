@@ -16,8 +16,6 @@ export const useMypageStore = create<MypageStore & CoupleInfoStore>((set) => ({
   setBirthdate: (birthdate: string) => set({ birthdate }),
 
   // 커플 정보
-  coupleId: '',
-  setCoupleId: (coupleId: string) => set({ coupleId }),
   coupleHomeName: '',
   setCoupleHomeName: (coupleHomeName: string) => set({ coupleHomeName }),
   datingStartDate: '',
