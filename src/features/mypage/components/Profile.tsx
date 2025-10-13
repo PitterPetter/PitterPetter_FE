@@ -123,6 +123,11 @@ export const Profile = () => {
               onChange={(e) => setNickname(e.target.value)}
               onFocus={() => originalNickname.current = nickname}
               onBlur={handleNicknameBlur}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.nativeEvent.isComposing) {
+                  e.currentTarget.blur();
+                }
+              }}
               className="w-full h-[42px] rounded-md p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-transparent"
               placeholder="닉네임을 입력하세요"
             />
