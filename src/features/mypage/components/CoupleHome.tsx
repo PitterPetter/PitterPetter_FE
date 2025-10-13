@@ -12,7 +12,7 @@ import { toast } from 'react-toastify';
 
 export const CoupleHome = () => {
   const navigate = useNavigate();
-  const { coupleHomeName, partnerName, partnerEmail, coupleId, datingStartDate, setCoupleHomeName } = useMypageStore() as CoupleInfoStore;
+  const { coupleHomeName, partnerName, partnerEmail, datingStartDate, setCoupleHomeName } = useMypageStore() as CoupleInfoStore;
   const { isProfileLoading, isProfileError } = useMypageStore();
   const [editCoupleHomeName, setEditCoupleHomeName] = useState(false);
   const inputRef = useRef<HTMLDivElement>(null);

@@ -17,7 +17,6 @@ export const MyPage = () => {
     isProfileError, setIsProfileError,
     setName, setNickname, setEmail, setBirthdate,
     nickname, birthdate,
-    setCoupleId,
     setCoupleHomeName,
     setDatingStartDate,
     setPartnerName,
@@ -65,7 +64,6 @@ export const MyPage = () => {
         setDateCostPreference(convertCostPreference(response.data.data.dateCostPreference) as CostList);
         setFavoriteFoodCategories(response.data.data.favoriteFoodCategories);
         setAtmosphere(response.data.data.atmosphere);
-        setCoupleId(response.data.data.coupleInfo.coupleId);
         setCoupleHomeName(response.data.data.coupleInfo.coupleHomeName);
         setDatingStartDate(response.data.data.coupleInfo.datingStartDate);
         setPartnerName(response.data.data.coupleInfo.partnerName);

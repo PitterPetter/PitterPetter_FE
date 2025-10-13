@@ -57,7 +57,6 @@ export type HeaderStore = {
 
 // CoupleRoomStore
 export type CoupleRoomStore = {
-  coupleId: string;
   coupleName: string;
   coupleDate: string;
   setCoupleRoom: (coupleRoom: CoupleRoomStore) => void;
@@ -99,8 +98,6 @@ export type MypageStore = {
 
 // CoupleInfoStore
 export type CoupleInfoStore = {
-  coupleId: string;
-  setCoupleId: (coupleId: string) => void;
   coupleHomeName: string;
   setCoupleHomeName: (coupleHomeName: string) => void;
   datingStartDate: string;
