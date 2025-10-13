@@ -9,12 +9,14 @@ import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { renderTimeViewClock } from "@mui/x-date-pickers/timeViewRenderers";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { Spinner } from "../../shared/ui/spinner";
 
 export const OptionsPage = () => {
   const navigation = useNavigate();
   const [condition, setCondition] = useState<Option['user_choice']['condition']>(5);
   const [drink_intent, setDrinking] = useState<Option['user_choice']['drink_intent']>(false);
   const [food, setFood] = useState<Option['user_choice']['food']>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [startTime, setStartTime] = useState<Date>(new Date());
   const [endTime, setEndTime] = useState<Date>(new Date());
   const start = useStartStore.getState();
@@ -30,12 +32,14 @@ export const OptionsPage = () => {
     }
   });
   const handleSubmit = () => {
+    setIsLoading(true);
     console.log({ user_choice: { start: [start.lat, start.lng], condition, drink_intent, food, startTime, endTime } });
     mutation.mutate({ user_choice: { start: [start.lat, start.lng], condition, drink_intent, food, startTime, endTime } });
   };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
+      {isLoading && <Spinner />}
       <div className="w-full min-w-[400px] h-full flex flex-col items-center justify-center px-0 sm:px-20 md:px-20 xl:px-60">
         <h1 className="text-2xl font-bold py-4">Set Your Prefencences</h1>
         <p className="text-gray-500 pb-8">원하는 조건을 설정해주세요.</p>
