@@ -5,15 +5,9 @@ import { tokenStore } from "../../shared/lib/tokenStore";
 export default function AuthBootstrap() {
   const location = useLocation();
   const navigate = useNavigate();
-  const hasProcessed = useRef(false);
+  const lastProcessedToken = useRef<string>('');
 
   useEffect(() => {
-    // 이미 처리했다면 중복 실행 방지
-    if (hasProcessed.current) {
-      console.log("[AuthBootstrap] already processed, skipping");
-      return;
-    }
-
     // 1. URL에서 쿼리 파라미터 추출
     const url = new URL(window.location.href);
     const qs = url.searchParams;
@@ -33,11 +27,17 @@ export default function AuthBootstrap() {
       return;
     }
 
-    // 처리 완료 플래그 설정 (중복 실행 방지)
-    hasProcessed.current = true;
+    // 이미 처리한 토큰이면 중복 실행 방지
+    if (lastProcessedToken.current === access) {
+      console.log("[AuthBootstrap] same token already processed, skipping");
+      return;
+    }
 
-    // 2. Access Token 저장
-    console.log("[AuthBootstrap] saving access_token to sessionStorage");
+    // 처리한 토큰 저장 (새로운 토큰은 처리 가능)
+    lastProcessedToken.current = access;
+
+    // 2. Access Token 저장 (새 토큰으로 업데이트)
+    console.log("[AuthBootstrap] saving new access_token to sessionStorage");
     tokenStore.setAccessToken(access);
 
     // 3. 쿼리 파라미터 저장
@@ -61,10 +61,10 @@ export default function AuthBootstrap() {
       targetPath = "/onboarding";
     } else if (status === "ONBOARDING_COMPLETE") {
       targetPath = "/home/coupleroom";
-    } else if (status === "COUPLED") {
+    } else if (status === "COMPLETED") {
       targetPath = "/home";
     } else {
-      targetPath = "/home/coupleroom";
+      targetPath = "/login";
     }
     
     console.log("[AuthBootstrap] navigating to:", targetPath);
