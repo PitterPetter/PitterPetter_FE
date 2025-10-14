@@ -242,4 +242,56 @@ export const handlers = [
 
     return HttpResponse.json(mock);
   }),
+
+  // 재추천 코스
+  http.post(`${API}/api/courses/recommends/replace`, async ({ request }) => {
+    await delay(700);
+    const mock = {
+      explain: '오늘 무드에 맞는 코스입니다~',
+      data: [
+        {
+          id: 'poi-1',
+          seq: 1,
+          name: '이태리 레게노 식당',
+          category: 'RESTAURANT',
+          lat: 37.69231,
+          lng: 126.92501,
+          indoor: true,
+          price_level: 2,
+          open_hours: {
+            mon: '09:00-18:00',
+            tue: '09:00-18:00',
+            wed: '09:00-18:00',
+            thu: '09:00-18:00',
+            fri: '09:00-20:00',
+            sat: '10:00-20:00',
+            sun: '10:00-18:00',
+          },
+          alcohol: false,
+          mood_tag: 'LOVELY',
+          food_tag: ['PASTA', 'PIZZA'],
+          rating_avg: 4.3,
+          link: 'https://example.com/italian',
+          reason: '분위기/가격대 밸런스 양호',
+        },
+        {
+          id: 'poi-2',
+          seq: 2,
+          name: 'Blue Bottle Yeonnam',
+          category: 'CAFE',
+          lat: 37.76231,
+          lng: 126.92501,
+        },
+        {
+          id: 'poi-3',
+          seq: 3,
+          name: 'Blue Bottle NewYork',
+          category: 'CAFE',
+          lat: 37.76231,
+          lng: 126.92501,
+        },
+      ],
+    };
+    return HttpResponse.json(mock);
+  }),
 ];
