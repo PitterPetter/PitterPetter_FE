@@ -1,5 +1,6 @@
 import { Profile } from "../../features/mypage/components/Profile";
 import { CoupleHome } from "../../features/mypage/components/CoupleHome";
+import { DistrictLock } from "../../features/mypage/components/DistrictLock";
 import { PersonalOnboarding } from "../../features/onboarding/PersonalOnboarding";
 import { useHeaderStore } from "../../shared/store/header.store";
 import { useMypageStore } from "../../shared/store/mypage.store";
@@ -122,50 +123,58 @@ export const MyPage = () => {
   return (
     <div
       className="
-        flex flex-col 2xl:flex-row gap-8 2xl:gap-4 items-center justify-start py-10 bg-primary/5
+        flex flex-col gap-8 items-center justify-start py-10 bg-primary/5
         w-full h-full min-h-screen
         2xl:px-20 2xl:items-start
         px-0
       ">
-      {/* 왼쪽 섹션 */}
-      <div className={`flex flex-col gap-8 w-full ${isOpen ? "min-w-[720px] max-w-[720px]" : "min-w-[720px] max-w-[720px] 2xl:min-w-[720px] 2xl:max-w-[850px]"}`
-      }>
-
-        {/* 개인 온보딩 카드 */}
-        <div className="p-8 px-2 md:px-0 border border-primary/10 rounded-2xl shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md">
-          <h2 className="text-2xl mb-4 text-gray-800 px-2 md:px-8">개인 온보딩</h2>
-          {isProfileLoading && <Spinner />}
-          {!isProfileLoading && !isProfileError && (
-          <>
-            <PersonalOnboarding />
-            <div className="flex justify-end mt-12 px-8">
-              <div className="bg-third/60 text-white w-[120px] h-[40px] text-center py-2 rounded-md cursor-pointer border border-primary/10 text-gray-500 mt-4 hover:bg-third/80 transition-all duration-300"
-                onClick={handleSubmit}
-              >
-                {putMypage.isPending ? '저장하는 중...' : "저장"}
+      {/* 상단 2단 레이아웃 */}
+      <div className="flex flex-col 2xl:flex-row gap-8 2xl:gap-4 w-full">
+        {/* 왼쪽 섹션 - 개인 온보딩 */}
+        <div className={`flex flex-col gap-8 w-full ${isOpen ? "min-w-[720px] max-w-[720px]" : "min-w-[720px] max-w-[720px] 2xl:min-w-[720px] 2xl:max-w-[850px]"}`
+        }>
+          <div className="p-8 px-2 md:px-0 border border-primary/10 rounded-2xl shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md">
+            <h2 className="text-2xl mb-4 text-gray-800 px-2 md:px-8">개인 온보딩</h2>
+            {isProfileLoading && <Spinner />}
+            {!isProfileLoading && !isProfileError && (
+            <>
+              <PersonalOnboarding />
+              <div className="flex justify-end mt-12 px-8">
+                <div className="bg-third/60 text-white w-[120px] h-[40px] text-center py-2 rounded-md cursor-pointer border border-primary/10 text-gray-500 mt-4 hover:bg-third/80 transition-all duration-300"
+                  onClick={handleSubmit}
+                >
+                  {putMypage.isPending ? '저장하는 중...' : "저장"}
+                </div>
               </div>
-            </div>
-          </>
-          )}
+            </>
+            )}
+          </div>
+        </div>
+
+        {/* 오른쪽 섹션 - 프로필 정보 & 커플 홈 */}
+        <div className={`flex flex-col gap-8 w-full ${isOpen ? "min-w-[400px] max-w-[720px]" : "min-w-[720px] max-w-[720px] 2xl:max-w-[850px] 2xl:min-w-[400px]"}`
+        }>
+          {/* 프로필 카드 */}
+          <div className="p-8 border border-primary/10 rounded-2xl shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md">
+            <Profile />
+          </div>
+          {/* 커플 홈 섹션 */}
+          <div className={`
+            flex flex-col justify-center items-center w-full px-2 md:px-0
+            2xl:max-h-[600px]
+            border border-primary/10 rounded-2xl shadow-sm bg-white/80 
+            backdrop-blur-sm p-6 transition-all hover:shadow-md
+            ${isOpen ? "min-w-[720px] max-w-[720px] 2xl:max-w-[720px] 2xl:min-w-[400px]" : "min-w-[720px] max-w-[720px] 2xl:max-w-[850px] 2xl:min-w-[400px]"}
+          `}>
+            <CoupleHome />
+          </div>
         </div>
       </div>
 
-      {/* 왼쪽 섹션 */}
-      <div className={`flex flex-col gap-8 w-full ${isOpen ? "min-w-[400px] max-w-[720px]" : "min-w-[720px] max-w-[720px] 2xl:max-w-[850px] 2xl:min-w-[400px]"}`
-      }>
-        {/* 프로필 카드 */}
-        <div className="p-8 border border-primary/10 rounded-2xl shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md">
-          <Profile />
-        </div>
-        {/* 커플 홈 섹션 */}
-        <div className={`
-          flex flex-col justify-center items-center w-full px-2 md:px-0
-          2xl:max-h-[600px]
-          border border-primary/10 rounded-2xl shadow-sm bg-white/80 
-          backdrop-blur-sm p-6 transition-all hover:shadow-md
-          ${isOpen ? "min-w-[720px] max-w-[720px] 2xl:max-w-[720px] 2xl:min-w-[400px]" : "min-w-[720px] max-w-[720px] 2xl:max-w-[850px] 2xl:min-w-[400px]"}
-        `}>
-          <CoupleHome />
+      {/* 하단 - 지역구 잠금 시스템 */}
+      <div className="w-full">
+        <div className="border border-primary/10 rounded-2xl shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md">
+          <DistrictLock />
         </div>
       </div>
     </div>

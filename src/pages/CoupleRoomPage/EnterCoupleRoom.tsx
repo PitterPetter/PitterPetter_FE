@@ -69,7 +69,7 @@ export const EnterCoupleRoom = () => {
       
       if (result.status === 'success') {
         toast.success('커플 인증이 완료되었습니다');
-        navigate('/home');
+        navigate('/home/district/choose');
       } else {
         setIsError(true);
         throw new Error('커플 인증에 실패했습니다');

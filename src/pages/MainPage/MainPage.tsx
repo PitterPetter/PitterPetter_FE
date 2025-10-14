@@ -4,10 +4,12 @@ import { Button } from "../../shared/ui/button";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { CoupleRoomModal } from "../CoupleRoomPage/CoupleRoomModal";
+import { DistrictModal } from "../DistrictPage/DistrictModal";
 
 export const MainPage = () => {
   const { isMarkers } = useMarkerStore();
   const [isCoupleRoom, setIsCoupleRoom] = useState(false);
+  const [isDistrict, setIsDistrict] = useState(false);
   const [clicked, setClicked] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -15,8 +17,13 @@ export const MainPage = () => {
   useEffect(() => {
     if (location.pathname.includes("/coupleroom")) {
       setIsCoupleRoom(true);
+      setIsDistrict(false);
+    } else if (location.pathname.includes("/district")) {
+      setIsDistrict(true);
+      setIsCoupleRoom(false);
     } else {
       setIsCoupleRoom(false);
+      setIsDistrict(false);
     }
   }, [location.pathname]);
   
@@ -62,6 +69,9 @@ export const MainPage = () => {
       </div>
       {isCoupleRoom && (
         <CoupleRoomModal />
+      )}
+      {isDistrict && (
+        <DistrictModal />
       )}
     </div>
   );
