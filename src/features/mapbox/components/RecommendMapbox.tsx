@@ -8,6 +8,7 @@ import { useUIStore } from '../../../shared/store/ui.store';
 import { fetchRoute, routeQueryKey } from '../../../shared/api/routes.api';
 import { MapboxProps, MapRefs, InputData, TimeOfDay } from '../types';
 import { useRecommendStore } from '../../../shared/store/recommend.store';
+import { useHeaderStore } from '../../../shared/store/header.store';
 
 const MapboxRecommendPage: React.FC<MapboxProps> = ({
   center = [127.1, 37.5133],
@@ -19,6 +20,7 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
   const mapRef = useRef<MapRefs['map']>(null);
   const { data: recommendData } = useRecommendStore();
   const { isMapReady, setMapReady } = useUIStore();
+  const { isOpen } = useHeaderStore();
   
   // courseData가 있으면 우선 사용, 없으면 recommendData 사용
   const displayData = useMemo(() => {
@@ -204,72 +206,28 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
   const isAnyFetching = results.some(r => r.isFetching);
 
   return (
-    <div style={{ position: 'relative', height: '100vh', width: '100vw' }}>
-      <div ref={mapContainerRef} id="map" style={{ height: '100%', width: '100%' }} />
+    <div style={{ 
+      position: 'relative', 
+      height: '100vh', 
+      width: '100vw',
+      maxWidth: '100vw',
+      overflow: 'hidden'
+    }}>
+      <div 
+        ref={mapContainerRef} 
+        id="map" 
+        style={{ 
+          height: '100%',
+          width: '100%',
+          transition: 'all 0.3s ease-in-out'
+        }} 
+      />
 
       {/* 전역 오버레이 */}
       {(!isMapReady || isAnyPending) && (
         <div className="pointer-events-none absolute inset-0 bg-white z-20 flex items-center justify-center">
           <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-300 border-t-transparent" />
           <span className="ml-3 text-gray-700 font-medium">경로 계산 중…</span>
-        </div>
-      )}
-
-      {/* 루트 정보 패널 */}
-      {(ok.length > 0 || isAnyPending || isAnyFetching) && (
-        <div className="absolute top-4 left-4 bg-white rounded-lg shadow-lg p-4 max-w-sm z-30 min-w-[280px]">
-          <h3 className="font-bold text-lg mb-3 text-gray-800 flex items-center">
-            코스 정보
-            {isAnyFetching && (
-              <span className="ml-2 text-xs px-2 py-0.5 rounded bg-blue-50 text-blue-600">갱신 중</span>
-            )}
-          </h3>
-
-          {/* 스켈레톤 */}
-          {ok.length === 0 && (isAnyPending || isAnyFetching) && (
-            <div className="space-y-2 mb-4">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="flex justify-between items-center text-sm">
-                  <div className="flex-1">
-                    <div className="h-4 w-40 bg-gray-200 rounded animate-pulse" />
-                  </div>
-                  <div className="text-right ml-2">
-                    <div className="h-4 w-16 bg-gray-200 rounded mb-1 animate-pulse" />
-                    <div className="h-3 w-12 bg-gray-200 rounded animate-pulse" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* 세그먼트 리스트 */}
-          {ok.length > 0 && (
-            <div className="space-y-2 mb-4">
-              {ok.map((s, idx) => (
-                <div key={idx} className="flex justify-between items-center text-sm">
-                  <div className="flex-1 text-gray-600">
-                    {s.seg.fromName} → {s.seg.toName}
-                  </div>
-                  <div className="text-right ml-2">
-                    <div className="font-medium text-blue-600">{formatDistance(s.distance)}</div>
-                    <div className="text-xs text-gray-500">{formatDuration(s.duration)}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* 총합 */}
-          <div className="border-t pt-3">
-            <div className="flex justify-between items-center">
-              <span className="font-semibold text-gray-800">총 거리:</span>
-              <span className="font-bold text-lg text-blue-600">{formatDistance(totalDistance)}</span>
-            </div>
-            <div className="flex justify-between items-center mt-1">
-              <span className="font-semibold text-gray-800">총 시간:</span>
-              <span className="font-bold text-lg text-green-600">{formatDuration(totalDuration)}</span>
-            </div>
-          </div>
         </div>
       )}
     </div>
