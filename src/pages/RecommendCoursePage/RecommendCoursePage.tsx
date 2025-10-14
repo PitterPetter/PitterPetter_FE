@@ -4,7 +4,6 @@ import { RecommendMapbox } from "../../features/mapbox";
 import { Button } from "@mui/material";
 import { useRecommendStore } from "../../shared/store/recommend.store";
 import { useCallback, useMemo, useState, useEffect } from "react";
-import axios from "axios";
 import { PlaceDetailModal, SessionCoursesModal } from "../../features/course";
 import { useQueries, useMutation } from '@tanstack/react-query';
 import { fetchRoute, routeQueryKey } from '../../shared/api/routes.api';
@@ -12,26 +11,13 @@ import { useUIStore } from '../../shared/store/ui.store';
 import { useHeaderStore } from '../../shared/store/header.store';
 import { saveCourseApi } from "../../features/course/api";
 import { toast } from 'react-toastify';
+import { saveRecommendToSession } from "../../features/recommend/utils/sessionStorage";
+import { RecommendStop } from "./type";
 
-type RecommendStop = {
-  id?: string;
-  seq: number;
-  name: string;
-  category: string;
-  lat?: number;
-  lng?: number;
-  indoor?: boolean;
-  price_level?: number;
-  alcohol?: boolean | 0 | 1;
-  mood_tag?: number;
-  food_tag?: string[];
-  rating_avg?: number;
-};
-
-const formatCategory = (c?: string) => (c ? c.toUpperCase() : "UNKNOWN");
-const formatPrice = (p?: number) => (typeof p === "number" ? `가격대: ${p}` : "");
-const formatAlcohol = (a?: boolean | 0 | 1) => (a ? "음주 가능" : "음주 불가");
-const formatIndoor = (i?: boolean) => (i ? "실내" : "실외");
+const formatCategory = (category?: string) => (category ? category.toUpperCase() : "UNKNOWN");
+const formatPrice = (price_level?: number) => (typeof price_level === "number" ? `가격대: ${price_level}` : "");
+const formatAlcohol = (alcohol?: boolean | 0 | 1) => (alcohol ? "음주 가능" : "음주 불가");
+const formatIndoor = (indoor?: boolean) => (indoor ? "실내" : "실외");
 
 export const RecommendCoursePage = () => {
   const navigate = useNavigate();
@@ -60,6 +46,12 @@ export const RecommendCoursePage = () => {
     setIsSessionCoursesModalOpen(false);
   }, []);
 
+  const handleRerecommendSuccess = useCallback((data: any) => {
+    console.log('재추천 성공 데이터:', data);
+    saveRecommendToSession(data.explain, data.data);
+    setRecommend?.(data);
+  }, [setRecommend]);
+
     const handlePlaceClick = useCallback((place: RecommendStop) => {
       setSelectedPlace(place);
       setIsPlaceModalOpen(true);
@@ -74,7 +66,6 @@ export const RecommendCoursePage = () => {
         alcohol: typeof place.alcohol === 'number' ? place.alcohol : (place.alcohol ? 1 : 0),
         mood_tag: 0 // 기본값 설정
       });
-      // URL 변경
       navigate(`/recommend/${place.id || place.seq}`);
     }, [navigate, setStoreSelectedPlace]);
 
@@ -139,7 +130,6 @@ export const RecommendCoursePage = () => {
   const isAnyPending = results.some(r => r.isPending);
   const isAnyFetching = results.some(r => r.isFetching);
 
-  // Helper functions
   const formatDistance = (m: number) => {
     return m >= 1000 ? `${(m / 1000).toFixed(1)}km` : `${Math.round(m)}m`;
   };
@@ -148,7 +138,6 @@ export const RecommendCoursePage = () => {
     return `${Math.round(sec / 60)}분`;
   };
 
-  // useMutation을 컴포넌트 최상위에서 호출
   const saveCourseMutation = useMutation({
     mutationFn: saveCourseApi,
     onSuccess: (data) => {
@@ -424,6 +413,7 @@ export const RecommendCoursePage = () => {
       <SessionCoursesModal
         isOpen={isSessionCoursesModalOpen}
         onClose={handleCloseSessionCoursesModal}
+        onSuccess={handleRerecommendSuccess}
       />
     </div>
   );

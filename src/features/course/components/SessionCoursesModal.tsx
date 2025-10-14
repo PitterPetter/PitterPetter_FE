@@ -2,11 +2,32 @@ import React, { useState } from 'react';
 import { Place } from '../../../shared/store/type';
 import { loadRecommendFromSession } from '../../recommend/utils/sessionStorage';
 import { SessionCoursesModalProps } from '../types';
+import { rerecommendCourseApi } from '../api';
+import { useMutation } from '@tanstack/react-query';
+import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
-export const SessionCoursesModal: React.FC<SessionCoursesModalProps> = ({ isOpen, onClose }) => {
+export const SessionCoursesModal: React.FC<SessionCoursesModalProps> = ({ isOpen, onClose, onSuccess }) => {
+  const navigate = useNavigate();
   const sessionData = loadRecommendFromSession();
   const places: Place[] = sessionData?.data || [];
   const [selectedPlaces, setSelectedPlaces] = useState<Set<number>>(new Set());
+
+  const rerecommendCourseMutation = useMutation({
+    mutationFn: rerecommendCourseApi,
+    onSuccess: (response) => {
+      console.log('API 응답:', response);
+      const data = response.data;
+      console.log('추출된 데이터:', data);
+      toast.success("재추천 받기 성공");
+      onSuccess?.(data);
+      navigate('/recommend');
+      onClose();
+    },
+    onError: () => {
+      toast.error("재추천 받기에 실패했습니다.");
+    },
+  });
 
   const formatCategory = (category?: string) => (category ? category.toUpperCase() : "UNKNOWN");
 
@@ -19,6 +40,13 @@ export const SessionCoursesModal: React.FC<SessionCoursesModalProps> = ({ isOpen
         newSet.add(seq);
       }
       return newSet;
+    });
+  };
+
+  const handleRerecommend = () => {
+    rerecommendCourseMutation.mutate({
+      explain: sessionData?.explain,
+      data: places.filter(place => selectedPlaces.has(place.seq)),
     });
   };
 
@@ -95,7 +123,7 @@ export const SessionCoursesModal: React.FC<SessionCoursesModalProps> = ({ isOpen
             <p className="text-sm text-gray-600">
               재추천 받을 장소를 선택해주세요
             </p>
-            <button className="bg-[#662B2B] text-white w-full py-3 rounded-md">
+            <button className="bg-[#662B2B] text-white w-full py-3 rounded-md" onClick={handleRerecommend}>
               재추천 받기
             </button>
           </div>

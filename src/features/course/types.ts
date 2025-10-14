@@ -30,4 +30,5 @@ export type PoiDetail = {
 export interface SessionCoursesModalProps {
   isOpen: boolean;
   onClose: () => void;
+  onSuccess?: (data: any) => void;
 }
