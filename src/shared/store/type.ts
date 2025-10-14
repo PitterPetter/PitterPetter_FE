@@ -47,6 +47,7 @@ export type Place = {
 export type RecommendStore = {
   explain: string;
   data: Place[];
+  setRecommend: (recommend: { explain: string; data: Place[] }) => void;
 };
 
 // HeaderStore

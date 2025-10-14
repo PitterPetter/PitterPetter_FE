@@ -12,12 +12,32 @@ import { useRecommendStore } from '../../../shared/store/recommend.store';
 const MapboxRecommendPage: React.FC<MapboxProps> = ({
   center = [127.1, 37.5133],
   zoom = 15,
-  pitch = 0
+  pitch = 0,
+  courseData
 }) => {
   const mapContainerRef = useRef<MapRefs['container']>(null);
   const mapRef = useRef<MapRefs['map']>(null);
   const { data: recommendData } = useRecommendStore();
   const { isMapReady, setMapReady } = useUIStore();
+  
+  // courseData가 있으면 우선 사용, 없으면 recommendData 사용
+  const displayData = useMemo(() => {
+    if (courseData?.poi_list) {
+      return courseData.poi_list.map((poiSet: any) => ({
+        id: poiSet.poi.poi_id,
+        name: poiSet.poi.name,
+        category: poiSet.poi.category,
+        lat: poiSet.poi.lat,
+        lng: poiSet.poi.lng,
+        seq: poiSet.order,
+        indoor: poiSet.poi.indoor,
+        price_level: poiSet.poi.price_level,
+        alcohol: poiSet.poi.alcohol,
+        mood_tag: poiSet.poi.mood_tag,
+      }));
+    }
+    return recommendData;
+  }, [courseData, recommendData]);
   const getTimeOfDay = (date = new Date()): TimeOfDay => {
     const hour = date.getHours();
     if (hour >= 5 && hour < 9) return 'dawn';
@@ -28,13 +48,13 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
 
   // 데이터가 있을 때만 center 계산
   const mapCenter = useMemo(() => {
-    if (recommendData && recommendData.length > 0) {
-      const avgLng = recommendData.reduce((s, v) => s + v.lng, 0) / recommendData.length;
-      const avgLat = recommendData.reduce((s, v) => s + v.lat, 0) / recommendData.length;
+    if (displayData && displayData.length > 0) {
+      const avgLng = displayData.reduce((s: number, v: any) => s + v.lng, 0) / displayData.length;
+      const avgLat = displayData.reduce((s: number, v: any) => s + v.lat, 0) / displayData.length;
       return [avgLng, avgLat] as [number, number];
     }
     return center;
-  }, [recommendData, center]);
+  }, [displayData, center]);
 
   // 1) 맵 초기화 + 마커/임시 점선(직선)
   useEffect(() => {
@@ -76,18 +96,6 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
     });
 
     map.on('load', () => {
-      // 마커 + 임시 점선 먼저
-      if (recommendData && recommendData.length > 0) {
-        const sorted: InputData[] = [...recommendData].sort((a, b) => a.seq - b.seq);
-
-        sorted.forEach(stop => addSeqMarker(map, stop));
-
-        for (let i = 0; i < sorted.length - 1; i++) {
-          const s = sorted[i], e = sorted[i + 1];
-          upsertLine(map, segId(s.seq, e.seq), lineString([s.lng, s.lat], [e.lng, e.lat]), false);
-        }
-      }
-
       setMapReady(true);
     });
 
@@ -96,7 +104,43 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
       mapRef.current = null;
       setMapReady(false);
     };
-  }, [mapCenter.toString(), zoom, pitch, setMapReady, recommendData]);
+  }, [mapCenter.toString(), zoom, pitch, setMapReady]);
+
+  // displayData가 변경될 때 마커와 라인 업데이트
+  useEffect(() => {
+    if (!mapRef.current || !isMapReady) return;
+    
+    const map = mapRef.current;
+    
+    // 기존 마커와 라인 제거
+    map.getStyle().layers?.forEach(layer => {
+      if (layer.id.includes('marker') || layer.id.includes('line')) {
+        if (map.getLayer(layer.id)) {
+          map.removeLayer(layer.id);
+        }
+      }
+    });
+    
+    map.getStyle().sources && Object.keys(map.getStyle().sources).forEach(sourceId => {
+      if (sourceId.includes('marker') || sourceId.includes('line')) {
+        if (map.getSource(sourceId)) {
+          map.removeSource(sourceId);
+        }
+      }
+    });
+
+    // 새로운 마커와 라인 추가
+    if (displayData && displayData.length > 0) {
+      const sorted: InputData[] = [...displayData].sort((a, b) => a.seq - b.seq);
+
+      sorted.forEach(stop => addSeqMarker(map, stop));
+
+      for (let i = 0; i < sorted.length - 1; i++) {
+        const s = sorted[i], e = sorted[i + 1];
+        upsertLine(map, segId(s.seq, e.seq), lineString([s.lng, s.lat], [e.lng, e.lat]), false);
+      }
+    }
+  }, [displayData, isMapReady]);
 
   // 2) 세그먼트 목록
   const segments = useMemo(() => {
@@ -108,8 +152,8 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
       toName: string;
     }[] = [];
 
-    if (recommendData && recommendData.length > 0) {
-      const stops: InputData[] = [...recommendData].sort((a, b) => a.seq - b.seq);
+    if (displayData && displayData.length > 0) {
+      const stops: InputData[] = [...displayData].sort((a, b) => a.seq - b.seq);
       for (let i = 0; i < stops.length - 1; i++) {
         const s = stops[i], e = stops[i + 1];
         arr.push({
@@ -122,7 +166,7 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
       }
     }
     return arr;
-  }, [recommendData]);
+  }, [displayData]);
 
   // 3) TanStack Query – 경로 호출/캐싱/상태
   const results = useQueries({
