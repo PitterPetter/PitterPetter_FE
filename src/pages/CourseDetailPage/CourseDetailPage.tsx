@@ -67,15 +67,6 @@ export const CourseDetailPage = () => {
       {/* url에 따라 컴포넌트 변경 */}
       <div className="w-[28.57vw] min-w-[320px] z-10 relative">
         <CourseDetailSidebar />
-
-        <div className="absolute bottom-20 left-0 w-full flex flex-col gap-2 p-4">
-          {/* <div className="flex gap-2 w-full h-[50px] justify-between">
-            <Button variant="outlined" className="w-full" onClick={() => {navigate("/options")}}>Back to Options</Button>
-            <Button variant="outlined" className="w-full">Rerecommend</Button>
-          </div> */}
-          <Button variant="contained" className="w-full h-[50px]" onClick={() => {navigate("/course")}}>추억의 코스로 돌아가기</Button>
-          <Button variant="contained" className="w-full h-[50px]" onClick={() => {navigate("/diary/create")}}>다이어리 작성하러 가기</Button>
-        </div>
       </div>
       
       {/* 장소 상세 모달 */}
