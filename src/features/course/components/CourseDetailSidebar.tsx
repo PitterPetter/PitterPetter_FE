@@ -99,7 +99,7 @@ export const CourseDetailSidebar = () => {
         <p className="text-base text-[#6B7486] w-full break-words break-all px-2">{activeCourse.description}</p>
       </div>
       <div className="w-full h-px bg-gray-200" />
-      <div className="flex flex-col w-full gap-2">
+      <div className="flex flex-col w-full gap-2 overflow-y-auto">
         {sortedStops.map((stop, index) => {
           const navigationState: PlaceNavigationState = {
             courseId: activeCourse.course_id,

@@ -8,16 +8,38 @@ import { useUIStore } from '../../../shared/store/ui.store';
 import { fetchRoute, routeQueryKey } from '../../../shared/api/routes.api';
 import { MapboxProps, MapRefs, InputData, TimeOfDay } from '../types';
 import { useRecommendStore } from '../../../shared/store/recommend.store';
+import { useHeaderStore } from '../../../shared/store/header.store';
 
 const MapboxRecommendPage: React.FC<MapboxProps> = ({
   center = [127.1, 37.5133],
   zoom = 15,
-  pitch = 0
+  pitch = 0,
+  courseData
 }) => {
   const mapContainerRef = useRef<MapRefs['container']>(null);
   const mapRef = useRef<MapRefs['map']>(null);
-  const { data: recommendData } = useRecommendStore();
+  const { data: recommendData, selectedPlace } = useRecommendStore();
   const { isMapReady, setMapReady } = useUIStore();
+  const { isOpen } = useHeaderStore();
+  
+  // courseData가 있으면 우선 사용, 없으면 recommendData 사용
+  const displayData = useMemo(() => {
+    if (courseData?.poi_list) {
+      return courseData.poi_list.map((poiSet: any) => ({
+        id: poiSet.poi.poi_id,
+        name: poiSet.poi.name,
+        category: poiSet.poi.category,
+        lat: poiSet.poi.lat,
+        lng: poiSet.poi.lng,
+        seq: poiSet.order,
+        indoor: poiSet.poi.indoor,
+        price_level: poiSet.poi.price_level,
+        alcohol: poiSet.poi.alcohol,
+        mood_tag: poiSet.poi.mood_tag,
+      }));
+    }
+    return recommendData;
+  }, [courseData, recommendData]);
   const getTimeOfDay = (date = new Date()): TimeOfDay => {
     const hour = date.getHours();
     if (hour >= 5 && hour < 9) return 'dawn';
@@ -28,13 +50,27 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
 
   // 데이터가 있을 때만 center 계산
   const mapCenter = useMemo(() => {
-    if (recommendData && recommendData.length > 0) {
-      const avgLng = recommendData.reduce((s, v) => s + v.lng, 0) / recommendData.length;
-      const avgLat = recommendData.reduce((s, v) => s + v.lat, 0) / recommendData.length;
-      return [avgLng, avgLat] as [number, number];
+    if (displayData && displayData.length > 0) {
+      // 유효한 좌표만 필터링
+      const validData = displayData.filter((v: any) => 
+        typeof v.lng === 'number' && 
+        typeof v.lat === 'number' && 
+        !isNaN(v.lng) && 
+        !isNaN(v.lat)
+      );
+      
+      if (validData.length > 0) {
+        const avgLng = validData.reduce((s: number, v: any) => s + v.lng, 0) / validData.length;
+        const avgLat = validData.reduce((s: number, v: any) => s + v.lat, 0) / validData.length;
+        
+        // NaN 체크
+        if (!isNaN(avgLng) && !isNaN(avgLat)) {
+          return [avgLng, avgLat] as [number, number];
+        }
+      }
     }
     return center;
-  }, [recommendData, center]);
+  }, [displayData, center]);
 
   // 1) 맵 초기화 + 마커/임시 점선(직선)
   useEffect(() => {
@@ -76,18 +112,6 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
     });
 
     map.on('load', () => {
-      // 마커 + 임시 점선 먼저
-      if (recommendData && recommendData.length > 0) {
-        const sorted: InputData[] = [...recommendData].sort((a, b) => a.seq - b.seq);
-
-        sorted.forEach(stop => addSeqMarker(map, stop));
-
-        for (let i = 0; i < sorted.length - 1; i++) {
-          const s = sorted[i], e = sorted[i + 1];
-          upsertLine(map, segId(s.seq, e.seq), lineString([s.lng, s.lat], [e.lng, e.lat]), false);
-        }
-      }
-
       setMapReady(true);
     });
 
@@ -96,7 +120,51 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
       mapRef.current = null;
       setMapReady(false);
     };
-  }, [mapCenter.toString(), zoom, pitch, setMapReady, recommendData]);
+  }, [mapCenter.toString(), zoom, pitch, setMapReady]);
+
+  // displayData가 변경될 때 마커와 라인 업데이트
+  useEffect(() => {
+    if (!mapRef.current || !isMapReady) return;
+    
+    const map = mapRef.current;
+    
+    // 기존 마커와 라인 제거
+    map.getStyle().layers?.forEach(layer => {
+      if (layer.id.includes('marker') || layer.id.includes('line')) {
+        if (map.getLayer(layer.id)) {
+          map.removeLayer(layer.id);
+        }
+      }
+    });
+    
+    map.getStyle().sources && Object.keys(map.getStyle().sources).forEach(sourceId => {
+      if (sourceId.includes('marker') || sourceId.includes('line')) {
+        if (map.getSource(sourceId)) {
+          map.removeSource(sourceId);
+        }
+      }
+    });
+
+    // 새로운 마커와 라인 추가
+    if (displayData && displayData.length > 0) {
+      // 유효한 좌표만 필터링하여 정렬
+      const validData = displayData.filter((v: any) => 
+        typeof v.lng === 'number' && 
+        typeof v.lat === 'number' && 
+        !isNaN(v.lng) && 
+        !isNaN(v.lat)
+      );
+      
+      const sorted: InputData[] = [...validData].sort((a, b) => a.seq - b.seq);
+
+      sorted.forEach(stop => addSeqMarker(map, stop));
+
+      for (let i = 0; i < sorted.length - 1; i++) {
+        const s = sorted[i], e = sorted[i + 1];
+        upsertLine(map, segId(s.seq, e.seq), lineString([s.lng, s.lat], [e.lng, e.lat]), false);
+      }
+    }
+  }, [displayData, isMapReady]);
 
   // 2) 세그먼트 목록
   const segments = useMemo(() => {
@@ -108,8 +176,8 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
       toName: string;
     }[] = [];
 
-    if (recommendData && recommendData.length > 0) {
-      const stops: InputData[] = [...recommendData].sort((a, b) => a.seq - b.seq);
+    if (displayData && displayData.length > 0) {
+      const stops: InputData[] = [...displayData].sort((a, b) => a.seq - b.seq);
       for (let i = 0; i < stops.length - 1; i++) {
         const s = stops[i], e = stops[i + 1];
         arr.push({
@@ -122,7 +190,7 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
       }
     }
     return arr;
-  }, [recommendData]);
+  }, [displayData]);
 
   // 3) TanStack Query – 경로 호출/캐싱/상태
   const results = useQueries({
@@ -148,7 +216,25 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
     });
   }, [results, segments, isMapReady]);
 
-  // 5) 패널 데이터: 성공한 것만 집계
+  // 5) 선택된 장소로 지도 중심 이동
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !isMapReady || !selectedPlace) return;
+
+    // 선택된 장소의 좌표가 유효한지 확인
+    if (typeof selectedPlace.lng === 'number' && typeof selectedPlace.lat === 'number' && 
+        !isNaN(selectedPlace.lng) && !isNaN(selectedPlace.lat)) {
+      
+      map.flyTo({
+        center: [selectedPlace.lng, selectedPlace.lat],
+        zoom: 17,
+        duration: 1000,
+        essential: true
+      });
+    }
+  }, [selectedPlace, isMapReady]);
+
+  // 6) 패널 데이터: 성공한 것만 집계
   const ok = results
     .map((r, i) => (r.isSuccess ? { seg: segments[i], ...r.data } : null))
     .filter(Boolean) as Array<{ seg: (typeof segments)[number]; distance: number; duration: number }>;
@@ -160,72 +246,28 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
   const isAnyFetching = results.some(r => r.isFetching);
 
   return (
-    <div style={{ position: 'relative', height: '100vh', width: '100vw' }}>
-      <div ref={mapContainerRef} id="map" style={{ height: '100%', width: '100%' }} />
+    <div style={{ 
+      position: 'relative', 
+      height: '100vh', 
+      width: '100vw',
+      maxWidth: '100vw',
+      overflow: 'hidden'
+    }}>
+      <div 
+        ref={mapContainerRef} 
+        id="map" 
+        style={{ 
+          height: '100%',
+          width: '100%',
+          transition: 'all 0.3s ease-in-out'
+        }} 
+      />
 
       {/* 전역 오버레이 */}
       {(!isMapReady || isAnyPending) && (
         <div className="pointer-events-none absolute inset-0 bg-white z-20 flex items-center justify-center">
           <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-300 border-t-transparent" />
           <span className="ml-3 text-gray-700 font-medium">경로 계산 중…</span>
-        </div>
-      )}
-
-      {/* 루트 정보 패널 */}
-      {(ok.length > 0 || isAnyPending || isAnyFetching) && (
-        <div className="absolute top-4 left-4 bg-white rounded-lg shadow-lg p-4 max-w-sm z-30 min-w-[280px]">
-          <h3 className="font-bold text-lg mb-3 text-gray-800 flex items-center">
-            코스 정보
-            {isAnyFetching && (
-              <span className="ml-2 text-xs px-2 py-0.5 rounded bg-blue-50 text-blue-600">갱신 중</span>
-            )}
-          </h3>
-
-          {/* 스켈레톤 */}
-          {ok.length === 0 && (isAnyPending || isAnyFetching) && (
-            <div className="space-y-2 mb-4">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="flex justify-between items-center text-sm">
-                  <div className="flex-1">
-                    <div className="h-4 w-40 bg-gray-200 rounded animate-pulse" />
-                  </div>
-                  <div className="text-right ml-2">
-                    <div className="h-4 w-16 bg-gray-200 rounded mb-1 animate-pulse" />
-                    <div className="h-3 w-12 bg-gray-200 rounded animate-pulse" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* 세그먼트 리스트 */}
-          {ok.length > 0 && (
-            <div className="space-y-2 mb-4">
-              {ok.map((s, idx) => (
-                <div key={idx} className="flex justify-between items-center text-sm">
-                  <div className="flex-1 text-gray-600">
-                    {s.seg.fromName} → {s.seg.toName}
-                  </div>
-                  <div className="text-right ml-2">
-                    <div className="font-medium text-blue-600">{formatDistance(s.distance)}</div>
-                    <div className="text-xs text-gray-500">{formatDuration(s.duration)}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* 총합 */}
-          <div className="border-t pt-3">
-            <div className="flex justify-between items-center">
-              <span className="font-semibold text-gray-800">총 거리:</span>
-              <span className="font-bold text-lg text-blue-600">{formatDistance(totalDistance)}</span>
-            </div>
-            <div className="flex justify-between items-center mt-1">
-              <span className="font-semibold text-gray-800">총 시간:</span>
-              <span className="font-bold text-lg text-green-600">{formatDuration(totalDuration)}</span>
-            </div>
-          </div>
         </div>
       )}
     </div>

@@ -12,7 +12,7 @@ interface ImageUploadProps {
 export const ImageUpload: React.FC<ImageUploadProps> = ({
   onFileSelect,
   className = '',
-  maxSize = 10, // 10MB 기본값
+  maxSize = 5, // 5MB 기본값
   acceptedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
