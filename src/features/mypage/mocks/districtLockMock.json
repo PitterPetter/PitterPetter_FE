@@ -1,0 +1,166 @@
+{
+  "success": true,
+  "data": {
+    "totalKeys": 15,
+    "cities": [
+      {
+        "cityName": "서울시",
+        "totalDistricts": 25,
+        "lockedDistricts": 20,
+        "unlockedDistricts": 5,
+        "districts": [
+          {
+            "id": "gangnam",
+            "name": "강남구",
+            "isLocked": false,
+            "description": "서울의 중심가, 강남역 일대"
+          },
+          {
+            "id": "seocho",
+            "name": "서초구",
+            "isLocked": false,
+            "description": "강남의 중심, 서초동과 반포동"
+          },
+          {
+            "id": "mapo",
+            "name": "마포구",
+            "isLocked": false,
+            "description": "홍대, 이대, 연세대가 있는 젊은 도시"
+          },
+          {
+            "id": "jongno",
+            "name": "종로구",
+            "isLocked": false,
+            "description": "경복궁과 인사동이 있는 역사적 중심가"
+          },
+          {
+            "id": "jung",
+            "name": "중구",
+            "isLocked": false,
+            "description": "명동과 남대문이 있는 서울의 중심"
+          },
+          {
+            "id": "gangdong",
+            "name": "강동구",
+            "isLocked": true,
+            "description": "한강과 접한 동부 지역"
+          },
+          {
+            "id": "gangbuk",
+            "name": "강북구",
+            "isLocked": true,
+            "description": "북한산 기슭의 조용한 주거지역"
+          },
+          {
+            "id": "gangseo",
+            "name": "강서구",
+            "isLocked": true,
+            "description": "김포공항과 가까운 서부 지역"
+          },
+          {
+            "id": "gwanak",
+            "name": "관악구",
+            "isLocked": true,
+            "description": "서울대학교가 위치한 지역"
+          },
+          {
+            "id": "gwangjin",
+            "name": "광진구",
+            "isLocked": true,
+            "description": "건국대학교와 한강이 만나는 곳"
+          },
+          {
+            "id": "guro",
+            "name": "구로구",
+            "isLocked": true,
+            "description": "구로디지털단지가 있는 지역"
+          },
+          {
+            "id": "geumcheon",
+            "name": "금천구",
+            "isLocked": true,
+            "description": "서울의 남서부 끝자락"
+          },
+          {
+            "id": "nowon",
+            "name": "노원구",
+            "isLocked": true,
+            "description": "북한산과 도봉산 사이의 지역"
+          },
+          {
+            "id": "dobong",
+            "name": "도봉구",
+            "isLocked": true,
+            "description": "도봉산이 있는 북부 지역"
+          },
+          {
+            "id": "dongdaemun",
+            "name": "동대문구",
+            "isLocked": true,
+            "description": "동대문 시장과 청계천이 있는 지역"
+          },
+          {
+            "id": "dongjak",
+            "name": "동작구",
+            "isLocked": true,
+            "description": "한강과 남산이 보이는 지역"
+          },
+          {
+            "id": "seodaemun",
+            "name": "서대문구",
+            "isLocked": true,
+            "description": "서대문형무소와 독립문이 있는 역사적 지역"
+          },
+          {
+            "id": "seongdong",
+            "name": "성동구",
+            "isLocked": true,
+            "description": "성수동과 한강이 만나는 지역"
+          },
+          {
+            "id": "seongbuk",
+            "name": "성북구",
+            "isLocked": true,
+            "description": "한성대와 고려대가 있는 지역"
+          },
+          {
+            "id": "songpa",
+            "name": "송파구",
+            "isLocked": true,
+            "description": "롯데월드타워와 올림픽공원이 있는 지역"
+          },
+          {
+            "id": "yangcheon",
+            "name": "양천구",
+            "isLocked": true,
+            "description": "목동과 신정동이 있는 서부 지역"
+          },
+          {
+            "id": "yeongdeungpo",
+            "name": "영등포구",
+            "isLocked": true,
+            "description": "여의도와 한강이 만나는 지역"
+          },
+          {
+            "id": "yongsan",
+            "name": "용산구",
+            "isLocked": true,
+            "description": "남산과 한강이 만나는 중심가"
+          },
+          {
+            "id": "eunpyeong",
+            "name": "은평구",
+            "isLocked": true,
+            "description": "북한산 기슭의 조용한 주거지역"
+          },
+          {
+            "id": "jungnang",
+            "name": "중랑구",
+            "isLocked": true,
+            "description": "동부의 조용한 주거지역"
+          }
+        ]
+      }
+    ]
+  }
+}

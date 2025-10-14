@@ -18,6 +18,9 @@ import AuthBootstrap from './app/providers/AuthBootstrap';
 import { CoupleRoomModal } from './pages/CoupleRoomPage/CoupleRoomModal';
 import { CoupleCodeRoom } from './pages/CoupleRoomPage/CoupleCodeRoom';
 import { CreateDiaryPage } from './pages/DiaryPage/CreateDiaryPage';
+import { DistrictModal } from './pages/DistrictPage/DistrictModal';
+import { DistrictChoose } from './pages/DistrictPage/DistrictChoose';
+import { DistrictCheck } from './pages/DistrictPage/DistrictCheck';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import DataBootstrap from './app/providers/DataBootstrap';
@@ -41,6 +44,10 @@ function App() {
               <Route path="create" element={<CreateCoupleRoom />} />
               <Route path="create/:id" element={<CoupleCodeRoom />} />
               <Route path="enter" element={<EnterCoupleRoom />} />
+            </Route>
+            <Route path="district" element={<DistrictModal />}>
+              <Route path="choose" element={<DistrictChoose />} />
+              <Route path="check" element={<DistrictCheck />} />
             </Route>
           </Route>
           <Route path="/options" element={<OptionsPage />} />
