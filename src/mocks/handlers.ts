@@ -246,6 +246,9 @@ export const handlers = [
   // 재추천 코스
   http.post(`${API}/api/courses/recommends/replace`, async ({ request }) => {
     await delay(700);
+    const body = await request.json().catch(() => ({}));
+    console.log('재추천 API 요청 데이터:', body);
+    
     const mock = {
       explain: '오늘 무드에 맞는 코스입니다~',
       data: [

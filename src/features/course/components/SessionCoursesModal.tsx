@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Place } from '../../../shared/store/type';
 import { loadRecommendFromSession } from '../../recommend/utils/sessionStorage';
+import { loadOptionFromSession } from '../../option/utils/sessionStorage';
 import { SessionCoursesModalProps } from '../types';
 import { rerecommendCourseApi } from '../api';
 import { useMutation } from '@tanstack/react-query';
@@ -44,10 +45,29 @@ export const SessionCoursesModal: React.FC<SessionCoursesModalProps> = ({ isOpen
   };
 
   const handleRerecommend = () => {
-    rerecommendCourseMutation.mutate({
-      explain: sessionData?.explain,
-      data: places.filter(place => selectedPlaces.has(place.seq)),
-    });
+    // 옵션 데이터 로드
+    const optionData = loadOptionFromSession();
+    
+    // 재추천 API에 필요한 데이터 구성
+    const requestData = {
+      exclude_pois: places.filter(place => selectedPlaces.has(place.seq)).map(place => ({
+        category: place.category,
+        name: place.name,
+        lat: place.lat,
+        lng: place.lng
+      })),
+      previous_recommendations: places.map(place => ({
+        category: place.category,
+        name: place.name,
+        lat: place.lat,
+        lng: place.lng,
+        seq: place.seq
+      })),
+      user_choice: optionData?.user_choice || {}
+    };
+
+    console.log('재추천 요청 데이터:', requestData);
+    rerecommendCourseMutation.mutate(requestData);
   };
 
   if (!isOpen) return null;
