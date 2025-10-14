@@ -1,7 +1,7 @@
 // 코스 상세 페이지 (Mapbox 페이지 + 코스 & 장소 목록 페이지)
 
 import { useLocation } from "react-router-dom";
-import { RecommendMapbox } from "../../features/mapbox";
+import { CourseDetailMapbox } from "../../features/mapbox";
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useParams } from "react-router-dom";
@@ -129,7 +129,7 @@ export const CourseDetailPage = () => {
 
   return (
     <div className={`flex absolute left-0 top-0 w-full h-full`}>
-      <RecommendMapbox courseData={currentCourse} />
+      <CourseDetailMapbox courseData={currentCourse} />
 
 
       {/* 루트 정보 패널 */}
