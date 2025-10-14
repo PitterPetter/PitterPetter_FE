@@ -20,12 +20,14 @@ import { CoupleCodeRoom } from './pages/CoupleRoomPage/CoupleCodeRoom';
 import { CreateDiaryPage } from './pages/DiaryPage/CreateDiaryPage';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import DataBootstrap from './app/providers/DataBootstrap';
 
 function App() {
 
   return (
     <BrowserRouter>
       <AuthBootstrap />
+      <DataBootstrap />
       <Routes>
         {/* 로그인 페이지 */}
         <Route path="/login" element={<LoginPage />} />
@@ -48,7 +50,7 @@ function App() {
           {/* 코스 추천 페이지 */}
           <Route path="/recommend" element={<RecommendCoursePage />}>
             <Route index element={<CourseDetailSidebar />} />
-            <Route path="course/:id" element={<PlaceDetailSidebar />} />
+            <Route path=":id" element={<PlaceDetailSidebar />} />
           </Route>
 
           {/* 코스 상세 페이지 */}

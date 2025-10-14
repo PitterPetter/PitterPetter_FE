@@ -4,9 +4,10 @@ import { PlaceDetailSidebar } from "./PlaceDetailSidebar";
 interface PlaceDetailModalProps {
   isOpen: boolean;
   onClose: () => void;
+  placeData?: any; // 추천 장소 데이터
 }
 
-export const PlaceDetailModal = ({ isOpen, onClose }: PlaceDetailModalProps) => {
+export const PlaceDetailModal = ({ isOpen, onClose, placeData }: PlaceDetailModalProps) => {
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
@@ -64,7 +65,7 @@ export const PlaceDetailModal = ({ isOpen, onClose }: PlaceDetailModalProps) => 
           </div>
    
           <div className="h-[calc(100vh-144px)] overflow-y-auto">
-              <PlaceDetailSidebar />       
+              <PlaceDetailSidebar placeData={placeData} />       
                </div>
         </div>
       </div>

@@ -47,7 +47,11 @@ export type Place = {
 export type RecommendStore = {
   explain: string;
   data: Place[];
+  selectedPlace: Place | null;
   setRecommend: (recommend: { explain: string; data: Place[] }) => void;
+  setSelectedPlace: (place: Place | null) => void;
+  restoreFromSession: () => boolean;
+  clearSession: () => void;
 };
 
 // HeaderStore

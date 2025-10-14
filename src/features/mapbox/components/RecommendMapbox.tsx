@@ -18,7 +18,7 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
 }) => {
   const mapContainerRef = useRef<MapRefs['container']>(null);
   const mapRef = useRef<MapRefs['map']>(null);
-  const { data: recommendData } = useRecommendStore();
+  const { data: recommendData, selectedPlace } = useRecommendStore();
   const { isMapReady, setMapReady } = useUIStore();
   const { isOpen } = useHeaderStore();
   
@@ -51,9 +51,23 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
   // 데이터가 있을 때만 center 계산
   const mapCenter = useMemo(() => {
     if (displayData && displayData.length > 0) {
-      const avgLng = displayData.reduce((s: number, v: any) => s + v.lng, 0) / displayData.length;
-      const avgLat = displayData.reduce((s: number, v: any) => s + v.lat, 0) / displayData.length;
-      return [avgLng, avgLat] as [number, number];
+      // 유효한 좌표만 필터링
+      const validData = displayData.filter((v: any) => 
+        typeof v.lng === 'number' && 
+        typeof v.lat === 'number' && 
+        !isNaN(v.lng) && 
+        !isNaN(v.lat)
+      );
+      
+      if (validData.length > 0) {
+        const avgLng = validData.reduce((s: number, v: any) => s + v.lng, 0) / validData.length;
+        const avgLat = validData.reduce((s: number, v: any) => s + v.lat, 0) / validData.length;
+        
+        // NaN 체크
+        if (!isNaN(avgLng) && !isNaN(avgLat)) {
+          return [avgLng, avgLat] as [number, number];
+        }
+      }
     }
     return center;
   }, [displayData, center]);
@@ -133,7 +147,15 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
 
     // 새로운 마커와 라인 추가
     if (displayData && displayData.length > 0) {
-      const sorted: InputData[] = [...displayData].sort((a, b) => a.seq - b.seq);
+      // 유효한 좌표만 필터링하여 정렬
+      const validData = displayData.filter((v: any) => 
+        typeof v.lng === 'number' && 
+        typeof v.lat === 'number' && 
+        !isNaN(v.lng) && 
+        !isNaN(v.lat)
+      );
+      
+      const sorted: InputData[] = [...validData].sort((a, b) => a.seq - b.seq);
 
       sorted.forEach(stop => addSeqMarker(map, stop));
 
@@ -194,7 +216,25 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
     });
   }, [results, segments, isMapReady]);
 
-  // 5) 패널 데이터: 성공한 것만 집계
+  // 5) 선택된 장소로 지도 중심 이동
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !isMapReady || !selectedPlace) return;
+
+    // 선택된 장소의 좌표가 유효한지 확인
+    if (typeof selectedPlace.lng === 'number' && typeof selectedPlace.lat === 'number' && 
+        !isNaN(selectedPlace.lng) && !isNaN(selectedPlace.lat)) {
+      
+      map.flyTo({
+        center: [selectedPlace.lng, selectedPlace.lat],
+        zoom: 17,
+        duration: 1000,
+        essential: true
+      });
+    }
+  }, [selectedPlace, isMapReady]);
+
+  // 6) 패널 데이터: 성공한 것만 집계
   const ok = results
     .map((r, i) => (r.isSuccess ? { seg: segments[i], ...r.data } : null))
     .filter(Boolean) as Array<{ seg: (typeof segments)[number]; distance: number; duration: number }>;

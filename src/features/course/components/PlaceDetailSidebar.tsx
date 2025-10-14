@@ -155,7 +155,11 @@ const findPlaceEntry = (
   return narrowedEntries[0] ?? null;
 };
 
-export const PlaceDetailSidebar = () => {
+interface PlaceDetailSidebarProps {
+  placeData?: any; // 추천 장소 데이터
+}
+
+export const PlaceDetailSidebar = ({ placeData }: PlaceDetailSidebarProps) => {
   const location = useLocation();
   const { id: courseIdParam, placeId } = useParams();
   const navigationState = (location.state ?? {}) as NavigationState;
@@ -208,6 +212,87 @@ export const PlaceDetailSidebar = () => {
   const resolvedEntry = useMemo(() => {
     return findPlaceEntry(poisWithCourse, courseTargets, poiTargets);
   }, [courseTargets, poiTargets, poisWithCourse]);
+
+  // 추천 장소 데이터가 있으면 해당 데이터를 사용
+  if (placeData) {
+    const formatPriceLevel = (level?: number) => {
+      if (!Number.isFinite(level) || level === undefined || level <= 0) {
+        return "정보 없음";
+      }
+      const normalized = Math.max(1, Math.min(4, Math.round(level)));
+      return "₩".repeat(normalized);
+    };
+
+    const formatAlcohol = (alcohol?: boolean | 0 | 1) => {
+      if (alcohol === undefined || alcohol === null) return "정보 없음";
+      const supportsAlcohol = typeof alcohol === "number" ? alcohol > 0 : Boolean(alcohol);
+      return supportsAlcohol ? "주류 제공" : "주류 미제공";
+    };
+
+    const formatIndoor = (indoor?: boolean) => {
+      if (indoor === undefined) return "정보 없음";
+      return indoor ? "실내" : "실외";
+    };
+
+    return (
+      <div className="flex h-full flex-col bg-white">
+        <div className="flex-1 overflow-y-auto">
+          <div className="border-b border-gray-100 px-6 py-5">
+            <h3 className="mt-2 text-xl font-bold text-gray-900">{placeData.name}</h3>
+            {placeData.category ? <p className="text-sm text-gray-500">{placeData.category}</p> : null}
+          </div>
+
+          <div className="space-y-6 px-6 py-5">
+            <div className="space-y-3">
+              {placeData.category && (
+                <div className="flex justify-between gap-4 text-sm">
+                  <span className="text-gray-500">카테고리</span>
+                  <span className="truncate text-right font-medium text-gray-800">{placeData.category}</span>
+                </div>
+              )}
+              
+              {placeData.indoor !== undefined && (
+                <div className="flex justify-between gap-4 text-sm">
+                  <span className="text-gray-500">공간</span>
+                  <span className="truncate text-right font-medium text-gray-800">{formatIndoor(placeData.indoor)}</span>
+                </div>
+              )}
+              
+              {placeData.price_level !== undefined && (
+                <div className="flex justify-between gap-4 text-sm">
+                  <span className="text-gray-500">가격대</span>
+                  <span className="truncate text-right font-medium text-gray-800">{formatPriceLevel(placeData.price_level)}</span>
+                </div>
+              )}
+              
+              {placeData.alcohol !== undefined && (
+                <div className="flex justify-between gap-4 text-sm">
+                  <span className="text-gray-500">주류</span>
+                  <span className="truncate text-right font-medium text-gray-800">{formatAlcohol(placeData.alcohol)}</span>
+                </div>
+              )}
+              
+              {placeData.seq && (
+                <div className="flex justify-between gap-4 text-sm">
+                  <span className="text-gray-500">순서</span>
+                  <span className="truncate text-right font-medium text-gray-800">{placeData.seq}번째 장소</span>
+                </div>
+              )}
+              
+              {(typeof placeData.lat === "number" && typeof placeData.lng === "number") && (
+                <div className="flex justify-between gap-4 text-sm">
+                  <span className="text-gray-500">좌표</span>
+                  <span className="truncate text-right font-medium text-gray-800">
+                    {placeData.lat.toFixed(4)}, {placeData.lng.toFixed(4)}
+                  </span>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   if (!resolvedEntry) {
     return (

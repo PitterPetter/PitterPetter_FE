@@ -20,10 +20,41 @@ export const OptionsPage = () => {
   const [startTime, setStartTime] = useState<Date>(new Date());
   const [endTime, setEndTime] = useState<Date>(new Date());
   const start = useStartStore.getState();
+  const { setRecommend } = useRecommendStore();
   const mutation = useMutation({
     mutationFn: postOption,
     onSuccess: (data) => {
-      useRecommendStore.setState({ data: data });
+      console.log('Options API response:', data);
+      if (data?.explain && data?.data) {
+        const mapData = data.data.map((item: any) => ({
+          seq: item.seq,
+          name: item.name,
+          category: item.category,
+          lat: item.lat,
+          lng: item.lng,
+          indoor: item.indoor,
+          price_level: item.price_level,
+          alcohol: item.alcohol,
+          mood_tag: typeof item.mood_tag === 'string' ? parseInt(item.mood_tag) || 0 : item.mood_tag || 0,
+        }));
+        
+        setRecommend({ 
+          explain: data.explain,
+          data: mapData 
+        });
+        
+        console.log('Set recommend data:', { explain: data.explain, data: mapData });
+      } else {
+        // 기존 방식 (배열 직접 반환)
+        const mapData = Array.isArray(data) ? data : data?.courses || [];
+        
+        setRecommend({ 
+          explain: "옵션에서 추천받은 코스",
+          data: mapData 
+        });
+        
+        console.log('Set recommend data:', { explain: "옵션에서 추천받은 코스", data: mapData });
+      }
       navigation("/recommend");
     },
     onError: (error) => {
