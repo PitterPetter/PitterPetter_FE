@@ -27,3 +27,7 @@ export type PoiDetail = {
   link?: string | null;
   avarage_review_score?: number;
 };
+export interface SessionCoursesModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+}
