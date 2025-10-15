@@ -4,31 +4,20 @@ import { RecommendMapbox } from "../../features/mapbox";
 import { Button } from "@mui/material";
 import { useRecommendStore } from "../../shared/store/recommend.store";
 import { useCallback, useMemo, useState, useEffect } from "react";
-import axios from "axios";
-import { PlaceDetailModal } from "../../features/course";
+import { PlaceDetailModal, SessionCoursesModal } from "../../features/course";
 import { useQueries, useMutation } from '@tanstack/react-query';
 import { fetchRoute, routeQueryKey } from '../../shared/api/routes.api';
 import { useUIStore } from '../../shared/store/ui.store';
 import { useHeaderStore } from '../../shared/store/header.store';
 import { saveCourseApi } from "../../features/course/api";
 import { toast } from 'react-toastify';
+import { saveRecommendToSession } from "../../features/recommend/utils/sessionStorage";
+import { RecommendStop } from "./type";
 
-type RecommendStop = {
-  id?: string;
-  seq: number;
-  name: string;
-  category: string;
-  lat?: number;
-  lng?: number;
-  indoor?: boolean;
-  price_level?: number;
-  alcohol?: boolean | 0 | 1;
-};
-
-const formatCategory = (c?: string) => (c ? c.toUpperCase() : "UNKNOWN");
-const formatPrice = (p?: number) => (typeof p === "number" ? `가격대: ${p}` : "");
-const formatAlcohol = (a?: boolean | 0 | 1) => (a ? "음주 가능" : "음주 불가");
-const formatIndoor = (i?: boolean) => (i ? "실내" : "실외");
+const formatCategory = (category?: string) => (category ? category.toUpperCase() : "UNKNOWN");
+const formatPrice = (price_level?: number) => (typeof price_level === "number" ? `가격대: ${price_level}` : "");
+const formatAlcohol = (alcohol?: boolean | 0 | 1) => (alcohol ? "음주 가능" : "음주 불가");
+const formatIndoor = (indoor?: boolean) => (indoor ? "실내" : "실외");
 
 export const RecommendCoursePage = () => {
   const navigate = useNavigate();
@@ -39,6 +28,7 @@ export const RecommendCoursePage = () => {
   const { isOpen } = useHeaderStore();
   const [isPlaceModalOpen, setIsPlaceModalOpen] = useState(false);
   const [selectedPlace, setSelectedPlace] = useState<RecommendStop | null>(null);
+  const [isSessionCoursesModalOpen, setIsSessionCoursesModalOpen] = useState(false);
 
   const stops: RecommendStop[] = useMemo(() => {
     if (!recommendData) return [];
@@ -48,13 +38,18 @@ export const RecommendCoursePage = () => {
     return [];
   }, [recommendData]);
 
-  const handleRerecommend = useCallback(async () => {
-    try {
-      const { data } = await axios.post("https://api.loventure.us/api/recommends", {}, { withCredentials: true });
-      setRecommend?.(data);
-    } catch (e) {
-      console.error("[Rerecommend] failed:", e);
-    }
+  const handleRerecommend = useCallback(() => {
+    setIsSessionCoursesModalOpen(true);
+  }, []);
+
+  const handleCloseSessionCoursesModal = useCallback(() => {
+    setIsSessionCoursesModalOpen(false);
+  }, []);
+
+  const handleRerecommendSuccess = useCallback((data: any) => {
+    console.log('재추천 성공 데이터:', data);
+    saveRecommendToSession(data.explain, data.data);
+    setRecommend?.(data);
   }, [setRecommend]);
 
     const handlePlaceClick = useCallback((place: RecommendStop) => {
@@ -71,7 +66,6 @@ export const RecommendCoursePage = () => {
         alcohol: typeof place.alcohol === 'number' ? place.alcohol : (place.alcohol ? 1 : 0),
         mood_tag: 0 // 기본값 설정
       });
-      // URL 변경
       navigate(`/recommend/${place.id || place.seq}`);
     }, [navigate, setStoreSelectedPlace]);
 
@@ -136,7 +130,6 @@ export const RecommendCoursePage = () => {
   const isAnyPending = results.some(r => r.isPending);
   const isAnyFetching = results.some(r => r.isFetching);
 
-  // Helper functions
   const formatDistance = (m: number) => {
     return m >= 1000 ? `${(m / 1000).toFixed(1)}km` : `${Math.round(m)}m`;
   };
@@ -145,7 +138,6 @@ export const RecommendCoursePage = () => {
     return `${Math.round(sec / 60)}분`;
   };
 
-  // useMutation을 컴포넌트 최상위에서 호출
   const saveCourseMutation = useMutation({
     mutationFn: saveCourseApi,
     onSuccess: (data) => {
@@ -275,7 +267,7 @@ export const RecommendCoursePage = () => {
 
             <div className="w-full h-px bg-gray-200" />
 
-            <div className="flex flex-col w-full gap-2 overflow-y-auto">
+            <div className="flex flex-col w-full gap-2 overflow-y-auto max-h-[calc(100vh-380px)]">
               {[...stops]
                 .sort((a, b) => (a.seq ?? 0) - (b.seq ?? 0))
                 .map((stop, index) => (
@@ -302,12 +294,20 @@ export const RecommendCoursePage = () => {
                           .filter(Boolean)
                           .join(" | ")}
                       </p>
-                      {(typeof stop.lat === "number" && typeof stop.lng === "number") ? (
-                        <p className="text-xs text-gray-400">
-                          좌표: {stop.lat.toFixed(4)}, {stop.lng.toFixed(4)}
+                      {stop.rating_avg && (
+                        <p className="text-xs text-yellow-600">
+                          평점: {stop.rating_avg.toFixed(1)}
                         </p>
-                      ) : (
-                        <p className="text-xs text-gray-400">좌표: -</p>
+                      )}
+                      {stop.mood_tag && (
+                        <p className="text-xs text-blue-600">
+                          분위기: {stop.mood_tag}
+                        </p>
+                      )}
+                      {stop.food_tag && stop.food_tag.length > 0 && (
+                        <p className="text-xs text-green-600">
+                          음식 태그: {stop.food_tag.join(", ")}
+                        </p>
                       )}
                     </div>
 
@@ -317,31 +317,28 @@ export const RecommendCoursePage = () => {
                   </div>
                 ))}
             </div>
+
+              {/* 하단 버튼 */}
+              <div className="flex flex-col gap-2 p-4 z-20">
+                <div className="flex gap-2 w-full h-[50px] justify-between">
+                  <Button variant="outlined" className="w-full" onClick={handleRerecommend}>
+                    Rerecommend
+                  </Button>
+                </div>
+                <Button
+                  variant="contained"
+                  className="w-full h-[50px]"
+                  onClick={() => saveCourse()}
+                >
+                  Save this course
+                </Button>
+              </div>
           </div>
         ) : (
           <div className="flex h-full items-center justify-center bg-white p-6 text-sm text-gray-500">
             추천 코스 데이터가 없습니다. 온보딩을 완료해주세요.
           </div>
         )}
-
-        {/* 하단 버튼 */}
-        <div className="absolute bottom-20 left-0 w-[460px] flex flex-col gap-2 p-4 z-20">
-          <div className="flex gap-2 w-full h-[50px] justify-between">
-            <Button variant="outlined" className="w-full" onClick={() => navigate("/options")}>
-              Back to Options
-            </Button>
-            <Button variant="outlined" className="w-full" onClick={handleRerecommend}>
-              Rerecommend
-            </Button>
-          </div>
-          <Button
-            variant="contained"
-            className="w-full h-[50px]"
-            onClick={() => saveCourse()}
-          >
-            Save this course
-          </Button>
-        </div>
       </div>
 
 
@@ -411,6 +408,13 @@ export const RecommendCoursePage = () => {
           placeData={selectedPlace}
         />
       )}
+
+      {/* 세션 코스 모달 */}
+      <SessionCoursesModal
+        isOpen={isSessionCoursesModalOpen}
+        onClose={handleCloseSessionCoursesModal}
+        onSuccess={handleRerecommendSuccess}
+      />
     </div>
   );
 };

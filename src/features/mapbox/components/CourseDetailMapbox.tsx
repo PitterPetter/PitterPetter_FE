@@ -8,7 +8,6 @@ import { useUIStore } from '../../../shared/store/ui.store';
 import { fetchRoute, routeQueryKey } from '../../../shared/api/routes.api';
 import { MapboxProps, MapRefs, InputData, TimeOfDay } from '../types';
 import { useRecommendStore } from '../../../shared/store/recommend.store';
-import { Spinner } from '../../../shared/ui/spinner';
 
 const MapboxRecommendPage: React.FC<MapboxProps> = ({
   center = [127.1, 37.5133],
@@ -18,21 +17,11 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
 }) => {
   const mapContainerRef = useRef<MapRefs['container']>(null);
   const mapRef = useRef<MapRefs['map']>(null);
-  const markersRef = useRef<mapboxgl.Marker[]>([]);
-  const drawRetryTimerRef = useRef<number | null>(null);
-  const drawRetryCountRef = useRef(0);
-  const ignoreSelectedUntilRef = useRef(0);
-  const lastDataKeyRef = useRef('');
-
-  const dataRef = useRef<{
-    displayData: InputData[];
-    ok: Array<{ seg: { id: string; start: [number, number]; end: [number, number]; fromName: string; toName: string }, distance: number, duration: number, geometry: GeoJSON.LineString }>;
-  }>({ displayData: [], ok: [] });
-
   const { data: recommendData, selectedPlace } = useRecommendStore();
   const { isMapReady, setMapReady } = useUIStore();
   
-  const displayData = useMemo<InputData[] | any>(() => {
+  // courseData가 있으면 우선 사용, 없으면 recommendData 사용
+  const displayData = useMemo(() => {
     if (courseData?.poi_list) {
       return courseData.poi_list.map((poiSet: any) => ({
         id: poiSet.poi.poi_id,
@@ -49,66 +38,30 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
     }
     return recommendData;
   }, [courseData, recommendData]);
-
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map || !isMapReady) return;
-    if (!displayData || displayData.length === 0) return;
-  
-    const valid = displayData.filter((v: any) =>
-      Number.isFinite(v.lng) && Number.isFinite(v.lat)
-    );
-    if (valid.length === 0) return;
-
-    const key = JSON.stringify(valid.map((v: any) => [v.seq, v.lng, v.lat]));
-    if (key === lastDataKeyRef.current) return;
-    lastDataKeyRef.current = key;
-  
-    const recenter = () => {
-      if (!map.isStyleLoaded()) return;
-      if (valid.length === 1) {
-        map.flyTo({
-          center: [valid[0].lng, valid[0].lat],
-          zoom: 16,
-          duration: 700,
-          essential: true,
-        });
-        ignoreSelectedUntilRef.current = Date.now() + 1500;
-        return;
-      }
-      const bounds = valid.reduce((b: mapboxgl.LngLatBounds, p: any) => {
-        return b.extend([p.lng, p.lat]);
-      }, new mapboxgl.LngLatBounds([valid[0].lng, valid[0].lat], [valid[0].lng, valid[0].lat]));
-  
-      map.fitBounds(bounds, { padding: 120, duration: 800 });
-      ignoreSelectedUntilRef.current = Date.now() + 1500;
-    };
-  
-    if (map.isStyleLoaded()) {
-      recenter();
-    } else {
-      const once = () => { map.off('style.load', once); recenter(); };
-      map.on('style.load', once);
-    }
-  }, [displayData, isMapReady]);
-
   const getTimeOfDay = (date = new Date()): TimeOfDay => {
     const hour = date.getHours();
     if (hour >= 5 && hour < 9) return 'dawn';
     if (hour >= 9 && hour < 17) return 'day';
     if (hour >= 17 && hour < 21) return 'dusk';
     return 'night';
-  };
+  }
 
+  // 데이터가 있을 때만 center 계산
   const mapCenter = useMemo(() => {
     if (displayData && displayData.length > 0) {
+      // 유효한 좌표만 필터링
       const validData = displayData.filter((v: any) => 
-        typeof v.lng === 'number' && typeof v.lat === 'number' &&
-        !isNaN(v.lng) && !isNaN(v.lat)
+        typeof v.lng === 'number' && 
+        typeof v.lat === 'number' && 
+        !isNaN(v.lng) && 
+        !isNaN(v.lat)
       );
+      
       if (validData.length > 0) {
         const avgLng = validData.reduce((s: number, v: any) => s + v.lng, 0) / validData.length;
         const avgLat = validData.reduce((s: number, v: any) => s + v.lat, 0) / validData.length;
+        
+        // NaN 체크
         if (!isNaN(avgLng) && !isNaN(avgLat)) {
           return [avgLng, avgLat] as [number, number];
         }
@@ -117,6 +70,7 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
     return center;
   }, [displayData, center]);
 
+  // 1) 맵 초기화 + 마커/임시 점선(직선)
   useEffect(() => {
     if (!mapContainerRef.current) return;
 
@@ -125,6 +79,7 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
     const map = new mapboxgl.Map({
       container: mapContainerRef.current,
       style: 'mapbox://styles/mapbox/standard',
+      // 시간에 따라 조명 프리셋 변경
       config: {
         basemap: {
           lightPreset: getTimeOfDay().toLowerCase() as 'dawn' | 'day' | 'dusk' | 'night',
@@ -139,6 +94,7 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
 
     map.on('error', (e) => {
       if (e.error?.message?.includes('meshes is not iterable')) {
+        console.debug('3D mesh error suppressed (map works fine)');
         return;
       }
       console.error('Map error:', e);
@@ -146,37 +102,90 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
 
     mapRef.current = map;
 
-    const onLoad = () => setMapReady(true);
-    map.once('load', onLoad);
+    map.once('style.load', () => {
+      map.setConfigProperty('basemap', 'showPointOfInterestLabels', false);
+      map.setConfigProperty('basemap', 'showPlaceLabels', false);
+      map.setConfigProperty('basemap', 'showRoadLabels', false);
+      map.setConfigProperty('basemap', 'showTransitLabels', false);
+    });
 
-    const onStyleLoad = () => {
-      try {
-        map.setConfigProperty('basemap', 'showPointOfInterestLabels', false);
-        map.setConfigProperty('basemap', 'showPlaceLabels', false);
-        map.setConfigProperty('basemap', 'showRoadLabels', false);
-        map.setConfigProperty('basemap', 'showTransitLabels', false);
-      } catch {}
-      rebuildAll();
-      forceEnsureSolidLines();
-    };
-    map.on('style.load', onStyleLoad);
+    map.on('load', () => {
+      setMapReady(true);
+    });
 
     return () => {
-      map.off('style.load', onStyleLoad);
-      try {
-        markersRef.current.forEach(m => m.remove());
-        markersRef.current = [];
-      } catch {}
-      if (drawRetryTimerRef.current) {
-        window.clearTimeout(drawRetryTimerRef.current);
-        drawRetryTimerRef.current = null;
-      }
       map.remove();
       mapRef.current = null;
       setMapReady(false);
     };
   }, [mapCenter.toString(), zoom, pitch, setMapReady]);
 
+  // displayData가 변경될 때 마커와 라인 업데이트
+  useEffect(() => {
+    if (!mapRef.current || !isMapReady) return;
+    
+    const map = mapRef.current;
+    
+    // 스타일이 로딩 중인지 확인
+    if (!map.isStyleLoaded()) {
+      map.on('styledata', () => {
+        updateMapMarkers();
+      });
+      return;
+    }
+    
+    updateMapMarkers();
+  }, [displayData, isMapReady]);
+
+  const updateMapMarkers = () => {
+    if (!mapRef.current) return;
+    
+    const map = mapRef.current;
+    
+    // 기존 마커와 라인 제거
+    try {
+      map.getStyle().layers?.forEach(layer => {
+        if (layer.id.includes('marker') || layer.id.includes('line')) {
+          if (map.getLayer(layer.id)) {
+            map.removeLayer(layer.id);
+          }
+        }
+      });
+      
+      map.getStyle().sources && Object.keys(map.getStyle().sources).forEach(sourceId => {
+        if (sourceId.includes('marker') || sourceId.includes('line')) {
+          if (map.getSource(sourceId)) {
+            map.removeSource(sourceId);
+          }
+        }
+      });
+    } catch (error) {
+      console.warn('Map style not ready:', error);
+      return;
+    }
+
+    // 새로운 마커와 라인 추가
+    if (displayData && displayData.length > 0) {
+      // 유효한 좌표만 필터링하여 정렬
+      const validData = displayData.filter((v: any) => 
+        typeof v.lng === 'number' && 
+        typeof v.lat === 'number' && 
+        !isNaN(v.lng) && 
+        !isNaN(v.lat)
+      );
+      
+      const sorted: InputData[] = [...validData].sort((a, b) => a.seq - b.seq);
+
+      sorted.forEach(stop => addSeqMarker(map, stop));
+
+      for (let i = 0; i < sorted.length - 1; i++) {
+        const s = sorted[i], e = sorted[i + 1];
+        upsertLine(map, segId(s.seq, e.seq), lineString([s.lng, s.lat], [e.lng, e.lat]), false);
+      }
+    }
+  };
+
+  // 2) 세그먼트 목록
   const segments = useMemo(() => {
     const arr: {
       id: string;
@@ -202,6 +211,7 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
     return arr;
   }, [displayData]);
 
+  // 3) TanStack Query – 경로 호출/캐싱/상태
   const results = useQueries({
     queries: segments.map(seg => ({
       queryKey: routeQueryKey({ start: seg.start, end: seg.end }),
@@ -213,55 +223,27 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
     }))
   });
 
-  const ok = results
-    .map((r, i) => (r.isSuccess ? { seg: segments[i], ...r.data } : null))
-    .filter(Boolean) as Array<{
-      seg: (typeof segments)[number];
-      distance: number;
-      duration: number;
-      geometry: GeoJSON.LineString;
-    }>;
-
-  useEffect(() => {
-    dataRef.current.displayData = (displayData || []) as InputData[];
-  }, [displayData]);
-  useEffect(() => {
-    dataRef.current.ok = ok;
-  }, [ok]);
-
+  // 4) 성공 시 실선으로 교체
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !isMapReady) return;
-    if (map.isStyleLoaded()) {
-      rebuildAll();
-      forceEnsureSolidLines();
-    }
-  }, [displayData, segments, isMapReady]);
 
-  useEffect(() => {
-    const map = mapRef.current;
-    if (!map || !isMapReady) return;
-  
-    const drawSolids = () => {
-      if (!map.isStyleLoaded()) return;
-      ok.forEach(x => upsertLine(map, x.seg.id, x.geometry, true));
-      forceEnsureSolidLines();
-    };
-  
-    if (map.isStyleLoaded()) drawSolids();
-    else {
-      const once = () => { map.off('style.load', once); drawSolids(); };
-      map.on('style.load', once);
-    }
-  }, [ok, isMapReady]);
-  
+    results.forEach((r, i) => {
+      if (!r.isSuccess) return;
+      const seg = segments[i];
+      upsertLine(map, seg.id, r.data.geometry as GeoJSON.LineString, true);
+    });
+  }, [results, segments, isMapReady]);
 
+  // 5) 선택된 장소로 지도 중심 이동
   useEffect(() => {
     const map = mapRef.current;
     if (!map || !isMapReady || !selectedPlace) return;
-    if (Date.now() < ignoreSelectedUntilRef.current) return;
-    if (typeof selectedPlace.lng === 'number' && typeof selectedPlace.lat === 'number' &&
+
+    // 선택된 장소의 좌표가 유효한지 확인
+    if (typeof selectedPlace.lng === 'number' && typeof selectedPlace.lat === 'number' && 
         !isNaN(selectedPlace.lng) && !isNaN(selectedPlace.lat)) {
+      
       map.flyTo({
         center: [selectedPlace.lng, selectedPlace.lat],
         zoom: 17,
@@ -271,8 +253,16 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
     }
   }, [selectedPlace, isMapReady]);
 
+  // 6) 패널 데이터: 성공한 것만 집계
+  const ok = results
+    .map((r, i) => (r.isSuccess ? { seg: segments[i], ...r.data } : null))
+    .filter(Boolean) as Array<{ seg: (typeof segments)[number]; distance: number; duration: number }>;
+
+  const totalDistance = ok.reduce((s, x) => s + x.distance, 0);
+  const totalDuration = ok.reduce((s, x) => s + x.duration, 0);
+
   const isAnyPending = results.some(r => r.isPending);
-  const isAnyMissing = ok.length < segments.length;
+  const isAnyFetching = results.some(r => r.isFetching);
 
   return (
     <div style={{ 
@@ -292,73 +282,20 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
         }} 
       />
 
-      {(!isMapReady || isAnyPending || isAnyMissing) && (
-        <div className="pointer-events-none absolute inset-0 bg-white/80 z-20 flex flex-col items-center justify-center gap-3">
-          <Spinner />
-          <span className="ml-0 text-gray-700 font-medium">경로 계산 중…</span>
+      {/* 전역 오버레이 */}
+      {(!isMapReady || isAnyPending) && (
+        <div className="pointer-events-none absolute inset-0 bg-white z-20 flex items-center justify-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-300 border-t-transparent" />
+          <span className="ml-3 text-gray-700 font-medium">경로 계산 중…</span>
         </div>
       )}
     </div>
   );
-
-  function rebuildAll() {
-    const map = mapRef.current;
-    if (!map || !map.isStyleLoaded()) return;
-  
-    try { markersRef.current.forEach(m => m.remove()); markersRef.current = []; } catch {}
-    try {
-      const style = map.getStyle();
-      style?.layers?.forEach(l => { if (l.id.startsWith('route-')) map.getLayer(l.id) && map.removeLayer(l.id); });
-      const srcs = style?.sources ? Object.keys(style.sources) : [];
-      srcs.forEach(id => { if (id.startsWith('route-')) map.getSource(id) && map.removeSource(id); });
-    } catch {}
-  
-    const list = (dataRef.current.displayData || [])
-      .filter((v: any) => Number.isFinite(v.lng) && Number.isFinite(v.lat))
-      .sort((a: InputData, b: InputData) => a.seq - b.seq);
-  
-    list.forEach(stop => {
-      const marker = addSeqMarker(map, stop);
-      markersRef.current.push(marker);
-    });
-  }
-
-  function forceEnsureSolidLines() {
-    const map = mapRef.current;
-    if (!map) return;
-    if (drawRetryTimerRef.current) {
-      window.clearTimeout(drawRetryTimerRef.current);
-      drawRetryTimerRef.current = null;
-    }
-    drawRetryCountRef.current = 0;
-
-    const tick = () => {
-      if (!mapRef.current) return;
-      if (!map.isStyleLoaded()) {
-        drawRetryTimerRef.current = window.setTimeout(tick, 300);
-        return;
-      }
-      const missing = (dataRef.current.ok || []).filter(x => !map.getLayer(x.seg.id) || !map.getSource(x.seg.id));
-      missing.forEach(x => upsertLine(map, x.seg.id, x.geometry, true));
-      const stillMissing = (dataRef.current.ok || []).some(x => !map.getLayer(x.seg.id) || !map.getSource(x.seg.id));
-      if (stillMissing && drawRetryCountRef.current < 10) {
-        drawRetryCountRef.current += 1;
-        drawRetryTimerRef.current = window.setTimeout(tick, 300);
-      } else {
-        if (drawRetryTimerRef.current) {
-          window.clearTimeout(drawRetryTimerRef.current);
-          drawRetryTimerRef.current = null;
-        }
-      }
-    };
-
-    tick();
-  }
 };
 
 export default MapboxRecommendPage;
 
-/* Helpers */
+/* ==================== Helpers ==================== */
 
 function segId(sid: string | number, eid: string | number) {
   return `route-${sid}-${eid}`;
@@ -378,8 +315,7 @@ function addSeqMarker(map: mapboxgl.Map, stop: InputData) {
     font-weight: bold; font-size: 14px;
   `;
   el.textContent = String(stop.seq);
-  const marker = new mapboxgl.Marker(el).setLngLat([stop.lng, stop.lat]).addTo(map);
-  return marker;
+  new mapboxgl.Marker(el).setLngLat([stop.lng, stop.lat]).addTo(map);
 }
 function upsertLine(
   map: mapboxgl.Map,
@@ -387,14 +323,8 @@ function upsertLine(
   geometry: GeoJSON.LineString,
   solid: boolean
 ) {
-  if (!map.isStyleLoaded()) {
-    const once = () => { map.off('style.load', once); upsertLine(map, id, geometry, solid); };
-    map.on('style.load', once);
-    return;
-  }
-
-  const data: GeoJSON.Feature<GeoJSON.LineString> = { type: 'Feature', properties: {}, geometry };
   const src = map.getSource(id) as mapboxgl.GeoJSONSource | undefined;
+  const data: GeoJSON.Feature<GeoJSON.LineString> = { type: 'Feature', properties: {}, geometry };
 
   if (!src) {
     map.addSource(id, { type: 'geojson', data });
@@ -421,4 +351,10 @@ function upsertLine(
       map.setPaintProperty(id, 'line-opacity', 0.8);
     }
   }
+}
+function formatDistance(m: number) {
+  return m >= 1000 ? `${(m / 1000).toFixed(1)}km` : `${Math.round(m)}m`;
+}
+function formatDuration(sec: number) {
+  return `${Math.round(sec / 60)}분`;
 }
