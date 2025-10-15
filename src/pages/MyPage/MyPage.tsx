@@ -5,13 +5,16 @@ import { PersonalOnboarding } from "../../features/onboarding/PersonalOnboarding
 import { useHeaderStore } from "../../shared/store/header.store";
 import { useMypageStore } from "../../shared/store/mypage.store";
 import { useOnboardingStore } from "../../shared/store/onboarding.store";
+import { useEffect } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { mypageApi } from "../../features/mypage/api";
 import { Spinner } from "../../shared/ui/spinner";
 import { toast } from 'react-toastify';
 import { CostList } from "../../features/onboarding/types";
+import { useLocation } from "react-router-dom";
 
 export const MyPage = () => {
+  const location = useLocation();
   const isOpen = useHeaderStore((s) => s.isOpen);
   const {
     isProfileLoading, setIsProfileLoading,
@@ -120,6 +123,19 @@ export const MyPage = () => {
     console.log('body data: ',{nickname, birthdate, alcoholPreference, activeBound, dateCostPreference: convertCostPreference(dateCostPreference), favoriteFoodCategories, atmosphere});
   };
 
+  useEffect(() => {
+    if (!location.hash) return;
+    const targetId = location.hash.replace('#', '');
+    const targetElement = document.getElementById(targetId);
+    if (!targetElement) return;
+
+    const handle = requestAnimationFrame(() => {
+      targetElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    return () => cancelAnimationFrame(handle);
+  }, [location.hash]);
+
   return (
     <div
       className="
@@ -173,7 +189,7 @@ export const MyPage = () => {
 
       {/* 하단 - 지역구 잠금 시스템 */}
       <div className="w-full">
-        <div className="border border-primary/10 rounded-2xl shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md">
+        <div id="district-lock" className="border border-primary/10 rounded-2xl shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md">
           <DistrictLock />
         </div>
       </div>

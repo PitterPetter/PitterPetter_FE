@@ -1,8 +1,7 @@
 import { MainMapbox } from "../../features/mapbox";
 import { useMarkerStore } from "../../shared/store/mapbox.store";
-import { Button } from "../../shared/ui/button";
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 import { CoupleRoomModal } from "../CoupleRoomPage/CoupleRoomModal";
 import { DistrictModal } from "../DistrictPage/DistrictModal";
 import { useDistrictStore } from "../../shared/store/district.store";
@@ -56,10 +55,25 @@ export const MainPage = () => {
       <MainMapbox />
 
       <div className="absolute bottom-16 right-1/2 translate-x-1/2">
-        <Button
+
+      {selectedDistrict && (
+            <div className="flex flex-col items-center gap-1 mb-2">
+              <span className="text-s font-semibold text-gray-800">
+                {selectedDistrict.name}
+              </span>
+              {isLockedDistrict && (
+                <p className="text-[#b45309]">
+                  <Link to="/mypage#district-lock" className="underline">
+                    잠금 해제
+                  </Link>{" "}
+                  후 이용 가능합니다
+                </p>
+              )}
+            </div>
+          )}
+        <div
           onClick={handleRecommend}
-          disabled={isRecommendDisabled}
-          className={isRecommendDisabled ? "bg-gray-400 hover:bg-gray-400 cursor-not-allowed" : ""}
+          className={`flex flex-col items-center justify-center active:scale-95 transition-all duration-150 rounded-lg w-48 h-12 text-white text-lg text-center shadow-md ${isRecommendDisabled || isLockedDistrict ? `cursor-not-allowed bg-primary/20` : `bg-primary hover:bg-primary cursor-pointer`}`}
           aria-disabled={isRecommendDisabled}
           title={(() => {
             if (!isMarkers) return "지도를 클릭해 시작점을 먼저 선택하세요";
@@ -69,18 +83,10 @@ export const MainPage = () => {
           })()}
         >
           코스 추천받기
-        </Button>
+        </div>
 
         <div className="mt-3 flex flex-col items-center gap-2 text-center text-xs text-gray-500">
           {!isMarkers && <p>시작점을 클릭해주세요</p>}
-          {selectedDistrict && (
-            <div className="flex flex-col items-center gap-1">
-              <span className="text-sm font-semibold text-gray-800">
-                {selectedDistrict.name}
-              </span>
-              {isLockedDistrict && <p className="text-[#b45309]">잠금 해제 후 이용 가능합니다</p>}
-            </div>
-          )}
           {isOutsideSeoul && <p className="text-red-500">서울 외부 지역은 지원되지 않습니다</p>}
         </div>
       </div>
