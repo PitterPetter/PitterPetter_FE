@@ -54,7 +54,8 @@ export const SessionCoursesModal: React.FC<SessionCoursesModalProps> = ({ isOpen
         category: place.category,
         name: place.name,
         lat: place.lat,
-        lng: place.lng
+        lng: place.lng,
+        seq: place.seq
       })),
       previous_recommendations: places.map(place => ({
         category: place.category,
