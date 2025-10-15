@@ -3,12 +3,11 @@ import { ImageUpload, MarkdownEditor } from '../../../shared/ui';
 import { useDiaryStore } from '../../../shared/store/diary.store';
 
 export const WriteDiary = () => {
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const { diaryTitle, setDiaryTitle, diaryContent, setDiaryContent } = useDiaryStore();
+  const { diaryTitle, setDiaryTitle, diaryContent, setDiaryContent, diaryImage, setDiaryImage } = useDiaryStore();
 
   const handleImageSelect = (file: File | null) => {
     console.log('Selected file:', file);
-    setSelectedImage(file);
+    setDiaryImage(file);
   };
 
   const handleContentChange = (content: string) => {

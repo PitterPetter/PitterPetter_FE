@@ -81,8 +81,8 @@ export type DiaryStore = {
   setDiaryTitle: (diaryTitle: string) => void;
   diaryContent: string;
   setDiaryContent: (diaryContent: string) => void;
-  diaryImage: string;
-  setDiaryImage: (diaryImage: string) => void;
+  diaryImage: File | null;
+  setDiaryImage: (diaryImage: File | null) => void;
 };
 
 // MypageStore

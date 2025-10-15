@@ -1,12 +1,33 @@
 {
-  "status": "success",
-  "data": {
-    "diaryId": "d_123",
-    "title": "제주도 첫 여행",
-    "content": "본문 텍스트…",
-    "courseId": "c_77",
-    "rating": "4.5",
-    "createdAt": "2025-09-05T00:00:00Z",
-    "updatedAt": "2025-09-06T10:11:12Z"
+  "timestamp": "2025-10-15T02:51:37.628Z",
+  "code": "string",
+  "result": {
+    "contentId": "1234567890123456789",
+    "title": "오늘의 데이트",
+    "content": "정말 즐거운 하루였습니다!",
+    "courseId": "9876543210987654321",
+    "userId": "string",
+    "author": "string",
+    "createdAt": "2025-10-15T02:51:37.628Z",
+    "updatedAt": "2025-10-15T02:51:37.628Z",
+    "comments": [
+      {
+        "commentId": "1234567890123456789",
+        "content": "좋은 글이네요!",
+        "userId": "9876543210987654321",
+        "authorName": "홍길동",
+        "createdAt": "2025-10-15T02:51:37.628Z",
+        "updatedAt": "2025-10-15T02:51:37.628Z"
+      }
+    ],
+    "imageId": "string",
+    "imageUrl": "https://static.solved.ac/profile_bg/profile/s4-gold5-ad0ef814-3b5c-4f75-acde-4a5d018cbd33.png",
+    "imageStatus": "string",
+    "imageExpiresIn": 0,
+    "imageUpload": {
+      "imageId": "1234567890123456789",
+      "presignedUrl": "string",
+      "expiresIn": 300
+    }
   }
 }

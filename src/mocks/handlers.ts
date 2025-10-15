@@ -167,4 +167,54 @@ export const handlers = [
 
     return HttpResponse.json(mock);
   }),
+
+  // 댓글 작성
+  http.post(`${API}/api/diaries/:id/comments`, async ({ params, request }) => {
+    await delay(300);
+    const body = await request.json().catch(() => ({}));
+    const { id } = params;
+    
+    return HttpResponse.json({
+      timestamp: new Date().toISOString(),
+      code: "COMMON200",
+      result: {
+        commentId: Date.now().toString(),
+        content: (body as any).content,
+        userId: "7610272898923", // mypageMock.json의 userId와 동일하게 설정
+        authorName: "양지훈",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+    });
+  }),
+
+  // 댓글 수정
+  http.put(`${API}/api/diaries/:diaryId/comments/:commentId`, async ({ params, request }) => {
+    await delay(300);
+    const body = await request.json().catch(() => ({}));
+    
+    return HttpResponse.json({
+      timestamp: new Date().toISOString(),
+      code: "COMMON200",
+      result: {
+        commentId: (params as any).commentId,
+        content: (body as any).content,
+        userId: "7610272898923", // mypageMock.json의 userId와 동일하게 설정
+        authorName: "양지훈",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      }
+    });
+  }),
+
+  // 댓글 삭제
+  http.delete(`${API}/api/diaries/:diaryId/comments/:commentId`, async () => {
+    await delay(300);
+    
+    return HttpResponse.json({
+      timestamp: new Date().toISOString(),
+      code: "COMMON200",
+      result: "댓글이 성공적으로 삭제되었습니다."
+    });
+  }),
 ];

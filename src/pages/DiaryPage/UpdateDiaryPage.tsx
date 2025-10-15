@@ -1,13 +1,13 @@
 import { ConnectCourse } from "../../features/diary/components/ConnectCourse";
 import { Review } from "../../features/diary/components/Review";
 import { WriteDiary } from "../../features/diary/components/WriteDiary";
-import { useNavigate } from "react-router-dom";
-import { diaryCreateApi } from "../../features/diary/api";
+import { useNavigate, useParams } from "react-router-dom";
+import { diaryUpdateApi } from "../../features/diary/api";
 import { useDiaryStore } from "../../shared/store/diary.store";
 import { toast } from 'react-toastify';
 import { useQuery } from "@tanstack/react-query";
 
-export const CreateDiaryPage = () => {
+export const UpdateDiaryPage = () => {
   const navigate = useNavigate();
   const { diaryTitle, diaryContent, diaryImage } = useDiaryStore();
 
@@ -24,6 +24,12 @@ export const CreateDiaryPage = () => {
   };
 
   const handleSave = async () => {
+    const { id } = useParams();
+    if (!id) {
+      toast.error('다이어리 ID가 없습니다.');
+      return;
+    }
+
     try {
       // API 호출을 위한 데이터 형태 구성
       const requestData = {
@@ -37,16 +43,16 @@ export const CreateDiaryPage = () => {
         removeImage: !diaryImage
       };
 
-      const res = await diaryCreateApi.createDiary(requestData);
+      const res = await diaryUpdateApi.updateDiary(id, requestData);
       
       // 성공 시 토스트 메시지와 네비게이션
-      toast.success('다이어리가 성공적으로 저장되었습니다.');
+      toast.success('다이어리가 성공적으로 수정되었습니다.');
       navigate('/diary');
       
-      console.log('Diary created successfully:', res);
+      console.log('Diary updated successfully:', res);
     } catch (error) {
-      console.error('Failed to create diary:', error);
-      toast.error('다이어리 저장에 실패했습니다.');
+      console.error('Failed to update diary:', error);
+      toast.error('다이어리 수정에 실패했습니다.');
     }
   };
   

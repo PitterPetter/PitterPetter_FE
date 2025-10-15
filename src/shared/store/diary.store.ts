@@ -12,6 +12,6 @@ export const useDiaryStore = create<DiaryStore>((set) => ({
   setDiaryTitle: (diaryTitle: string) => set({ diaryTitle }),
   diaryContent: '',
   setDiaryContent: (diaryContent: string) => set({ diaryContent }),
-  diaryImage: '',
-  setDiaryImage: (diaryImage: string) => set({ diaryImage }),
+  diaryImage: null as File | null,
+  setDiaryImage: (diaryImage: File | null) => set({ diaryImage }),
 }));
