@@ -1,3 +1,5 @@
+import { DistrictInfo } from "../../features/mypage/types";
+
 // MarkerStore
 export interface MarkerStore {
   isMarkers: boolean;
@@ -118,4 +120,10 @@ export type CoupleInfoStore = {
   setPartnerName: (partnerName: string) => void;
   partnerEmail: string;
   setPartnerEmail: (partnerEmail: string) => void;
+};
+
+// DistrictStore
+export type DistrictStore = {
+  district: DistrictInfo | null;
+  setDistrict: (district: DistrictInfo | null) => void;
 };

@@ -3,6 +3,8 @@ export interface DistrictInfo {
   name: string;
   isLocked: boolean;
   description?: string;
+  lat?: number;
+  lng?: number;
 }
 
 export interface CityData {
