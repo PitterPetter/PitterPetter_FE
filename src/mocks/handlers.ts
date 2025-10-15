@@ -87,9 +87,33 @@ export const handlers = [
   }),
 
   // 다이어리 목록
-  http.get(`${API}/api/diaries`, async () => {
+  http.get(`${API}/api/diaries`, async ({ request }) => {
     await delay(800);
-    return HttpResponse.json(diary);
+    const url = new URL(request.url);
+    const page = parseInt(url.searchParams.get('page') || '0');
+    const size = parseInt(url.searchParams.get('size') || '6');
+    
+    // 원본 데이터를 깊은 복사하여 사용
+    const allDiaries = JSON.parse(JSON.stringify(diary.data.content));
+    const startIndex = page * size;
+    const endIndex = startIndex + size;
+    const paginatedDiaries = allDiaries.slice(startIndex, endIndex);
+    
+    const totalElements = allDiaries.length;
+    const totalPages = Math.ceil(totalElements / size);
+    
+    return HttpResponse.json({
+      success: true,
+      data: {
+        content: paginatedDiaries,
+        page: {
+          page,
+          size,
+          totalElements,
+          totalPages
+        }
+      }
+    });
   }),
 
   // 코스 목록

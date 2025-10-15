@@ -2,7 +2,8 @@ import { api } from "../../shared/api/base";
 
 // 다이어리 목록 조회 API
 export const diaryApi = {
-  getDiaryList: () => api.get('/api/diaries'),
+  getDiaryList: (page: number = 0, size: number = 6) => 
+    api.get(`/api/diaries?page=${page}&size=${size}`),
   createDiary: (data: any) => api.post('/api/diaries', data),
 };
 
