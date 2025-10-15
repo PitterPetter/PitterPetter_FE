@@ -12,7 +12,7 @@ import { Spinner } from "../../../shared/ui/spinner";
 export const ConnectCourse = () => {
   const [searchResults, setSearchResults] = useState<Course[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
-  const { setCourseId } = useDiaryStore();
+  const { courseId, setCourseId, courseName, setCourseName } = useDiaryStore();
 
   const { data: courseList, isLoading, error } = useQuery({
     queryKey: ['courses'],
@@ -31,12 +31,21 @@ export const ConnectCourse = () => {
 
   useEffect(() => {
     setSearchResults(courseData);
-  }, [courseData]);
+    // 기존 courseId가 있으면 검색어에 설정
+    if (courseId) {
+      setSearchTerm(courseId);
+      handleCourseSelect(courseId);
+    }
+  }, [courseData, courseId]);
 
   // 코스 선택
   const handleCourseSelect = (courseId: number | string) => {
+    const selectedCourse = courseData.find(course => course.courseId === courseId);
     setSearchTerm(String(courseId));
     setCourseId(String(courseId));
+    if (selectedCourse) {
+      setCourseName(selectedCourse.title);
+    }
     handleInputChange({ target: { value: String(courseId) } } as React.ChangeEvent<HTMLInputElement>);
   };
 

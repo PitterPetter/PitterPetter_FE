@@ -26,6 +26,11 @@ export const diaryUpdateApi = {
   updateDiary: (id: string, data: any) => api.put(`/api/diaries/${id}`, data),
 };
 
+// 다이어리 삭제 API
+export const diaryDeleteApi = {
+  deleteDiary: (id: string) => api.delete(`/api/diaries/${id}`),
+};
+
 // 댓글 API
 export const commentApi = {
   // 댓글 작성

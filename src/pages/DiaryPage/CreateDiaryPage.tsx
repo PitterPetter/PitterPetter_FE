@@ -6,10 +6,16 @@ import { diaryCreateApi } from "../../features/diary/api";
 import { useDiaryStore } from "../../shared/store/diary.store";
 import { toast } from 'react-toastify';
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 export const CreateDiaryPage = () => {
   const navigate = useNavigate();
-  const { diaryTitle, diaryContent, diaryImage } = useDiaryStore();
+  const { diaryTitle, diaryContent, diaryImage, resetDiaryForm, courseId, courseName, rating } = useDiaryStore();
+
+  // 새 다이어리 작성 시 폼 초기화
+  useEffect(() => {
+    resetDiaryForm();
+  }, [resetDiaryForm]);
 
   const handleCancel = () => {
     const isReal = confirm('정말 취소하시겠습니까?\n(취소할 경우, 작성한 내용은 사라집니다)');
@@ -29,6 +35,9 @@ export const CreateDiaryPage = () => {
       const requestData = {
         title: diaryTitle,
         content: diaryContent,
+        courseId: courseId,
+        courseName: courseName,
+        rating: rating.toString(),
         image: diaryImage ? {
           originalFileName: diaryImage.name,
           contentType: diaryImage.type,
@@ -37,10 +46,17 @@ export const CreateDiaryPage = () => {
         removeImage: !diaryImage
       };
 
-      const res = await diaryCreateApi.createDiary(requestData);
+      const res = useQuery({
+        queryKey: ['diaryCreate'],
+        queryFn: async () => {
+          const res = await diaryCreateApi.createDiary(requestData);
+          return res;
+        },
+      });
       
       // 성공 시 토스트 메시지와 네비게이션
       toast.success('다이어리가 성공적으로 저장되었습니다.');
+      resetDiaryForm(); // store 초기화
       navigate('/diary');
       
       console.log('Diary created successfully:', res);

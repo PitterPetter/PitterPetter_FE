@@ -10,25 +10,74 @@
         "commentCount": 0,
         "likeCount": 0,
         "imageId": 10,
-        "imageUrl": "https://storage.googleapis.com/...",
+        "imageUrl": "https://static.solved.ac/profile_bg/profile/s4-gold5-ad0ef814-3b5c-4f75-acde-4a5d018cbd33.png",
         "imageStatus": "UPLOADED",
         "imageExpiresIn": 3600
       },
       {
         "diaryId": 12455123523, 
         "title": "업로드 중인 다이어리",
-        "excerpt": "...",
+        "excerpt": "오늘은 정말 특별한 날이었습니다. 새로운 곳을 탐험하며 많은 추억을 만들었어요.",
+        "updatedAt": "2025-10-12T15:30:00",
         "commentCount": 4,
         "likeCount": 0,
         "imageId": 11,
-        "imageUrl": null,
-        "imageStatus": "PENDING",
-        "imageExpiresIn": null
+        "imageUrl": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop",
+        "imageStatus": "UPLOADED",
+        "imageExpiresIn": 3600
+      },
+      {
+        "diaryId": 12455123523, 
+        "title": "업로드 중인 다이어리",
+        "excerpt": "오늘은 정말 특별한 날이었습니다. 새로운 곳을 탐험하며 많은 추억을 만들었어요.",
+        "updatedAt": "2025-10-12T15:30:00",
+        "commentCount": 4,
+        "likeCount": 0,
+        "imageId": 11,
+        "imageUrl": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop",
+        "imageStatus": "UPLOADED",
+        "imageExpiresIn": 3600
+      },
+      {
+        "diaryId": 12455123523, 
+        "title": "업로드 중인 다이어리",
+        "excerpt": "오늘은 정말 특별한 날이었습니다. 새로운 곳을 탐험하며 많은 추억을 만들었어요.",
+        "updatedAt": "2025-10-12T15:30:00",
+        "commentCount": 4,
+        "likeCount": 0,
+        "imageId": 11,
+        "imageUrl": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop",
+        "imageStatus": "UPLOADED",
+        "imageExpiresIn": 3600
+      },
+      {
+        "diaryId": 12455123523, 
+        "title": "업로드 중인 다이어리",
+        "excerpt": "오늘은 정말 특별한 날이었습니다. 새로운 곳을 탐험하며 많은 추억을 만들었어요.",
+        "updatedAt": "2025-10-12T15:30:00",
+        "commentCount": 4,
+        "likeCount": 0,
+        "imageId": 11,
+        "imageUrl": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop",
+        "imageStatus": "UPLOADED",
+        "imageExpiresIn": 3600
+      },
+      {
+        "diaryId": 12455123523, 
+        "title": "업로드 중인 다이어리",
+        "excerpt": "오늘은 정말 특별한 날이었습니다. 새로운 곳을 탐험하며 많은 추억을 만들었어요.",
+        "updatedAt": "2025-10-12T15:30:00",
+        "commentCount": 4,
+        "likeCount": 0,
+        "imageId": 11,
+        "imageUrl": "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=400&h=300&fit=crop",
+        "imageStatus": "UPLOADED",
+        "imageExpiresIn": 3600
       }
     ],
     "page": {
       "page": 0,
-      "size": 10,
+      "size":6,
       "totalElements": 2,
       "totalPages": 1
     }

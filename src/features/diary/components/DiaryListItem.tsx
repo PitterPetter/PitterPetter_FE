@@ -6,18 +6,30 @@ export const DiaryListItem = (item: any) => {
   console.log(item);
   const navigate = useNavigate();
   return (
-    <div className="relative flex flex-col gap-2 h-[320px] border-gray-300 border rounded-2xl pb-6 cursor-pointer"
+    <div className="relative flex flex-col gap-2 h-[320px] border-gray-300 border rounded-[20px] pb-6 cursor-pointer group"
       onClick={() => {navigate(`/diary/${item.diaryId}`)}}
     >
       <div className="flex gap-2">
-        <div className="w-full h-[165px] bg-gray-200 rounded-t-2xl"></div>
+        <div className="w-full h-[165px] bg-gray-200 rounded-t-[19.2px] overflow-hidden">
+          {item.imageUrl ? (
+            <img 
+              src={item.imageUrl} 
+              alt={item.title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-all duration-300"
+            />
+          ) : (
+            <div className="w-full h-full bg-gray-200 flex items-center justify-center">
+              <span className="text-gray-400 text-sm">이미지 없음</span>
+            </div>
+          )}
+        </div>
       </div>
       <div className="flex flex-col gap-2">
         <h2 className="px-2">{item.title}</h2>
-        <p className="text-sm text-gray-500 px-2 -4">{item.content}</p>
+        <p className="text-sm text-gray-500 px-2 -4">{item.excerpt || item.content}</p>
       </div>
       <div className="w-full absolute bottom-2 flex justify-between px-2 gap-2 items-center">
-        <div className="w-[100px] text-sm">{item.createdAt}</div>
+        <div className="w-[100px] text-sm">{item.updatedAt?.split('T')[0] || item.createdAt}</div>
         <div className="flex items-center w-[100px] flex justify-end gap-1 text-sm text-gray-500">
           <FontAwesomeIcon icon={faComment} className="w-[12px] h-[12px]" />
           {item.commentCount}

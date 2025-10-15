@@ -9,6 +9,67 @@ import mypage from '../features/mypage/mocks/mypageMock.json';
 // 한 곳에서 베이스 URL 관리
 const API = 'https://api.loventure.us';
 
+// 메모리 기반 Mock Store
+const mockStore = {
+  // 다이어리별 댓글 저장소
+  comments: new Map<string, any[]>(),
+  
+  // 초기 데이터 설정
+  init() {
+    // diaryDetail.json의 댓글을 초기 데이터로 설정
+    if (diaryDetail.result.comments && diaryDetail.result.comments.length > 0) {
+      this.comments.set('343532365357', diaryDetail.result.comments);
+    }
+  },
+  
+  // 댓글 추가
+  addComment(diaryId: string, comment: any) {
+    const comments = this.comments.get(diaryId) || [];
+    comments.push(comment);
+    this.comments.set(diaryId, comments);
+    return comment;
+  },
+  
+  // 댓글 수정
+  updateComment(diaryId: string, commentId: string, content: string) {
+    const comments = this.comments.get(diaryId) || [];
+    const commentIndex = comments.findIndex(c => c.commentId === commentId);
+    if (commentIndex !== -1) {
+      comments[commentIndex] = {
+        ...comments[commentIndex],
+        content,
+        updatedAt: new Date().toISOString()
+      };
+      this.comments.set(diaryId, comments);
+      return comments[commentIndex];
+    }
+    return null;
+  },
+  
+  // 댓글 삭제
+  deleteComment(diaryId: string, commentId: string) {
+    const comments = this.comments.get(diaryId) || [];
+    const filteredComments = comments.filter(c => c.commentId !== commentId);
+    this.comments.set(diaryId, filteredComments);
+    return true;
+  },
+  
+  // 다이어리 상세 정보에 댓글 포함해서 반환
+  getDiaryDetailWithComments(diaryId: string) {
+    const comments = this.comments.get(diaryId) || [];
+    return {
+      ...diaryDetail,
+      result: {
+        ...diaryDetail.result,
+        comments
+      }
+    };
+  }
+};
+
+// Mock Store 초기화
+mockStore.init();
+
 export const handlers = [
   // 맵박스 조회 API
   http.get(`${API}/api/mapbox`, async () => {
@@ -51,15 +112,45 @@ export const handlers = [
   }),
 
   // 다이어리 생성
-  http.post(`${API}/api/diaries`, async () => {
+  http.post(`${API}/api/diaries`, async ({ request }) => {
     await delay(800);
-    return HttpResponse.json(diary);
+    const body = await request.json().catch(() => ({}));
+    console.log('Diary create request:', body);
+    
+    return HttpResponse.json({
+      timestamp: new Date().toISOString(),
+      code: "COMMON200",
+      result: {
+        contentId: Date.now().toString(),
+        title: (body as any).title || "새 다이어리",
+        content: (body as any).content || "",
+        courseId: (body as any).courseId || "",
+        courseName: (body as any).courseName || "",
+        rating: (body as any).rating || "0",
+        userId: "7610272898923",
+        author: "양지훈",
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        comments: [],
+        imageId: "string",
+        imageUrl: null,
+        imageStatus: "PENDING",
+        imageExpiresIn: 0,
+        imageUpload: {
+          imageId: Date.now().toString(),
+          presignedUrl: "string",
+          expiresIn: 300
+        }
+      }
+    });
   }),
 
   // 다이어리 상세
-  http.get(`${API}/api/diaries/:id`, async () => {
+  http.get(`${API}/api/diaries/:id`, async ({ params }) => {
     await delay(500);
-    return HttpResponse.json(diaryDetail);
+    const { id } = params;
+    const diaryData = mockStore.getDiaryDetailWithComments(id as string);
+    return HttpResponse.json(diaryData);
   }),
 
   // 커플 방 생성
@@ -174,17 +265,25 @@ export const handlers = [
     const body = await request.json().catch(() => ({}));
     const { id } = params;
     
+    const newComment = {
+      commentId: Date.now().toString(),
+      content: (body as any).content,
+      userId: "7610272898923", // mypageMock.json의 userId와 동일하게 설정
+      authorName: "양지훈",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
+    
+    // mockStore에 댓글 저장
+    mockStore.addComment(id as string, newComment);
+    
+    console.log('댓글 작성 완료:', newComment);
+    console.log('현재 댓글 목록:', mockStore.comments.get(id as string));
+    
     return HttpResponse.json({
       timestamp: new Date().toISOString(),
       code: "COMMON200",
-      result: {
-        commentId: Date.now().toString(),
-        content: (body as any).content,
-        userId: "7610272898923", // mypageMock.json의 userId와 동일하게 설정
-        authorName: "양지훈",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
+      result: newComment
     });
   }),
 
@@ -192,24 +291,35 @@ export const handlers = [
   http.put(`${API}/api/diaries/:diaryId/comments/:commentId`, async ({ params, request }) => {
     await delay(300);
     const body = await request.json().catch(() => ({}));
+    const { diaryId, commentId } = params;
+    
+    // mockStore에서 댓글 수정
+    const updatedComment = mockStore.updateComment(
+      diaryId as string, 
+      commentId as string, 
+      (body as any).content
+    );
+    
+    console.log('댓글 수정 완료:', updatedComment);
+    console.log('현재 댓글 목록:', mockStore.comments.get(diaryId as string));
     
     return HttpResponse.json({
       timestamp: new Date().toISOString(),
       code: "COMMON200",
-      result: {
-        commentId: (params as any).commentId,
-        content: (body as any).content,
-        userId: "7610272898923", // mypageMock.json의 userId와 동일하게 설정
-        authorName: "양지훈",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      }
+      result: updatedComment
     });
   }),
 
   // 댓글 삭제
-  http.delete(`${API}/api/diaries/:diaryId/comments/:commentId`, async () => {
+  http.delete(`${API}/api/diaries/:diaryId/comments/:commentId`, async ({ params }) => {
     await delay(300);
+    const { diaryId, commentId } = params;
+    
+    // mockStore에서 댓글 삭제
+    mockStore.deleteComment(diaryId as string, commentId as string);
+    
+    console.log('댓글 삭제 완료:', { diaryId, commentId });
+    console.log('현재 댓글 목록:', mockStore.comments.get(diaryId as string));
     
     return HttpResponse.json({
       timestamp: new Date().toISOString(),

@@ -3,7 +3,7 @@ import { ImageUpload, MarkdownEditor } from '../../../shared/ui';
 import { useDiaryStore } from '../../../shared/store/diary.store';
 
 export const WriteDiary = () => {
-  const { diaryTitle, setDiaryTitle, diaryContent, setDiaryContent, diaryImage, setDiaryImage } = useDiaryStore();
+  const { diaryTitle, setDiaryTitle, diaryContent, setDiaryContent, diaryImage, setDiaryImage, existingImageUrl } = useDiaryStore();
 
   const handleImageSelect = (file: File | null) => {
     console.log('Selected file:', file);
@@ -37,6 +37,7 @@ export const WriteDiary = () => {
             onFileSelect={handleImageSelect}
             maxSize={10}
             acceptedTypes={['image/jpeg', 'image/jpg', 'image/png', 'image/gif']}
+            existingImageUrl={existingImageUrl}
           />
         </div>
 

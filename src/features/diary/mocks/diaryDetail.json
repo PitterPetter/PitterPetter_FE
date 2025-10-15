@@ -2,12 +2,14 @@
   "timestamp": "2025-10-15T02:51:37.628Z",
   "code": "string",
   "result": {
-    "contentId": "1234567890123456789",
+    "contentId": "1",
     "title": "오늘의 데이트",
     "content": "정말 즐거운 하루였습니다!",
-    "courseId": "9876543210987654321",
+    "courseId": "1",
+    "courseName": "오늘의 데이트",
+    "rating": "4",
     "userId": "string",
-    "author": "string",
+    "author": "지훈",
     "createdAt": "2025-10-15T02:51:37.628Z",
     "updatedAt": "2025-10-15T02:51:37.628Z",
     "comments": [
@@ -16,6 +18,14 @@
         "content": "좋은 글이네요!",
         "userId": "9876543210987654321",
         "authorName": "홍길동",
+        "createdAt": "2025-10-15T02:51:37.628Z",
+        "updatedAt": "2025-10-15T02:51:37.628Z"
+      },
+      {
+        "commentId": "1234567890123456789",
+        "content": "좋은 글이네요!",
+        "userId": "9876543210987654321",
+        "authorName": "지훈",
         "createdAt": "2025-10-15T02:51:37.628Z",
         "updatedAt": "2025-10-15T02:51:37.628Z"
       }

@@ -4,10 +4,11 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
-import { diaryDetailApi } from "../../features/diary/api";
+import { diaryDetailApi, diaryDeleteApi } from "../../features/diary/api";
 import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "../../shared/ui/spinner";
 import { CommentSection } from "../../features/diary/components/CommentSection";
+import { useMutation } from "@tanstack/react-query";
 
 export const DiaryDetailPage = () => {
   const navigate = useNavigate();
@@ -22,6 +23,13 @@ export const DiaryDetailPage = () => {
       return response.data;
     },
     enabled: !!id,
+  });
+
+  const deleteDiary = useMutation({
+    mutationFn: () => diaryDeleteApi.deleteDiary(id as string),
+    onSuccess: () => {
+      navigate('/diary');
+    },
   });
 
   return (
@@ -42,6 +50,7 @@ export const DiaryDetailPage = () => {
         <div className="flex justify-between p-4 pr-0 w-full">
           <div className="flex flex-col gap-2">
             <h1 className="text-4xl font-bold text-gray-800">{diaryData?.result.title}</h1>
+            <p className="text-sm text-gray-500">작성자: {diaryData?.result.author}</p>
             <p className="text-sm text-gray-500">{diaryData?.result.createdAt.split("T")[0]}</p>
           </div>
           <div>
@@ -63,7 +72,7 @@ export const DiaryDetailPage = () => {
               수정하기
             </div>
             <div className="flex items-center justify-center w-[120px] h-[45px] text-white rounded-md cursor-pointer border border-primary/10 bg-third/60 hover:bg-third/80 transition-all duration-300"
-              onClick={() => {navigate(`/diary`)}}
+              onClick={() => {deleteDiary.mutate()}}
             >
               삭제하기
             </div>

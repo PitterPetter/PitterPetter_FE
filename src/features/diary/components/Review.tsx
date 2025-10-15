@@ -4,8 +4,7 @@ import { faStar, faBell } from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 
 export const Review = () => {
-  const { courseId } = useDiaryStore();
-  const [rating, setRating] = useState(0);
+  const { courseId, courseName, rating, setRating } = useDiaryStore();
   const [hoveredRating, setHoveredRating] = useState(0);
 
   const handleStarClick = (starRating: number) => {
@@ -28,6 +27,7 @@ export const Review = () => {
         <div className="flex flex-col gap-4">
           <div className="text-sm text-gray-600">
             선택된 코스: <span className="font-medium text-pink-600">{courseId}</span>
+            {courseName && <span className="ml-2 text-gray-500">({courseName})</span>}
           </div>
           <div className="flex gap-4 items-center">
             <div className="text-sm text-gray-600">
