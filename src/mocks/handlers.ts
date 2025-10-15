@@ -425,6 +425,7 @@ export const handlers = [
       code: "COMMON200",
       result: "댓글이 성공적으로 삭제되었습니다."
     });
+  }),
 
   // 재추천 코스
   http.post(`${API}/api/courses/recommends/replace`, async ({ request }) => {
