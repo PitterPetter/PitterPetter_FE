@@ -1,21 +1,69 @@
 import { ConnectCourse } from "../../features/diary/components/ConnectCourse";
 import { Review } from "../../features/diary/components/Review";
 import { WriteDiary } from "../../features/diary/components/WriteDiary";
-import { useNavigate } from "react-router-dom";
-import { diaryCreateApi } from "../../features/diary/api";
+import { useNavigate, useParams } from "react-router-dom";
+import { diaryDetailApi, diaryCreateApi } from "../../features/diary/api";
 import { useDiaryStore } from "../../shared/store/diary.store";
 import { toast } from 'react-toastify';
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { Spinner } from "../../shared/ui/spinner";
 
-export const CreateDiaryPage = () => {
+export const UpdateDiaryPage = () => {
   const navigate = useNavigate();
-  const { diaryTitle, diaryContent, diaryImage, resetDiaryForm, courseId, courseName, rating } = useDiaryStore();
+  const { id } = useParams();
+  const { 
+    diaryTitle, 
+    diaryContent, 
+    diaryImage, 
+    setDiaryTitle, 
+    setDiaryContent, 
+    setDiaryImage,
+    existingImageUrl,
+    setExistingImageUrl,
+    courseId,
+    courseName,
+    setCourseId,
+    setCourseName,
+    rating,
+    setRating,
+    resetDiaryForm
+  } = useDiaryStore();
 
-  // 새 다이어리 작성 시 폼 초기화
+  // 기존 다이어리 내용 불러오기
+  const { data: diaryData, isLoading, error } = useQuery({
+    queryKey: ['diaryDetail', id],
+    queryFn: async () => {
+      if (!id) {
+        throw new Error('다이어리 ID가 필요합니다.');
+      }
+      const response = await diaryDetailApi.getDiaryDetail(id);
+      return response.data;
+    },
+    enabled: !!id,
+  });
+
+  // 다이어리 데이터를 store에 설정
   useEffect(() => {
-    resetDiaryForm();
-  }, [resetDiaryForm]);
+    if (diaryData?.result) {
+      setDiaryTitle(diaryData.result.title || '');
+      setDiaryContent(diaryData.result.content || '');
+      // 기존 이미지 URL 설정
+      if (diaryData.result.imageUrl) {
+        setExistingImageUrl(diaryData.result.imageUrl);
+      }
+      // courseId, courseName, rating도 설정 (있는 경우)
+      if (diaryData.result.courseId) {
+        setCourseId(diaryData.result.courseId.toString());
+      }
+      if (diaryData.result.courseName) {
+        setCourseName(diaryData.result.courseName);
+      }
+      if (diaryData.result.rating) {
+        setRating(parseFloat(diaryData.result.rating));
+      }
+    }
+  }, [diaryData, setDiaryTitle, setDiaryContent, setExistingImageUrl, setCourseId, setCourseName, setRating]);
 
   const handleCancel = () => {
     const isReal = confirm('정말 취소하시겠습니까?\n(취소할 경우, 작성한 내용은 사라집니다)');
@@ -30,6 +78,11 @@ export const CreateDiaryPage = () => {
   };
 
   const handleSave = async () => {
+    if (!id) {
+      toast.error('다이어리 ID가 없습니다.');
+      return;
+    }
+
     try {
       // API 호출을 위한 데이터 형태 구성
       const requestData = {
@@ -46,26 +99,39 @@ export const CreateDiaryPage = () => {
         removeImage: !diaryImage
       };
 
-      const res = useQuery({
-        queryKey: ['diaryCreate'],
-        queryFn: async () => {
-          const res = await diaryCreateApi.createDiary(requestData);
-          return res;
-        },
-      });
+      // POST로 수정 요청
+      const res = await diaryCreateApi.createDiary(requestData);
       
       // 성공 시 토스트 메시지와 네비게이션
-      toast.success('다이어리가 성공적으로 저장되었습니다.');
+      toast.success('다이어리가 성공적으로 수정되었습니다.');
       resetDiaryForm(); // store 초기화
       navigate('/diary');
       
-      console.log('Diary created successfully:', res);
+      console.log('Diary updated successfully:', res);
     } catch (error) {
-      console.error('Failed to create diary:', error);
-      toast.error('다이어리 저장에 실패했습니다.');
+      console.error('Failed to update diary:', error);
+      toast.error('다이어리 수정에 실패했습니다.');
     }
   };
   
+  if (isLoading) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-primary/5">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-primary/5">
+        <div className="text-center py-8 text-red-500">
+          다이어리를 불러오는 중 에러가 발생했습니다: {error.message}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full h-full flex flex-col gap-6 items-center justify-start py-10 bg-primary/5">
       {/* 코스 연결 */}
@@ -86,12 +152,12 @@ export const CreateDiaryPage = () => {
           >
             취소
           </div>
-          <div
+          {/* <div
             onClick={handleSaveAsDraft}
             className="flex items-center justify-center w-[120px] h-[45px] bg-third/40 text-white rounded-md cursor-pointer border border-primary/10 hover:bg-third/60 transition-all duration-300"
           >
             임시저장
-          </div>
+          </div> */}
           <div
             onClick={handleSave}
             className="flex items-center justify-center w-[120px] h-[45px] bg-third/60 text-white rounded-md cursor-pointer border border-primary/10 hover:bg-third/80 transition-all duration-300"

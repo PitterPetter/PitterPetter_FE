@@ -4,9 +4,11 @@ import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faStar } from "@fortawesome/free-solid-svg-icons";
-import { diaryDetailApi } from "../../features/diary/api";
+import { diaryDetailApi, diaryDeleteApi } from "../../features/diary/api";
 import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "../../shared/ui/spinner";
+import { CommentSection } from "../../features/diary/components/CommentSection";
+import { useMutation } from "@tanstack/react-query";
 
 export const DiaryDetailPage = () => {
   const navigate = useNavigate();
@@ -14,9 +16,20 @@ export const DiaryDetailPage = () => {
   const { data: diaryData, isLoading, error } = useQuery({
     queryKey: ['diaryDetail', id],
     queryFn: async () => {
-      const response = await diaryDetailApi.getDiaryDetail(id as string);
-      return response.data.data;
-    }
+      if (!id) {
+        throw new Error('다이어리 ID가 필요합니다.');
+      }
+      const response = await diaryDetailApi.getDiaryDetail(id);
+      return response.data;
+    },
+    enabled: !!id,
+  });
+
+  const deleteDiary = useMutation({
+    mutationFn: () => diaryDeleteApi.deleteDiary(id as string),
+    onSuccess: () => {
+      navigate('/diary');
+    },
   });
 
   return (
@@ -36,8 +49,9 @@ export const DiaryDetailPage = () => {
         {/* 다이어리 제목 및 날짜 */}
         <div className="flex justify-between p-4 pr-0 w-full">
           <div className="flex flex-col gap-2">
-            <h1 className="text-4xl font-bold text-gray-800">{diaryData?.title}</h1>
-            <p className="text-sm text-gray-500">{diaryData?.createdAt.split("T")[0]}</p>
+            <h1 className="text-4xl font-bold text-gray-800">{diaryData?.result.title}</h1>
+            <p className="text-sm text-gray-500">작성자: {diaryData?.result.author}</p>
+            <p className="text-sm text-gray-500">{diaryData?.result.createdAt.split("T")[0]}</p>
           </div>
           <div>
             <div
@@ -49,21 +63,27 @@ export const DiaryDetailPage = () => {
         {/* 다이어리 내용 */}
         <div className="flex gap-2 p-4 pr-0 w-full justify-between relative h-full">
           <div className="flex flex-col gap-2 w-full h-full">
-            <p>{diaryData?.content}</p>
           </div>
-          <div>
+          <div className="flex items-center justify-end gap-2">
             <div
               className="flex items-center justify-center w-[120px] h-[45px] text-white rounded-md cursor-pointer border border-primary/10 bg-third/40 hover:bg-third/60 transition-all duration-300"
-              onClick={() => {navigate(`/diary/create/${id}`)}}
+              onClick={() => {navigate(`/diary/update/${id}`)}}
             >
               수정하기
+            </div>
+            <div className="flex items-center justify-center w-[120px] h-[45px] text-white rounded-md cursor-pointer border border-primary/10 bg-third/60 hover:bg-third/80 transition-all duration-300"
+              onClick={() => {deleteDiary.mutate()}}
+            >
+              삭제하기
             </div>
           </div>
         </div>
 
         {/* 본문 이미지 */}
-        <div className="w-full h-[300px] bg-gray-300 rounded-md">
+        <div className="w-full h-full rounded-md">
+          <img src={diaryData?.result.imageUrl ?? diaryData?.result.imageUpload.presignedUrl} alt="diaryImage" className="w-full h-full object-cover" />
           {/* 추후 추가 예정 */}
+          <p className="w-full h-full p-2">{diaryData?.result.content}</p>
         </div>
 
         {/* 코스 정보 */}
@@ -74,9 +94,9 @@ export const DiaryDetailPage = () => {
 
             </div>
             <div className="flex flex-col w-full h-full gap-2 items-start justify-start">
-              <p className="text-sm text-gray-500">코스 코드: {diaryData?.courseId}</p>
+              <p className="text-sm text-gray-500">코스 코드: {diaryData?.result.contentId}</p>
               <div className="text-sm text-gray-500">
-                {diaryData?.title}
+                {diaryData?.result.title}
               </div>
             </div>
           </div>
@@ -88,32 +108,22 @@ export const DiaryDetailPage = () => {
           <div className="flex items-center justify-start gap-2">
             {[1,2,3,4,5].map((item) => (
               <div key={item}>
-                <FontAwesomeIcon icon={faStar} className={`w-[16px] h-[16px] ${item <= Math.floor(parseFloat(diaryData.rating)) ? 'text-yellow-400' : 'text-gray-300'}`} />
+                <FontAwesomeIcon icon={faStar} className={`w-[16px] h-[16px] ${item <= Math.floor(parseFloat(diaryData?.result.rating)) ? 'text-yellow-400' : 'text-gray-300'}`} />
               </div>
             ))}
             <div className="text-sm text-gray-500">
-              {diaryData?.rating}
+              {diaryData?.result.rating}
             </div>
           </div>
         </div>
 
         {/* 댓글 */}
-        <div className="flex flex-col gap-4 p-4 h-full rounded-md border-t border-gray-300">
-          <h2 className="text-lg text-gray-800">댓글</h2>
-          {[1,2].map((item) => (
-            <div key={item} className="flex items-center justify-start gap-2 w-full">
-              <div className="min-w-[60px] min-h-[60px] bg-gray-300 rounded-full">
-              </div>
-              <div className="flex justify-between w-full bg-gray-200 rounded-md p-2">
-                <div>
-                  <p className="text-sm text-gray-500">이름</p>
-                  <p className="text-sm text-gray-500">댓글 {item}</p>
-                </div>
-                <p className="text-sm text-gray-500">2025-01-01</p>
-              </div>
-            </div>
-          ))}
-        </div>
+        {id && (
+          <CommentSection 
+            diaryId={id} 
+            comments={diaryData?.result.comments || []} 
+          />
+        )}
       </div>
       )}
     </div>

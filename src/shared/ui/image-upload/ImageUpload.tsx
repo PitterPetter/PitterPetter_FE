@@ -7,13 +7,15 @@ interface ImageUploadProps {
   className?: string;
   maxSize?: number; // MB
   acceptedTypes?: string[];
+  existingImageUrl?: string | null;
 }
 
 export const ImageUpload: React.FC<ImageUploadProps> = ({
   onFileSelect,
   className = '',
   maxSize = 5, // 5MB 기본값
-  acceptedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
+  acceptedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'],
+  existingImageUrl
 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
@@ -118,10 +120,10 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
           className="hidden"
         />
 
-        {preview ? (
+        {(preview || existingImageUrl) ? (
           <div className="relative">
             <img
-              src={preview}
+              src={preview || existingImageUrl || ''}
               alt="미리보기"
               className="max-w-full max-h-48 mx-auto rounded-lg object-cover"
             />

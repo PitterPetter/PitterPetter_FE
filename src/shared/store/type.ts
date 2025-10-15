@@ -73,6 +73,8 @@ export type CoupleRoomStore = {
 export type DiaryStore = {
   courseId: string;
   setCourseId: (courseId: string) => void;
+  courseName: string;
+  setCourseName: (courseName: string) => void;
   rating: number;
   setRating: (rating: number) => void;
 
@@ -81,8 +83,13 @@ export type DiaryStore = {
   setDiaryTitle: (diaryTitle: string) => void;
   diaryContent: string;
   setDiaryContent: (diaryContent: string) => void;
-  diaryImage: string;
-  setDiaryImage: (diaryImage: string) => void;
+  diaryImage: File | null;
+  setDiaryImage: (diaryImage: File | null) => void;
+  existingImageUrl: string | null;
+  setExistingImageUrl: (existingImageUrl: string | null) => void;
+  
+  // store 초기화
+  resetDiaryForm: () => void;
 };
 
 // MypageStore

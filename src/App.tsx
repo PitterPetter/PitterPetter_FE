@@ -20,6 +20,7 @@ import { CoupleCodeRoom } from './pages/CoupleRoomPage/CoupleCodeRoom';
 import { CreateDiaryPage } from './pages/DiaryPage/CreateDiaryPage';
 import { DistrictModal } from './pages/DistrictPage/DistrictModal';
 import { DistrictChoose } from './pages/DistrictPage/DistrictChoose';
+import { UpdateDiaryPage } from './pages/DiaryPage/UpdateDiaryPage';
 import { DistrictCheck } from './pages/DistrictPage/DistrictCheck';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -75,6 +76,7 @@ function App() {
           {/* 다이어리 페이지 */}
           <Route path="/diary" element={<DiaryListPage />} />
           <Route path="/diary/create" element={<CreateDiaryPage />} />
+          <Route path="/diary/update/:id" element={<UpdateDiaryPage />} />
           <Route path="/diary/:id" element={<DiaryDetailPage />} />
         </Route>
       </Routes>

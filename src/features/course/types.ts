@@ -1,5 +1,5 @@
 export type Course = {
-  course_id: number;
+  course_id: number | string;
   title: string;
   description: string;
   reviewScore?: number;
@@ -7,7 +7,7 @@ export type Course = {
 };
 
 export type CoursePoiSet = {
-  poi_set_id: number;
+  poi_set_id: number | string;
   order: number;
   poi: PoiDetail;
 };
