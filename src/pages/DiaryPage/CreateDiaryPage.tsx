@@ -4,68 +4,81 @@ import { WriteDiary } from "../../features/diary/components/WriteDiary";
 import { useNavigate } from "react-router-dom";
 import { diaryCreateApi } from "../../features/diary/api";
 import { useDiaryStore } from "../../shared/store/diary.store";
-import { toast } from 'react-toastify';
-import { useQuery } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 import { useEffect } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const CreateDiaryPage = () => {
   const navigate = useNavigate();
-  const { diaryTitle, diaryContent, diaryImage, resetDiaryForm, courseId, courseName, rating } = useDiaryStore();
+  const queryClient = useQueryClient();
+
+  const {
+    diaryTitle,
+    diaryContent,
+    diaryImage,
+    resetDiaryForm,
+    courseId,
+    courseName,
+    rating,
+  } = useDiaryStore();
 
   // 새 다이어리 작성 시 폼 초기화
   useEffect(() => {
     resetDiaryForm();
   }, [resetDiaryForm]);
 
-  const handleCancel = () => {
-    const isReal = confirm('정말 취소하시겠습니까?\n(취소할 경우, 작성한 내용은 사라집니다)');
-    if (isReal) {
-      navigate('/diary');
-    }
-  };
-
-  const handleSaveAsDraft = () => {
-    // API 연동 후 임시저장
-    console.log('임시저장');
-  };
-
-  const handleSave = async () => {
-    try {
-      // API 호출을 위한 데이터 형태 구성
+  const { mutateAsync: createDiary, isPending } = useMutation({
+    mutationKey: ["diaryCreate"],
+    mutationFn: async () => {
       const requestData = {
         title: diaryTitle,
         content: diaryContent,
-        courseId: courseId,
-        courseName: courseName,
+        courseId,
+        courseName,
         rating: rating.toString(),
-        image: diaryImage ? {
-          originalFileName: diaryImage.name,
-          contentType: diaryImage.type,
-          sizeBytes: diaryImage.size
-        } : null,
-        removeImage: !diaryImage
+        image: diaryImage
+          ? {
+              originalFileName: diaryImage.name,
+              contentType: diaryImage.type,
+              sizeBytes: diaryImage.size,
+            }
+          : null,
+        removeImage: !diaryImage,
       };
+      // API 호출
+      const res = await diaryCreateApi.createDiary(requestData);
+      return res;
+    },
+    onSuccess: () => {
+      // 목록/상세 등 관련 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ["diaries"] });
+      toast.success("다이어리가 성공적으로 저장되었습니다.");
+      resetDiaryForm();
+      navigate("/diary");
+    },
+    onError: (err) => {
+      console.error("Failed to create diary:", err);
+      toast.error("다이어리 저장에 실패했습니다.");
+    },
+  });
 
-      const res = useQuery({
-        queryKey: ['diaryCreate'],
-        queryFn: async () => {
-          const res = await diaryCreateApi.createDiary(requestData);
-          return res;
-        },
-      });
-      
-      // 성공 시 토스트 메시지와 네비게이션
-      toast.success('다이어리가 성공적으로 저장되었습니다.');
-      resetDiaryForm(); // store 초기화
-      navigate('/diary');
-      
-      console.log('Diary created successfully:', res);
-    } catch (error) {
-      console.error('Failed to create diary:', error);
-      toast.error('다이어리 저장에 실패했습니다.');
-    }
+  const handleCancel = () => {
+    const isReal = confirm(
+      "정말 취소하시겠습니까?\n(취소할 경우, 작성한 내용은 사라집니다)"
+    );
+    if (isReal) navigate("/diary");
   };
-  
+
+  const handleSaveAsDraft = () => {
+    // TODO: 임시저장 API 연동
+    console.log("임시저장");
+    toast.info("임시저장은 곧 지원될 예정입니다.");
+  };
+
+  const handleSave = async () => {
+    await createDiary();
+  };
+
   return (
     <div className="w-full h-full flex flex-col gap-6 items-center justify-start py-10 bg-primary/5">
       {/* 코스 연결 */}
@@ -80,24 +93,28 @@ export const CreateDiaryPage = () => {
       <div className="h-full rounded-2xl p-4 pb-6 w-[800px] bg-white">
         <WriteDiary />
         <div className="flex justify-end gap-4 p-4">
-          <div
+          <button
             onClick={handleCancel}
             className="flex items-center justify-center w-[120px] h-[45px] bg-third/20 text-white rounded-md cursor-pointer border border-primary/10 hover:bg-third/40 transition-all duration-300"
+            type="button"
           >
             취소
-          </div>
-          <div
+          </button>
+          <button
             onClick={handleSaveAsDraft}
             className="flex items-center justify-center w-[120px] h-[45px] bg-third/40 text-white rounded-md cursor-pointer border border-primary/10 hover:bg-third/60 transition-all duration-300"
+            type="button"
           >
             임시저장
-          </div>
-          <div
+          </button>
+          <button
             onClick={handleSave}
-            className="flex items-center justify-center w-[120px] h-[45px] bg-third/60 text-white rounded-md cursor-pointer border border-primary/10 hover:bg-third/80 transition-all duration-300"
+            disabled={isPending}
+            className="flex items-center justify-center w-[120px] h-[45px] bg-third/60 text-white rounded-md cursor-pointer border border-primary/10 hover:bg-third/80 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+            type="button"
           >
-            저장하기
-          </div>
+            {isPending ? "저장 중…" : "저장하기"}
+          </button>
         </div>
       </div>
     </div>
