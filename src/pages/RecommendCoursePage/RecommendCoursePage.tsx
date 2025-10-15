@@ -151,23 +151,24 @@ export const RecommendCoursePage = () => {
   });
 
   const saveCourse = () => {
-    // recommend 데이터를 course 형태로 변환
+    // recommend 데이터를 course 형태로 변환 (스웨거 스펙에 맞춤)
     const courseData = {
-      name: "추천 코스",
-      description: explain || "옵션에서 추천받은 코스",
-      poi_list: stops.map((stop, index) => ({
-        order: stop.seq,
-        poi: {
-          poi_id: stop.id || `recommend-${stop.seq}`,
-          name: stop.name,
-          category: stop.category,
-          lat: stop.lat || 0,
-          lng: stop.lng || 0,
-          indoor: stop.indoor || false,
-          price_level: stop.price_level,
-          alcohol: stop.alcohol,
-          mood_tag: "0" // 기본값
-        }
+      title: "추천 코스",
+      explain: explain || "옵션에서 추천받은 코스",
+      data: stops.map((stop, index) => ({
+        seq: stop.seq,
+        name: stop.name,
+        category: stop.category,
+        lat: stop.lat || 0,
+        lng: stop.lng || 0,
+        indoor: stop.indoor || false,
+        priceLevel: stop.price_level,
+        openHours: stop.open_hours,
+        alcohol: stop.alcohol,
+        moodTag: stop.mood_tag || "0",
+        foodTag: stop.food_tag || [],
+        link: stop.link,
+        ratingAvg: stop.rating_avg
       }))
     };
     
