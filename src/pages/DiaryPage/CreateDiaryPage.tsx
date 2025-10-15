@@ -6,6 +6,7 @@ import { diaryCreateApi } from "../../features/diary/api";
 import { useDiaryStore } from "../../shared/store/diary.store";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
+import { DiaryCreatePayload } from "../../features/diary/types";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 export const CreateDiaryPage = () => {
@@ -29,28 +30,11 @@ export const CreateDiaryPage = () => {
 
   const { mutateAsync: createDiary, isPending } = useMutation({
     mutationKey: ["diaryCreate"],
-    mutationFn: async () => {
-      const requestData = {
-        title: diaryTitle,
-        content: diaryContent,
-        courseId,
-        courseName,
-        rating: rating.toString(),
-        image: diaryImage
-          ? {
-              originalFileName: diaryImage.name,
-              contentType: diaryImage.type,
-              sizeBytes: diaryImage.size,
-            }
-          : null,
-        removeImage: !diaryImage,
-      };
-      // API 호출
-      const res = await diaryCreateApi.createDiary(requestData);
-      return res;
+    mutationFn: async (payload: DiaryCreatePayload) => {
+      console.log("payload", payload);
+      return diaryCreateApi.createDiary(payload);
     },
     onSuccess: () => {
-      // 목록/상세 등 관련 캐시 무효화
       queryClient.invalidateQueries({ queryKey: ["diaries"] });
       toast.success("다이어리가 성공적으로 저장되었습니다.");
       resetDiaryForm();
@@ -76,7 +60,33 @@ export const CreateDiaryPage = () => {
   };
 
   const handleSave = async () => {
-    await createDiary();
+    // 간단 유효성 검사
+    if (!diaryTitle?.trim()) {
+      toast.error("제목을 입력해 주세요.");
+      return;
+    }
+    if (!diaryContent?.trim()) {
+      toast.error("내용을 입력해 주세요.");
+      return;
+    }
+
+    const requestData: DiaryCreatePayload = {
+      title: diaryTitle,
+      content: diaryContent,
+      courseId,
+      courseName,
+      rating: rating.toString(),
+      image: diaryImage
+        ? {
+            originalFileName: diaryImage.name,
+            contentType: diaryImage.type,
+            sizeBytes: diaryImage.size,
+          }
+        : null,
+      removeImage: !diaryImage,
+    };
+
+    await createDiary(requestData);
   };
 
   return (

@@ -19,3 +19,17 @@ export interface Diary {
   lng: number;
   isLiked: boolean;
 }
+
+export type DiaryCreatePayload = {
+  title: string;
+  content: string;
+  courseId: string | null;
+  courseName: string | null;
+  rating: string;
+  image: null | {
+    originalFileName: string;
+    contentType: string;
+    sizeBytes: number;
+  };
+  removeImage: boolean;
+};
