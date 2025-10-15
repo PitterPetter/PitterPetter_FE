@@ -1,7 +1,7 @@
 import type { Map as MapboxMap } from 'mapbox-gl';
 
 export interface MarkerData {
-  id: string;
+  id: number | string;
   coordinates: [number, number];
   title?: string;
   description?: string;
@@ -30,7 +30,7 @@ export interface RouteSegment {
 }
 
 export interface Course {
-  id: string;
+  id: number | string;
   name: string;
   score: number;
 }

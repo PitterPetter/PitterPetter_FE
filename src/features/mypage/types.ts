@@ -1,5 +1,5 @@
 export interface DistrictInfo {
-  id: string;
+  id: number | string;
   name: string;
   isLocked: boolean;
   description?: string;
