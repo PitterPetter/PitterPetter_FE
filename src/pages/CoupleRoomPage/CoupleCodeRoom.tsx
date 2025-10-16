@@ -7,6 +7,7 @@ import { faCopy } from "@fortawesome/free-solid-svg-icons";
 import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
 import { PhotoStack } from "../../features/auth/components/PhotoStack";
+import namsantower from '/namsantower.jpg';
 
 export const CoupleCodeRoom = () => {
   const navigate = useNavigate();
@@ -26,9 +27,12 @@ export const CoupleCodeRoom = () => {
     toast.success('복사되었습니다');
   };
   return (
-    <div className="flex items-center justify-center w-full h-full">
-      <div className="relative h-[800px] w-[700px] bg-[#DED6D6] border-gray-300 border rounded-2xl p-4 py-16 flex flex-col gap-2 justify-start items-center">
-        <PhotoStack />
+    <div className="flex items-center justify-center w-full h-full">{/* 배경 이미지 */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30"
+        style={{ backgroundImage: `url(${namsantower})` }}
+      />
+      <div className="relative h-full w-full bg-[#DED6D6] border-gray-300 border rounded-2xl p-4 py-16 flex flex-col gap-2 justify-start items-center">
         <h1 className="text-2xl font-bold py-4 pt-16">커플 코드 생성 완료</h1>
         <p className="pb-2">해당 코드를 연인에게 보내주세요</p>
         <div className="relative flex justify-center items-center bg-white rounded-md w-[320px] h-[48px] p-2">

@@ -43,10 +43,9 @@ export const CreateCoupleRoom = () => {
       
       if (res.status === 'success') {
         useCoupleRoomStore.setState({
-          coupleId: res.data.inviteCode,
+          coupleCode: res.data.inviteCode,
           coupleName: coupleName,
           coupleDate: formatDate(coupleDate),
-          coupleCode: res.data.inviteCode,
         });
         toast.success('커플 정보 생성에 성공했습니다');
         navigate(`/home/coupleroom/create/${res.data.inviteCode}`);
@@ -60,7 +59,7 @@ export const CreateCoupleRoom = () => {
 
   return (
     <div className="flex items-center justify-center w-full h-full">
-      <div className="relative h-[800px] w-[700px] bg-[#DED6D6] border-gray-300 border rounded-2xl p-4 pb-6 flex flex-col gap-4 justify-center items-center">
+      <div className="relative h-[800px] w-[800px] bg-[#DED6D6] border-gray-300 border rounded-2xl p-4 pb-6 flex flex-col gap-4 justify-center items-center">
         <div className="flex flex-col gap-2 justify-center items-center">
           <h1 className="text-2xl py-4"><span className="text-pink-900">커플 정보</span> 설정</h1>
           <p className="text-sm font-bold">커플 정보를 설정해주세요</p>
