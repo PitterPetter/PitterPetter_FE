@@ -175,6 +175,15 @@ export const handlers = [
     return HttpResponse.json(diaryData);
   }),
 
+  // 다이어리 수정
+  http.put(`${API}/api/diaries/:id`, async ({ params, request }) => {
+    await delay(500);
+    const { id } = params;
+    const body = await request.json().catch(() => ({}));
+    console.log('Diary update request:', body);
+    return HttpResponse.json({ status: 'success' });
+  }),
+
   // 커플 방 생성
   http.post(`${API}/api/home/coupleroom`, async () => {
     await delay(500);
