@@ -100,8 +100,9 @@ export const handlers = [
     const totalPages = Math.ceil(totalElements / size);
     
     return HttpResponse.json({
-      success: true,
-      data: {
+      timestamp: "2025-10-16T13:48:30.178+09:00",
+      code: "COMMON200",
+      result: {
         content: paginatedDiaries,
         page: {
           page,
