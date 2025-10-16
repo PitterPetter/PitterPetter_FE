@@ -4,6 +4,8 @@ export type Onboarding = {
     dateCostPreference: CostList;
     favoriteFoodCategories: FoodList[];
     atmosphere: AtmosphereList;
+    answeredCount: number;
+    setAnsweredCount: (value: number) => void;
     setAlcoholPreference: (value: DrinkingList) => void;
     setActiveBound: (value: ActiveList) => void;
     setDateCostPreference: (value: CostList) => void;
