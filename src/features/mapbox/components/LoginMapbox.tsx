@@ -98,7 +98,7 @@ const Mapbox: React.FC<MapboxProps> = ({
   }, [center.toString(), zoom, pitch, setMapReady]);
 
   return (
-    <div style={{ position: 'relative', height: '100vh', width: '100vw' }}>
+    <div style={{ position: 'relative', height: '110vh', width: '100vw' }}>
       <div
         ref={mapContainerRef}
         id="map"
