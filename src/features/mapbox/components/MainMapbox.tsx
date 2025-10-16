@@ -9,6 +9,7 @@ import { DistrictInfo } from '../../mypage/types';
 import { mapboxApi } from '../api';
 import { useDistrictStore as useDistrictSelectionStore } from '../../../shared/store/district.store';
 import { useQuery } from '@tanstack/react-query';
+import MapboxRemoteController from './MapboxRemoteController';
 
 const MapboxMainPage: React.FC<MapboxProps> = ({
   center = [127.104, 37.505],
@@ -21,6 +22,13 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
   const { isOpen } = useHeaderStore();
   const { setIsMarkers } = useMarkerStore();
   const setSelectedDistrict = useDistrictSelectionStore((state) => state.setSelectedDistrict);
+  const [initialLng, initialLat] = center;
+  const defaultViewRef = useRef({
+    center: [initialLng, initialLat] as [number, number],
+    zoom,
+    pitch,
+    bearing: 0,
+  });
 
   const popupMapRef = useRef<Map<number, mapboxgl.Popup>>(new Map());
   const districtDataRef = useRef<DistrictInfo[]>([]);
@@ -57,6 +65,9 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
     },
     staleTime: 5 * 60 * 1000,
   });
+
+  type EaseOptions = Parameters<mapboxgl.Map['easeTo']>[0];
+
   // 좌표를 기반으로 지역구 찾기 (간단한 근사치)
   const findDistrictByCoordinates = (lat: number, lng: number): DistrictInfo | null => {
     // 서울시 경계 좌표 범위 체크
@@ -377,7 +388,9 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
         });
       });
 
-      const update = () => syncAlwaysOnPopups();
+      const update = () => {
+        syncAlwaysOnPopups();
+      };
       map.on('moveend', update);
       map.on('sourcedata', (ev: mapboxgl.MapSourceDataEvent) => {
         if (ev.sourceId === 'posts' && ev.isSourceLoaded && ev.sourceDataType !== 'metadata') {
@@ -393,6 +406,14 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
     });
 
     map.once('load', () => {
+      const initialCenter = map.getCenter();
+      defaultViewRef.current = {
+        center: [initialCenter.lng, initialCenter.lat] as [number, number],
+        zoom: map.getZoom(),
+        pitch: map.getPitch(),
+        bearing: map.getBearing(),
+      };
+
       let currentMarker: mapboxgl.Marker | null = null;
 
       map.on('click', (e) => {
@@ -438,7 +459,7 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
       }
       popupMapRef.current.clear();
 
-      mapRef.current?.remove();
+      map.remove();
       mapRef.current = null;
       setIsMapReady(false);
     };
@@ -457,7 +478,13 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
         id="map"
         style={{ height: '110vh', width: isOpen ? 'calc(100vw - 256px)' : 'calc(100vw - 64px)' }}
       />
-      
+
+      <MapboxRemoteController 
+        mapRef={mapRef}
+        isMapReady={isMapReady}
+        defaultViewRef={defaultViewRef}
+      />
+
       {/* 로딩 오버레이 */}
       {!isMapReady && (
         <div className="pointer-events-none absolute inset-0 bg-white z-20 flex items-center justify-center">

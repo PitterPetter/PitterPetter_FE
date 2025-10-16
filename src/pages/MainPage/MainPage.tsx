@@ -58,8 +58,8 @@ export const MainPage = () => {
 
       {selectedDistrict && (
             <div className="flex flex-col items-center gap-1 mb-2">
-              <span className="text-s font-semibold text-gray-800">
-                {selectedDistrict.name}
+              <span className="text-sm font-semibold text-gray-800">
+                서울시 {selectedDistrict.name}
               </span>
               {isLockedDistrict && (
                 <p className="text-[#b45309]">
@@ -71,10 +71,11 @@ export const MainPage = () => {
               )}
             </div>
           )}
-        <div
+        <button
+          type="button"
           onClick={handleRecommend}
-          className={`flex flex-col items-center justify-center active:scale-95 transition-all duration-150 rounded-lg w-48 h-12 text-white text-lg text-center shadow-md ${isRecommendDisabled || isLockedDistrict ? `cursor-not-allowed bg-primary/20` : `bg-primary hover:bg-primary cursor-pointer`}`}
-          aria-disabled={isRecommendDisabled}
+          disabled={isRecommendDisabled}
+          className={`flex flex-col items-center justify-center active:scale-95 transition-all duration-150 rounded-lg w-48 h-12 text-white text-lg text-center shadow-md ${isRecommendDisabled ? "cursor-not-allowed bg-primary/20" : "bg-primary hover:bg-primary"}`}
           title={(() => {
             if (!isMarkers) return "지도를 클릭해 시작점을 먼저 선택하세요";
             if (isOutsideSeoul) return "서울 내부의 지점을 선택해주세요";
@@ -83,7 +84,7 @@ export const MainPage = () => {
           })()}
         >
           코스 추천받기
-        </div>
+        </button>
 
         <div className="mt-3 flex flex-col items-center gap-2 text-center text-xs text-gray-500">
           {!isMarkers && <p>시작점을 클릭해주세요</p>}
