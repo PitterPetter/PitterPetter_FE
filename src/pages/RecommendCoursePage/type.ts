@@ -11,4 +11,6 @@ export type RecommendStop = {
   mood_tag?: number;
   food_tag?: string[];
   rating_avg?: number;
+  open_hours?: string;
+  link?: string;
 };

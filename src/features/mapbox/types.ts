@@ -67,3 +67,14 @@ export interface RecommendResponse {
 
 
 export type TimeOfDay = 'dawn' | 'day' | 'dusk' | 'night';
+
+export interface MapboxRemoteControllerProps {
+  mapRef: React.RefObject<mapboxgl.Map | null>;
+  isMapReady: boolean;
+  defaultViewRef: React.MutableRefObject<{
+    center: [number, number];
+    zoom: number;
+    pitch: number;
+    bearing: number;
+  }>;
+}

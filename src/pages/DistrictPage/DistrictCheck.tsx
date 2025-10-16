@@ -7,6 +7,7 @@ import { useDistrictStore } from '../../shared/store/district.store';
 import { mypageApi } from '../../features/mypage/api';
 import { toast } from 'react-toastify';
 import { Spinner } from '../../shared/ui/spinner';
+import namsantower from '/namsantower.jpg';
 
 export const DistrictCheck = () => {
   const navigate = useNavigate();
@@ -39,7 +40,7 @@ export const DistrictCheck = () => {
     }
 
     setIsSubmitting(true);
-    const districtIds = selectedDistricts.map(district => district.id);
+    const districtIds = selectedDistricts.map(district => district.id.toString());
     confirmDistrictMutation.mutate(districtIds);
   };
 
@@ -66,12 +67,16 @@ export const DistrictCheck = () => {
 
   return (
     <div className="flex items-center justify-center w-full h-full">
-      <div className="h-[800px] w-[700px] bg-[#DED6D6] border-gray-300 border rounded-2xl p-4 py-16 flex flex-col gap-4 justify-center items-center">
-        <h1 className="text-2xl font-bold text-gray-800">데이트 지역 확인</h1>
-        <p className="text-gray-600 text-center">다음 2개의 자치구에서 데이트 코스를 추천받으시겠습니까?</p>
-        
+      <div className="relative h-[800px] w-[700px] bg-[#DED6D6] border-gray-300 border rounded-2xl p-4 py-16 flex flex-col gap-4 justify-center items-center">
+        <h1 className="text-2xl font-bold text-gray-900">데이트 지역 확인</h1>
+        <p className="text-gray-700 text-center">다음 2개의 자치구에서 데이트 코스를 추천받으시겠습니까?</p>
+        {/* 배경 이미지 */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30"
+          style={{ backgroundImage: `url(${namsantower})` }}
+        />
         {/* 선택된 자치구 목록 */}
-        <div className="w-full max-w-md space-y-4">
+        <div className="w-full max-w-md space-y-4 relative z-10">
           {selectedDistricts.map((district, index) => (
             <div
               key={district.id}
@@ -97,7 +102,7 @@ export const DistrictCheck = () => {
         </div>
 
         {/* 확인 메시지 */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 w-full max-w-md">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 w-full max-w-md relative z-10">
           <div className="flex items-center gap-2">
             <FontAwesomeIcon icon={faCheck} className="w-5 h-5 text-blue-600" />
             <p className="text-sm text-blue-800">
@@ -107,7 +112,7 @@ export const DistrictCheck = () => {
         </div>
 
         {/* 버튼 그룹 */}
-        <div className="flex gap-4 w-full max-w-md">
+        <div className="flex gap-4 w-full max-w-md relative z-10">
           <button
             onClick={handleBack}
             disabled={isSubmitting}
@@ -119,16 +124,14 @@ export const DistrictCheck = () => {
           <button
             onClick={handleConfirm}
             disabled={isSubmitting}
-            className="flex-1 h-[44px] bg-primary text-white rounded-md hover:bg-primary/80 disabled:opacity-50 transition-all duration-200 flex items-center justify-center gap-2"
+            className="flex-1 h-[44px] bg-[#662B2B] text-white rounded-md hover:bg-primary/80 disabled:opacity-50 transition-all duration-200 flex items-center justify-center gap-2"
           >
             {isSubmitting ? (
               <>
-                <Spinner />
                 <span>확인 중...</span>
               </>
             ) : (
               <>
-                <FontAwesomeIcon icon={faCheck} className="w-4 h-4" />
                 <span>확인</span>
               </>
             )}

@@ -3,10 +3,13 @@ import mapboxgl from 'mapbox-gl';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { useMarkerStore } from '../../../shared/store/mapbox.store';
 import { MapboxProps, MapRefs, TimeOfDay } from '../types';
-// import { mapboxApi } from '../api';
 import { useStartStore } from '../../../shared/store/recommend.store';
 import { useHeaderStore } from '../../../shared/store/header.store';
-import diaryMock from '../../diary/mocks/diary.json';
+import { DistrictInfo } from '../../mypage/types';
+import { mapboxApi } from '../api';
+import { useDistrictStore as useDistrictSelectionStore } from '../../../shared/store/district.store';
+import { useQuery } from '@tanstack/react-query';
+import MapboxRemoteController from './MapboxRemoteController';
 
 const MapboxMainPage: React.FC<MapboxProps> = ({
   center = [127.104, 37.505],
@@ -15,12 +18,20 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
 }) => {
   const mapContainerRef = useRef<MapRefs['container']>(null);
   const mapRef = useRef<MapRefs['map']>(null);
-  const [mapData, setMapData] = useState<any>(null);
   const [isMapReady, setIsMapReady] = useState(false);
   const { isOpen } = useHeaderStore();
   const { setIsMarkers } = useMarkerStore();
+  const setSelectedDistrict = useDistrictSelectionStore((state) => state.setSelectedDistrict);
+  const [initialLng, initialLat] = center;
+  const defaultViewRef = useRef({
+    center: [initialLng, initialLat] as [number, number],
+    zoom,
+    pitch,
+    bearing: 0,
+  });
 
   const popupMapRef = useRef<Map<number, mapboxgl.Popup>>(new Map());
+  const districtDataRef = useRef<DistrictInfo[]>([]);
 
   const getTimeOfDay = (date = new Date()): TimeOfDay => {
     const hour = date.getHours();
@@ -29,6 +40,69 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
     if (hour >= 17 && hour < 21) return 'dusk';
     return 'night';
   };
+
+  const { data: districtLockData } = useQuery({
+    queryKey: ['districtLockup'],
+    queryFn: async () => {
+      const response = await mapboxApi.getDistrictLockStatus();
+      return response.data;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  useEffect(() => {
+    const seoulDistricts =
+      districtLockData?.data?.cities?.find((city: any) => city.cityName === '서울시')?.districts ?? [];
+    districtDataRef.current = seoulDistricts;
+  }, [districtLockData]);
+
+
+  const { data: mapboxData } = useQuery({
+    queryKey: ['mapbox', 'main'],
+    queryFn: async () => {
+      const response = await mapboxApi.getMapboxData();
+      return response.data;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
+
+  type EaseOptions = Parameters<mapboxgl.Map['easeTo']>[0];
+
+  // 좌표를 기반으로 지역구 찾기 (간단한 근사치)
+  const findDistrictByCoordinates = (lat: number, lng: number): DistrictInfo | null => {
+    // 서울시 경계 좌표 범위 체크
+    const seoulBounds = {
+      north: 37.7151,  // 도봉구 북쪽
+      south: 37.4133,  // 금천구 남쪽
+      east: 127.2693,  // 강동구 동쪽
+      west: 126.7341   // 강서구 서쪽
+    };
+
+    // 서울시 범위를 벗어나면 null 반환
+    if (lat < seoulBounds.south || lat > seoulBounds.north || 
+        lng < seoulBounds.west || lng > seoulBounds.east) {
+      return null;
+    }
+
+    let closestDistrict: DistrictInfo | null = null;
+    let minDistance = Infinity;
+
+    for (const district of districtDataRef.current) {
+      if (typeof district.lat !== 'number' || typeof district.lng !== 'number') {
+        continue;
+      }
+
+      const distance = Math.hypot(lat - district.lat, lng - district.lng);
+      if (distance < minDistance) {
+        minDistance = distance;
+        closestDistrict = district;
+      }
+    }
+
+    return closestDistrict;
+  };
+
+  const mapData = mapboxData;
 
   const makeFeatureCollection = () => {
     const features = (mapData?.data?.content ?? []).map(
@@ -203,20 +277,6 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
     }
   };
 
-  // 데이터 로드
-  useEffect(() => {
-    const loadMapData = async () => {
-      try {
-        //const response = await mapboxApi.getMapboxData();
-        const response = diaryMock;
-        setMapData(response.data);
-      } catch (error) {
-        console.error('Failed to load map data:', error);
-      }
-    };
-    loadMapData();
-  }, []);
-
   useEffect(() => {
     if (!mapContainerRef.current || !mapData) return;
     mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
@@ -328,7 +388,9 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
         });
       });
 
-      const update = () => syncAlwaysOnPopups();
+      const update = () => {
+        syncAlwaysOnPopups();
+      };
       map.on('moveend', update);
       map.on('sourcedata', (ev: mapboxgl.MapSourceDataEvent) => {
         if (ev.sourceId === 'posts' && ev.isSourceLoaded && ev.sourceDataType !== 'metadata') {
@@ -344,6 +406,14 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
     });
 
     map.once('load', () => {
+      const initialCenter = map.getCenter();
+      defaultViewRef.current = {
+        center: [initialCenter.lng, initialCenter.lat] as [number, number],
+        zoom: map.getZoom(),
+        pitch: map.getPitch(),
+        bearing: map.getBearing(),
+      };
+
       let currentMarker: mapboxgl.Marker | null = null;
 
       map.on('click', (e) => {
@@ -353,14 +423,27 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
         
         if (features.length > 0) return;
 
+        // 기존 마커 제거
         if (currentMarker) currentMarker.remove();
 
-        currentMarker = new mapboxgl.Marker({ color: '#ff4444' })
+        // 새로운 마커 생성
+        currentMarker = new mapboxgl.Marker({ 
+          color: '#ff4444',
+          scale: 1.2
+        })
           .setLngLat(e.lngLat)
           .addTo(map);
 
         setIsMarkers(true);
         useStartStore.setState({ lat: e.lngLat.lat, lng: e.lngLat.lng });
+
+        // 클릭한 좌표의 지역구 찾기
+        const district = findDistrictByCoordinates(e.lngLat.lat, e.lngLat.lng);
+        if (district) {
+          setSelectedDistrict(district);
+        } else {
+          setSelectedDistrict(null);
+        }
 
         map.easeTo({
           pitch: 0,
@@ -376,7 +459,7 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
       }
       popupMapRef.current.clear();
 
-      mapRef.current?.remove();
+      map.remove();
       mapRef.current = null;
       setIsMapReady(false);
     };
@@ -395,7 +478,13 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
         id="map"
         style={{ height: '110vh', width: isOpen ? 'calc(100vw - 256px)' : 'calc(100vw - 64px)' }}
       />
-      
+
+      <MapboxRemoteController 
+        mapRef={mapRef}
+        isMapReady={isMapReady}
+        defaultViewRef={defaultViewRef}
+      />
+
       {/* 로딩 오버레이 */}
       {!isMapReady && (
         <div className="pointer-events-none absolute inset-0 bg-white z-20 flex items-center justify-center">
@@ -408,4 +497,3 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
 };
 
 export default MapboxMainPage;
-

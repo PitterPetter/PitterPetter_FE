@@ -5,6 +5,7 @@ import course from '../features/course/mocks/getCourse.json';
 import diaryDetail from '../features/diary/mocks/diaryDetail.json';
 import coupleRoomCode from '../features/coupleroom/mocks/coupleCodeMock.json';
 import mypage from '../features/mypage/mocks/mypageMock.json';
+import districtLockMock from '../features/mypage/mocks/districtLockMock.json';
 
 // 한 곳에서 베이스 URL 관리
 const API = 'https://api.loventure.us';
@@ -84,6 +85,12 @@ export const handlers = [
   // 홈 조회 API
   http.get('*/home', () => {
     return HttpResponse.json({ message: 'Home endpoint' });
+  }),
+
+  // 지역구 잠금 상태 (지도용)
+  http.get(`${API}/api/regions/lockup`, async () => {
+    await delay(500);
+    return HttpResponse.json(districtLockMock);
   }),
 
   // 다이어리 목록
@@ -480,5 +487,11 @@ export const handlers = [
       ],
     };
     return HttpResponse.json(mock);
+  }),
+
+  // 지역구 목록 조회 API
+  http.get(`${API}/api/districts`, async () => {
+    await delay(300);
+    return HttpResponse.json(districtLockMock);
   }),
 ];

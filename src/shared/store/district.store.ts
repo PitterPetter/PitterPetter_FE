@@ -1,14 +1,20 @@
-import { create } from "zustand";
-import { DistrictInfo } from "../../features/mypage/types";
+import { create } from 'zustand';
+import { DistrictInfo } from '../../features/mypage/types';
 
-export interface DistrictStore {
+interface DistrictStore {
+  selectedDistrict: DistrictInfo | null;
   selectedDistricts: DistrictInfo[];
+  setSelectedDistrict: (district: DistrictInfo | null) => void;
   setSelectedDistricts: (districts: DistrictInfo[]) => void;
+  clearSelectedDistrict: () => void;
   clearSelectedDistricts: () => void;
 }
 
 export const useDistrictStore = create<DistrictStore>((set) => ({
+  selectedDistrict: null,
   selectedDistricts: [],
-  setSelectedDistricts: (districts: DistrictInfo[]) => set({ selectedDistricts: districts }),
+  setSelectedDistrict: (district) => set({ selectedDistrict: district }),
+  setSelectedDistricts: (districts) => set({ selectedDistricts: districts }),
+  clearSelectedDistrict: () => set({ selectedDistrict: null }),
   clearSelectedDistricts: () => set({ selectedDistricts: [] }),
 }));
