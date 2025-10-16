@@ -15,16 +15,16 @@ export const DiaryListPage = () => {
 
   const { data: diaryData, isLoading, error } = useQuery({
     queryKey: ['diaries', currentPage],
-    queryFn: async () => {
-      const response = await diaryApi.getDiaryList(currentPage, pageSize);
-      console.log("diary list response:", response);
-      return response.data.data.result;
-    },
+      queryFn: async () => {
+        const response = await diaryApi.getDiaryList(currentPage, pageSize);
+        console.log("diary list response:", response.data);
+        return response.data.result;
+      },
     staleTime: 5 * 60 * 1000, // 5분간 캐시 유지
     gcTime: 10 * 60 * 1000, // 10분간 가비지 컬렉션 방지
   });
 
-  const diaryList = diaryData?.content as Diary[];
+  const diaryList = diaryData?.content || [];
   const totalPages = diaryData?.page?.totalPages || 0;
   const totalElements = diaryData?.page?.totalElements || 0;
   
