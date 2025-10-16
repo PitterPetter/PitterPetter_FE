@@ -10,6 +10,7 @@ import { mapboxApi } from '../api';
 import { useDistrictStore as useDistrictSelectionStore } from '../../../shared/store/district.store';
 import { useQuery } from '@tanstack/react-query';
 import MapboxRemoteController from './MapboxRemoteController';
+import districtLockMock from '../../mypage/mocks/districtLockMock.json';
 
 const MapboxMainPage: React.FC<MapboxProps> = ({
   center = [127.104, 37.505],
@@ -41,18 +42,20 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
     return 'night';
   };
 
-  const { data: districtLockData } = useQuery({
-    queryKey: ['districtLockup'],
-    queryFn: async () => {
-      const response = await mapboxApi.getDistrictLockStatus();
-      return response.data;
-    },
-    staleTime: 5 * 60 * 1000,
-  });
+  // const { data: districtLockData } = useQuery({
+  //   queryKey: ['districtLockup'],
+  //   queryFn: async () => {
+  //     const response = await mapboxApi.getDistrictLockStatus();
+  //     return response.data;
+  //   },
+  //   staleTime: 5 * 60 * 1000,
+  // });
+  const districtLockData = districtLockMock.data;
 
   useEffect(() => {
     const seoulDistricts =
-      districtLockData?.data?.cities?.find((city: any) => city.cityName === '서울시')?.districts ?? [];
+      // districtLockData?.data?.cities?.find((city: any) => city.cityName === '서울시')?.districts ?? [];
+      districtLockData?.cities?.find((city: any) => city.cityName === '서울시')?.districts ?? [];
     districtDataRef.current = seoulDistricts;
   }, [districtLockData]);
 
