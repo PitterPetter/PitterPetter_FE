@@ -91,7 +91,7 @@ export const handlers = [
     const size = parseInt(url.searchParams.get('size') || '6');
     
     // 원본 데이터를 깊은 복사하여 사용
-    const allDiaries = JSON.parse(JSON.stringify(diary.data.content));
+    const allDiaries = JSON.parse(JSON.stringify(diary.result.content));
     const startIndex = page * size;
     const endIndex = startIndex + size;
     const paginatedDiaries = allDiaries.slice(startIndex, endIndex);
