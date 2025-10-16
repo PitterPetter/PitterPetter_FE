@@ -184,6 +184,14 @@ export const handlers = [
     return HttpResponse.json({ status: 'success' });
   }),
 
+  // 다이어리 삭제
+  http.delete(`${API}/api/diaries/:id`, async ({ params }) => {
+    await delay(500);
+    const { id } = params;
+    console.log('Diary delete request for ID:', id);
+    return HttpResponse.json({ status: 'success' });
+  }),
+
   // 커플 방 생성
   http.post(`${API}/api/home/coupleroom`, async () => {
     await delay(500);
