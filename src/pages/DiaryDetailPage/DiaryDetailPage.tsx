@@ -9,6 +9,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "../../shared/ui/spinner";
 import { CommentSection } from "../../features/diary/components/CommentSection";
 import { useMutation } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
 export const DiaryDetailPage = () => {
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ export const DiaryDetailPage = () => {
   const deleteDiary = useMutation({
     mutationFn: () => diaryDeleteApi.deleteDiary(id as string),
     onSuccess: () => {
+      toast.success("다이어리가 성공적으로 삭제되었습니다.");
       navigate('/diary');
     },
   });
