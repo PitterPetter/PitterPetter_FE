@@ -12,6 +12,7 @@ import { useHeaderStore } from '../../shared/store/header.store';
 import { saveCourseApi } from "../../features/course/api";
 import { toast } from 'react-toastify';
 import { saveRecommendToSession } from "../../features/recommend/utils/sessionStorage";
+import { COURSE_STORAGE_KEY } from "../../features/course/utils/normalizeCourse";
 import { RecommendStop } from "./type";
 
 const formatCategory = (category?: string) => (category ? category.toUpperCase() : "UNKNOWN");
@@ -72,9 +73,7 @@ export const RecommendCoursePage = () => {
   const handleCloseModal = useCallback(() => {
     setIsPlaceModalOpen(false);
     setSelectedPlace(null);
-    // Store에서 선택된 장소 제거
     setStoreSelectedPlace(null);
-    // URL을 기본 recommend 페이지로 변경
     navigate("/recommend");
   }, [navigate, setStoreSelectedPlace]);
 
@@ -142,6 +141,13 @@ export const RecommendCoursePage = () => {
     mutationFn: saveCourseApi,
     onSuccess: (data) => {
       console.log(data);
+      try {
+        if (typeof window !== "undefined") {
+          sessionStorage.removeItem(COURSE_STORAGE_KEY);
+        }
+      } catch (error) {
+        console.error("[course] 코스 세션을 비우지 못했습니다.", error);
+      }
       navigate(`/course`);
       toast.success("코스가 저장되었습니다.");
     },
