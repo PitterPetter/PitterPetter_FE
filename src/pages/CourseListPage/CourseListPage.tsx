@@ -1,21 +1,11 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import { getCourseList } from "../../features/course/api";
 import { CourseListItem } from "../../features/course";
 import { COURSE_STORAGE_KEY, normalizeCourses, readCoursesFromSession } from "../../features/course/utils/normalizeCourse";
-import { injectTempToken } from "../../features/course/util/injectTempToken";
 import type { Course } from "../../features/course/types";
 import { Spinner } from "../../shared/ui/spinner";
 import { useQuery } from "@tanstack/react-query";
 
 export const CourseListPage = () => {
-  const navigate = useNavigate();
-
-  // 임시 토큰 주입 (로컬 테스트 전용)
-  useEffect(() => {
-    injectTempToken();
-  }, []);
-
   const { data: courseList, isLoading, error } = useQuery({
     queryKey: ['courses'],
     queryFn: async (): Promise<Course[]> => {
@@ -26,10 +16,14 @@ export const CourseListPage = () => {
         setTimeout(() => {
           getCourseList()
             .then((response) => {
+              console.log("response", response);
+              console.log("response.data", response.data);
               const normalized = normalizeCourses(response.data);
+              console.log("normalized", normalized);
               try {
                 if (typeof window !== "undefined") {
                   sessionStorage.setItem(COURSE_STORAGE_KEY, JSON.stringify(normalized));
+                  console.log("sessionStorage", sessionStorage.getItem(COURSE_STORAGE_KEY));
                 }
               } catch (error) {
                 console.error("[course] 코스 데이터를 세션 스토리지에 저장하지 못했습니다.", error);
@@ -44,8 +38,10 @@ export const CourseListPage = () => {
       
       // 세션에 없으면 API 호출
       const response = await getCourseList();
+      console.log("response", response);
+      console.log("response.data", response.data);
       const normalized = normalizeCourses(response.data);
-      
+      console.log("normalized", normalized);
       try {
         if (typeof window !== "undefined") {
           sessionStorage.setItem(COURSE_STORAGE_KEY, JSON.stringify(normalized));

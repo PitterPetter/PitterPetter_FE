@@ -32,5 +32,5 @@ export const injectTempToken = () => {
     return;
   }
 
-  tokenStore.setTokens(envToken);
+  tokenStore.setAccessToken(envToken);
 };
