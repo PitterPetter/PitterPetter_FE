@@ -81,7 +81,21 @@ export const DiaryDetailPage = () => {
 
         {/* 본문 이미지 */}
         <div className="w-full h-full rounded-md">
-          <img src={diaryData?.result.imageUrl ?? diaryData?.result.imageUpload.presignedUrl} alt="diaryImage" className="w-full h-full object-cover" />
+          {(() => {
+            const imageUrl = diaryData?.result.imageUrl;
+            const uploadUrl = diaryData?.result.imageUpload?.presignedUrl;
+            if (imageUrl) {
+              return <img src={imageUrl} alt="diaryImage" className="w-full h-full object-cover" />;
+            }
+            if (uploadUrl) {
+              return <img src={uploadUrl} alt="diaryImage" className="w-full h-full object-cover" />;
+            }
+            return (
+              <div className="w-full h-[300px] flex items-center justify-center rounded-md bg-gray-100 text-gray-500 text-sm">
+                등록된 이미지가 없습니다.
+              </div>
+            );
+          })()}
           {/* 추후 추가 예정 */}
           <p className="w-full h-full p-2">{diaryData?.result.content}</p>
         </div>
