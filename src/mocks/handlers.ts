@@ -72,16 +72,6 @@ const mockStore = {
 mockStore.init();
 
 export const handlers = [
-  // 맵박스 조회 API
-  http.get(`${API}/api/mapbox`, async () => {
-    await delay(500);
-    return HttpResponse.json({
-      markers: [
-        { id: 'm1', name: '샘플 POI', lat: 37.5665, lng: 126.9780, category: 'CAFE' }
-      ]
-    });
-  }),
-
   // 홈 조회 API
   http.get('*/home', () => {
     return HttpResponse.json({ message: 'Home endpoint' });

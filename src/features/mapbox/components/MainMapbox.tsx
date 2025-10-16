@@ -6,9 +6,8 @@ import { MapboxProps, MapRefs, TimeOfDay } from '../types';
 import { useStartStore } from '../../../shared/store/recommend.store';
 import { useHeaderStore } from '../../../shared/store/header.store';
 import { DistrictInfo } from '../../mypage/types';
-import { mapboxApi } from '../api';
+// import { mapboxApi } from '../api';
 import { useDistrictStore as useDistrictSelectionStore } from '../../../shared/store/district.store';
-import { useQuery } from '@tanstack/react-query';
 import MapboxRemoteController from './MapboxRemoteController';
 import districtLockMock from '../../mypage/mocks/districtLockMock.json';
 
@@ -50,24 +49,18 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
   //   },
   //   staleTime: 5 * 60 * 1000,
   // });
-  const districtLockData = districtLockMock.data;
 
+  // useEffect(() => {
+  //   const seoulDistricts =
+  //     districtLockData?.data?.cities?.find((city: any) => city.cityName === '서울시')?.districts ?? [];
+  //   districtDataRef.current = seoulDistricts;
+  // }, [districtLockData]);
+
+  // districtLockMock 데이터 로드
   useEffect(() => {
-    const seoulDistricts =
-      // districtLockData?.data?.cities?.find((city: any) => city.cityName === '서울시')?.districts ?? [];
-      districtLockData?.cities?.find((city: any) => city.cityName === '서울시')?.districts ?? [];
+    const seoulDistricts = districtLockMock.data.cities.find((city: any) => city.cityName === '서울시')?.districts || [];
     districtDataRef.current = seoulDistricts;
-  }, [districtLockData]);
-
-
-  const { data: mapboxData } = useQuery({
-    queryKey: ['mapbox', 'main'],
-    queryFn: async () => {
-      const response = await mapboxApi.getMapboxData();
-      return response.data;
-    },
-    staleTime: 5 * 60 * 1000,
-  });
+  }, []);
 
   type EaseOptions = Parameters<mapboxgl.Map['easeTo']>[0];
 
@@ -105,36 +98,12 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
     return closestDistrict;
   };
 
-  const mapData = mapboxData;
 
   const makeFeatureCollection = () => {
-    const features = (mapData?.data?.content ?? []).map(
-      (
-        item: {
-          lng: number;
-          lat: number;
-          title: string;
-          excerpt: string;
-          updatedAt: string;
-        },
-        idx: number
-      ) => ({
-        type: 'Feature' as const,
-        id: idx,
-        properties: {
-          title: item.title,
-          excerpt: item.excerpt,
-          updatedAt: item.updatedAt,
-        },
-        geometry: {
-          type: 'Point' as const,
-          coordinates: [item.lng, item.lat]
-        }
-      })
-    );
+    // 빈 FeatureCollection 반환
     return {
       type: 'FeatureCollection' as const,
-      features
+      features: []
     };
   };
 
@@ -281,7 +250,7 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
   };
 
   useEffect(() => {
-    if (!mapContainerRef.current || !mapData) return;
+    if (!mapContainerRef.current) return;
     mapboxgl.accessToken = import.meta.env.VITE_MAPBOX_ACCESS_TOKEN;
 
     const map = new mapboxgl.Map({
@@ -466,7 +435,7 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
       mapRef.current = null;
       setIsMapReady(false);
     };
-  }, [mapData, isOpen]);
+  }, [isOpen]);
 
   return (
     <div style={{ 
