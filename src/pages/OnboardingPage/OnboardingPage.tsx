@@ -43,18 +43,24 @@ export const OnboardingPage = () => {
     console.log('body data: ', {alcoholPreference, activeBound, dateCostPreference: convertCostPreference(dateCostPreference), favoriteFoodCategories, atmosphere});
   };
   return (
-    <div className="w-full flex justify-center items-center bg-primary/80 h-[100vh]">
-      <div className="flex flex-col p-0 pt-0 w-full md:max-w-[800px] h-full justify-center items-center">
-        <div className="h-full w-full p-4 pb-6 flex flex-col gap-4 items-center justify-center border border-primary/10 bg-white backdrop-blur-sm">
+    <div className="w-full flex justify-center items-center bg-[#93000A]/60 h-[100vh] relative">
+      <div className="flex flex-col p-0 pt-0 w-full md:max-w-[800px] h-full justify-center items-center relative z-10">
+        <div className="h-full w-full p-6 pb-8 flex flex-col gap-4 items-center justify-center border border-white/20 bg-white backdrop-blur-md shadow-2xl">
           {/* 개인 온보딩 */}
-          <h1 className="text-2xl">본인의 취향을 알려주세요</h1>
-          <p className="text-gray-500 pb-8">정보를 입력해 주시면 더 정확한 추천을 해드릴 수 있어요</p>
+          <div className="text-center mb-4">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent mb-3">
+              본인의 취향을 알려주세요
+            </h1>
+            <p className="text-gray-600 text-lg max-w-md mx-auto leading-relaxed">
+              정보를 입력해 주시면 더 정확한 추천을 해드릴 수 있어요
+            </p>
+          </div>
           <div className="overflow-y-hidden relative">
             <PersonalOnboarding />
             <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none"></div>
           </div>
           <div className="flex justify-center items-center mt-12">
-            <div className={`flex justify-center items-center w-[304px] h-[64px] bg-primary text-white px-4 py-2 rounded-md
+            <div className={`flex justify-center items-center w-[304px] h-[64px] bg-[#93000A] text-white px-4 py-2 rounded-md
             ${answeredCount===5 ? "opacity-100 cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
             onClick={answeredCount === 5 ? handleSubmit : undefined}>
               저장하기
