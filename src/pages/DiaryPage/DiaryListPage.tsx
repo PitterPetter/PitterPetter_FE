@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { diaryApi } from "../../features/diary/api";
 import { Diary } from "../../features/diary/types";
 import { Spinner } from "../../shared/ui/spinner";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 export const DiaryListPage = () => {
   const navigate = useNavigate();
@@ -20,8 +20,9 @@ export const DiaryListPage = () => {
         console.log("diary list response:", response.data);
         return response.data.result;
       },
-    staleTime: 5 * 60 * 1000, // 5분간 캐시 유지
-    gcTime: 10 * 60 * 1000, // 10분간 가비지 컬렉션 방지
+    staleTime: 0,
+    refetchOnMount: true,
+    refetchOnWindowFocus: false
   });
 
   const diaryList = diaryData?.content || [];

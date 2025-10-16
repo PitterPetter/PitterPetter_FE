@@ -2,7 +2,7 @@ import { ConnectCourse } from "../../features/diary/components/ConnectCourse";
 import { Review } from "../../features/diary/components/Review";
 import { WriteDiary } from "../../features/diary/components/WriteDiary";
 import { useNavigate, useParams } from "react-router-dom";
-import { diaryDetailApi, diaryCreateApi } from "../../features/diary/api";
+import { diaryDetailApi, diaryCreateApi, diaryUpdateApi } from "../../features/diary/api";
 import { useDiaryStore } from "../../shared/store/diary.store";
 import { toast } from 'react-toastify';
 import { useQuery } from "@tanstack/react-query";
@@ -99,8 +99,8 @@ export const UpdateDiaryPage = () => {
         removeImage: !diaryImage
       };
 
-      // POST로 수정 요청
-      const res = await diaryCreateApi.createDiary(requestData);
+      // PUT로 수정 요청
+      const res = await diaryUpdateApi.updateDiary(id, requestData);
       
       // 성공 시 토스트 메시지와 네비게이션
       toast.success('다이어리가 성공적으로 수정되었습니다.');

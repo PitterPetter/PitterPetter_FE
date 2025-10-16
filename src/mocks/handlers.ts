@@ -100,8 +100,9 @@ export const handlers = [
     const totalPages = Math.ceil(totalElements / size);
     
     return HttpResponse.json({
-      success: true,
-      data: {
+      timestamp: "2025-10-16T13:48:30.178+09:00",
+      code: "COMMON200",
+      result: {
         content: paginatedDiaries,
         page: {
           page,
@@ -172,6 +173,23 @@ export const handlers = [
     const { id } = params;
     const diaryData = mockStore.getDiaryDetailWithComments(id as string);
     return HttpResponse.json(diaryData);
+  }),
+
+  // 다이어리 수정
+  http.put(`${API}/api/diaries/:id`, async ({ params, request }) => {
+    await delay(500);
+    const { id } = params;
+    const body = await request.json().catch(() => ({}));
+    console.log('Diary update request:', body);
+    return HttpResponse.json({ status: 'success' });
+  }),
+
+  // 다이어리 삭제
+  http.delete(`${API}/api/diaries/:id`, async ({ params }) => {
+    await delay(500);
+    const { id } = params;
+    console.log('Diary delete request for ID:', id);
+    return HttpResponse.json({ status: 'success' });
   }),
 
   // 커플 방 생성

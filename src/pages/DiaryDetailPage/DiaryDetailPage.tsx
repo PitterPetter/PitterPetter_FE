@@ -2,13 +2,12 @@
 
 import { useParams } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faStar } from "@fortawesome/free-solid-svg-icons";
 import { diaryDetailApi, diaryDeleteApi } from "../../features/diary/api";
 import { useQuery } from "@tanstack/react-query";
 import { Spinner } from "../../shared/ui/spinner";
 import { CommentSection } from "../../features/diary/components/CommentSection";
 import { useMutation } from "@tanstack/react-query";
+import { toast } from "react-toastify";
 
 export const DiaryDetailPage = () => {
   const navigate = useNavigate();
@@ -28,6 +27,7 @@ export const DiaryDetailPage = () => {
   const deleteDiary = useMutation({
     mutationFn: () => diaryDeleteApi.deleteDiary(id as string),
     onSuccess: () => {
+      toast.success("다이어리가 성공적으로 삭제되었습니다.");
       navigate('/diary');
     },
   });
@@ -112,21 +112,6 @@ export const DiaryDetailPage = () => {
               <div className="text-sm text-gray-500">
                 {diaryData?.result.title}
               </div>
-            </div>
-          </div>
-        </div>
-
-         {/* 리뷰 */}
-         <div className="flex gap-4 p-4 py-6 bg-gray-100 h-full rounded-md items-center justify-between my-4">
-          <h2 className="text-lg text-gray-800">여행 만족도</h2>
-          <div className="flex items-center justify-start gap-2">
-            {[1,2,3,4,5].map((item) => (
-              <div key={item}>
-                <FontAwesomeIcon icon={faStar} className={`w-[16px] h-[16px] ${item <= Math.floor(parseFloat(diaryData?.result.rating)) ? 'text-yellow-400' : 'text-gray-300'}`} />
-              </div>
-            ))}
-            <div className="text-sm text-gray-500">
-              {diaryData?.result.rating}
             </div>
           </div>
         </div>
