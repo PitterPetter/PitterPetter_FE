@@ -18,11 +18,9 @@ export const CourseListPage = () => {
             .then((response) => {
               console.log("response", response);
               console.log("response.data", response.data);
-              const normalized = normalizeCourses(response.data);
-              console.log("normalized", normalized);
               try {
                 if (typeof window !== "undefined") {
-                  sessionStorage.setItem(COURSE_STORAGE_KEY, JSON.stringify(normalized));
+                  sessionStorage.setItem(COURSE_STORAGE_KEY, JSON.stringify(response.data));
                   console.log("sessionStorage", sessionStorage.getItem(COURSE_STORAGE_KEY));
                 }
               } catch (error) {
@@ -40,17 +38,15 @@ export const CourseListPage = () => {
       const response = await getCourseList();
       console.log("response", response);
       console.log("response.data", response.data);
-      const normalized = normalizeCourses(response.data);
-      console.log("normalized", normalized);
       try {
         if (typeof window !== "undefined") {
-          sessionStorage.setItem(COURSE_STORAGE_KEY, JSON.stringify(normalized));
+          sessionStorage.setItem(COURSE_STORAGE_KEY, JSON.stringify(response.data));
         }
       } catch (error) {
         console.error("[course] 코스 데이터를 세션 스토리지에 저장하지 못했습니다.", error);
       }
       
-      return normalized;
+      return response.data;
     },
     staleTime: 5 * 60 * 1000, // 5분간 fresh
     gcTime: 10 * 60 * 1000, // 10분간 캐시 유지 (cacheTime → gcTime)
