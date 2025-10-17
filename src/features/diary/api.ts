@@ -32,6 +32,12 @@ export const diaryDeleteApi = {
   deleteDiary: (id: string) => api.delete(`/api/diaries/${id}`),
 };
 
+// 이미지 업로드 상태 알림 API
+export const diaryImageApi = {
+  notifyComplete: (imageId: string) => api.patch(`/api/images/${imageId}/complete`),
+  notifyFail: (imageId: string) => api.patch(`/api/images/${imageId}/fail`),
+};
+
 // 댓글 API
 export const commentApi = {
   // 댓글 작성
