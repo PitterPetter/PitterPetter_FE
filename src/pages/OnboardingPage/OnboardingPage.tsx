@@ -43,9 +43,9 @@ export const OnboardingPage = () => {
     console.log('body data: ', {alcoholPreference, activeBound, dateCostPreference: convertCostPreference(dateCostPreference), favoriteFoodCategories, atmosphere});
   };
   return (
-    <div className="w-full flex justify-center items-center bg-[#93000A]/60 h-[100vh] relative">
-      <div className="flex flex-col p-0 pt-0 w-full md:max-w-[800px] h-full justify-center items-center relative z-10">
-        <div className="h-full w-full p-6 pb-8 flex flex-col gap-4 items-center justify-center border border-white/20 bg-white backdrop-blur-md shadow-2xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
+      <div className="w-full max-w-4xl mx-4 h-full bg-white shadow-2xl overflow-hidden">
+        <div className="h-full w-full p-6 pt-4 pb-8 flex flex-col gap-4 items-center justify-center">
           {/* 개인 온보딩 */}
           <div className="text-center mb-4">
             <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent mb-3">
@@ -55,15 +55,15 @@ export const OnboardingPage = () => {
               정보를 입력해 주시면 더 정확한 추천을 해드릴 수 있어요
             </p>
           </div>
-          <div className="overflow-y-hidden relative">
+          <div className="overflow-y-hidden relative flex-1 w-full">
             <PersonalOnboarding />
             <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none"></div>
           </div>
-          <div className="flex justify-center items-center mt-12">
-            <div className={`flex justify-center items-center w-[304px] h-[64px] bg-[#93000A] text-white px-4 py-2 rounded-md
-            ${answeredCount===5 ? "opacity-100 cursor-pointer" : "opacity-50 cursor-not-allowed"}`}
+          <div className="flex justify-center items-center mt-4">
+            <div className={`flex justify-center items-center w-[240px] h-[64px] bg-[#93000A] text-white px-4 py-2 rounded-md transition-all duration-300
+            ${answeredCount===5 ? "opacity-100 cursor-pointer hover:opacity-80" : "opacity-50 cursor-not-allowed hover:opacity-50"}`}
             onClick={answeredCount === 5 ? handleSubmit : undefined}>
-              저장하기
+              {mutation.isPending ? '저장하는 중...' : "저장"}
             </div>
           </div>
         </div>

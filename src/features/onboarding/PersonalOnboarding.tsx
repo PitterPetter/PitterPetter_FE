@@ -6,14 +6,12 @@ import { useEffect } from "react";
 
 const FOOD_CATEGORIES = ['한식', '중식', '양식', '일식', '분식'];
 const COST_PREFERENCE = ['1만원 이하', '1 ~ 3만원', '3 ~ 5만원', '5 ~ 8만원', '8만원 이상'];
-const HEIGHTLEVEL = [120, 270, 390, 510, 650, 650];
 
 export const PersonalOnboarding = () => {
   const { alcoholPreference, activeBound, dateCostPreference, favoriteFoodCategories, atmosphere, setAlcoholPreference, setActiveBound, setDateCostPreference, setFavoriteFoodCategories, setAtmosphere, setAnsweredCount } = useOnboardingStore();
   const circleStyle = "border border-gray-300 rounded-full transition-all duration-250 flex justify-center items-center text-white";
   const boxStyle = "w-full h-12 rounded-md transition-all duration-250 flex justify-center items-center border border-gray-300";
   
-  // 답변된 질문 수에 따라 높이 계산
   const getAnsweredQuestionsCount = () => {
     let count = 0;
     if (alcoholPreference !== 0) count++;
@@ -30,16 +28,14 @@ export const PersonalOnboarding = () => {
   }, [answeredCount]);
   
   return (
-    <div className="mt-4 flex flex-col gap-2 items-center justify-center pt-8">
-
+    <div className="mt-4 flex flex-col gap-2 items-center justify-center">
        <div 
-         className="flex flex-col w-full gap-8 transition-all duration-500 ease-out md:px-10"
-         style={{ height: `${HEIGHTLEVEL[answeredCount] || 300}px` }}
+         className="flex flex-col w-full gap-6 transition-all duration-500 ease-out md:px-10"
        >
         {/* Drinking */}
-        <div className="w-full flex flex-col gap-4">
+        <div className="w-full flex flex-col gap-2 md:gap-4">
           <p className="text-black text-lg font-medium">술을 즐기는 걸 선호한다.</p>
-          <div className="w-full grid grid-cols-2 items-center gap-4 md:flex md:justify-between md:items-center">
+          <div className="w-full grid grid-cols-2 items-center md:gap-4 md:flex md:justify-between md:items-center">
             <div className="col-span-2 order-2 flex justify-between items-center gap-4 md:gap-12">
               <span
                 className={`w-12 h-12 ${circleStyle} ${alcoholPreference === 1 ? "bg-[#93000A]/70" : "hover:bg-[#93000A]/40"} md:w-16 md:h-16`}
@@ -77,9 +73,9 @@ export const PersonalOnboarding = () => {
           </div>
         </div>
         {/* Active */}
-        <div className="w-full flex flex-col gap-4">
+        <div className="w-full flex flex-col gap-2 md:gap-4">
           <p className="text-black text-lg font-medium">활동적인 데이트를 선호한다.</p>
-          <div className="w-full grid grid-cols-2 items-center gap-2 md:flex md:justify-between md:items-center">
+          <div className="w-full grid grid-cols-2 items-center md:gap-2 md:flex md:justify-between md:items-center">
             <div className="col-span-2 order-2 flex justify-between items-center gap-4 md:gap-12">
               <span
                 className={`w-12 h-12 ${circleStyle} ${activeBound === 1 ? "bg-[#93000A]/70" : "hover:bg-[#93000A]/40"} md:w-16 md:h-16`}
@@ -137,7 +133,7 @@ export const PersonalOnboarding = () => {
         {/* Atmosphere */}
         <div className="w-full flex flex-col gap-2">
           <p className="text-black text-lg font-medium">어떤 분위기를 선호하세요?</p>
-          <input type="text" className="w-full p-2 h-14 rounded-md transition-all duration-250 flex justify-center items-center border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#93000A]/70" placeholder="입력해주세요." value={atmosphere} onChange={(e) => setAtmosphere(e.target.value)} />
+          <input type="text" className="w-[360px] md:w-full p-2 h-14 rounded-md transition-all duration-250 flex justify-center items-center border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#93000A]/70 mx-auto" placeholder="입력해주세요." value={atmosphere} onChange={(e) => setAtmosphere(e.target.value)} />
         </div>
       </div>
     </div>
