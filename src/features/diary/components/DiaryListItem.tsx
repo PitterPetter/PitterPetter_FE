@@ -32,7 +32,7 @@ export const DiaryListItem = (item: any) => {
         <div className="w-[100px] text-sm">{item.updatedAt?.split('T')[0] || item.createdAt}</div>
         <div className="flex items-center w-[100px] flex justify-end gap-1 text-sm text-gray-500">
           <FontAwesomeIcon icon={faComment} className="w-[12px] h-[12px]" />
-          {item.commentCount}
+          {item.commentCount || 0}
         </div>
       </div>
     </div>
