@@ -1,7 +1,6 @@
 {
   "success": true,
   "data": {
-    "totalKeys": 3,
     "cities": [
       {
         "cityName": "서울시",
@@ -48,169 +47,10 @@
             "description": "명동과 남대문이 있는 서울의 중심",
             "lat": 37.5636,
             "lng": 126.9979
-          },
-          {
-            "id": "gangdong",
-            "name": "강동구",
-            "isLocked": true,
-            "description": "한강과 접한 동부 지역",
-            "lat": 37.5301,
-            "lng": 127.1238
-          },
-          {
-            "id": "gangbuk",
-            "name": "강북구",
-            "isLocked": true,
-            "description": "북한산 기슭의 조용한 주거지역",
-            "lat": 37.6390,
-            "lng": 127.0253
-          },
-          {
-            "id": "gangseo",
-            "name": "강서구",
-            "isLocked": true,
-            "description": "김포공항과 가까운 서부 지역",
-            "lat": 37.5509,
-            "lng": 126.8496
-          },
-          {
-            "id": "gwanak",
-            "name": "관악구",
-            "isLocked": true,
-            "description": "서울대학교가 위치한 지역",
-            "lat": 37.4784,
-            "lng": 126.9516
-          },
-          {
-            "id": "gwangjin",
-            "name": "광진구",
-            "isLocked": true,
-            "description": "건국대학교와 한강이 만나는 곳",
-            "lat": 37.5385,
-            "lng": 127.0823
-          },
-          {
-            "id": "guro",
-            "name": "구로구",
-            "isLocked": true,
-            "description": "구로디지털단지가 있는 지역",
-            "lat": 37.4954,
-            "lng": 126.8874
-          },
-          {
-            "id": "geumcheon",
-            "name": "금천구",
-            "isLocked": true,
-            "description": "서울의 남서부 끝자락",
-            "lat": 37.4519,
-            "lng": 126.9020
-          },
-          {
-            "id": "nowon",
-            "name": "노원구",
-            "isLocked": true,
-            "description": "북한산과 도봉산 사이의 지역",
-            "lat": 37.6542,
-            "lng": 127.0568
-          },
-          {
-            "id": "dobong",
-            "name": "도봉구",
-            "isLocked": true,
-            "description": "도봉산이 있는 북부 지역",
-            "lat": 37.6688,
-            "lng": 127.0471
-          },
-          {
-            "id": "dongdaemun",
-            "name": "동대문구",
-            "isLocked": true,
-            "description": "동대문 시장과 청계천이 있는 지역",
-            "lat": 37.5838,
-            "lng": 127.0507
-          },
-          {
-            "id": "dongjak",
-            "name": "동작구",
-            "isLocked": true,
-            "description": "한강과 남산이 보이는 지역",
-            "lat": 37.5124,
-            "lng": 126.9397
-          },
-          {
-            "id": "seodaemun",
-            "name": "서대문구",
-            "isLocked": true,
-            "description": "서대문형무소와 독립문이 있는 역사적 지역",
-            "lat": 37.5791,
-            "lng": 126.9368
-          },
-          {
-            "id": "seongdong",
-            "name": "성동구",
-            "isLocked": true,
-            "description": "성수동과 한강이 만나는 지역",
-            "lat": 37.5633,
-            "lng": 127.0368
-          },
-          {
-            "id": "seongbuk",
-            "name": "성북구",
-            "isLocked": true,
-            "description": "한성대와 고려대가 있는 지역",
-            "lat": 37.5894,
-            "lng": 127.0167
-          },
-          {
-            "id": "songpa",
-            "name": "송파구",
-            "isLocked": true,
-            "description": "롯데월드타워와 올림픽공원이 있는 지역",
-            "lat": 37.5145,
-            "lng": 127.1059
-          },
-          {
-            "id": "yangcheon",
-            "name": "양천구",
-            "isLocked": true,
-            "description": "목동과 신정동이 있는 서부 지역",
-            "lat": 37.5170,
-            "lng": 126.8665
-          },
-          {
-            "id": "yeongdeungpo",
-            "name": "영등포구",
-            "isLocked": true,
-            "description": "여의도와 한강이 만나는 지역",
-            "lat": 37.5264,
-            "lng": 126.8962
-          },
-          {
-            "id": "yongsan",
-            "name": "용산구",
-            "isLocked": true,
-            "description": "남산과 한강이 만나는 중심가",
-            "lat": 37.5384,
-            "lng": 126.9654
-          },
-          {
-            "id": "eunpyeong",
-            "name": "은평구",
-            "isLocked": true,
-            "description": "북한산 기슭의 조용한 주거지역",
-            "lat": 37.6028,
-            "lng": 126.9291
-          },
-          {
-            "id": "jungnang",
-            "name": "중랑구",
-            "isLocked": true,
-            "description": "동부의 조용한 주거지역",
-            "lat": 37.6066,
-            "lng": 127.0926
           }
         ]
       }
     ]
   }
 }
+
