@@ -7,6 +7,7 @@ import { DistrictInfo, DistrictLockData } from '../../mypage/types';
 import { Spinner } from '../../../shared/ui/spinner';
 import { toast } from 'react-toastify';
 import { districtApi } from '../api';
+import mockDistrictLock from '../mocks/districtLockMock.json';
 
 export const DistrictLock = () => {
   const [selectedCity, setSelectedCity] = useState<string>('서울시');
@@ -17,8 +18,10 @@ export const DistrictLock = () => {
   const { data: districtData, isLoading, isError, refetch } = useQuery<DistrictLockData | null>({
     queryKey: ['districtLock'],
     queryFn: async () => {
-      const response = await districtApi.getDistrictLock();
-      return (response.data?.data as DistrictLockData) ?? null;
+      // const response = await districtApi.getDistrictLock();
+      const response = mockDistrictLock;
+      // return (response.data?.data as DistrictLockData) ?? null;
+      return (response.data as DistrictLockData) ?? null;
     },
   });
 

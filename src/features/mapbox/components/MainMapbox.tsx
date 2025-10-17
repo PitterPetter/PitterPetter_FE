@@ -9,7 +9,8 @@ import { DistrictInfo } from '../../mypage/types';
 // import { mapboxApi } from '../api';
 import { useDistrictStore as useDistrictSelectionStore } from '../../../shared/store/district.store';
 import MapboxRemoteController from './MapboxRemoteController';
-import { districtApi } from '../../district/api';
+import mockDistrictLock from '../../district/mocks/districtLockMock.json';
+// import { districtApi } from '../../district/api';
 
 const MapboxMainPage: React.FC<MapboxProps> = ({
   center = [127.104, 37.505],
@@ -62,10 +63,12 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
 
     const loadDistricts = async () => {
       try {
-        const response = await districtApi.getDistrictLock();
+        // const response = await districtApi.getDistrictLock();
+        const response = mockDistrictLock;
         if (!isMounted) return;
 
-        const payload = response.data?.data;
+        // const payload = response.data?.data;
+        const payload = response.data;
         const seoulDistricts =
           payload?.cities?.find((city: any) => city.cityName === '서울시')?.districts ?? [];
         districtDataRef.current = seoulDistricts;
