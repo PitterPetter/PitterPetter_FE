@@ -9,6 +9,7 @@ import { Spinner } from '../../../shared/ui/spinner';
 import { toast } from 'react-toastify';
 import { districtApi } from '../api';
 import mockDistrictLock from '../mocks/districtLockMock.json';
+import { CityData } from '../../mypage/types';
 
 export const DistrictLock = () => {
   const [selectedCity, setSelectedCity] = useState<string>('서울시');
@@ -16,13 +17,13 @@ export const DistrictLock = () => {
   const [unlockingDistricts, setUnlockingDistricts] = useState<Set<string>>(new Set());
   const { ticket } = useMypageStore();
   // 지역구 잠금 상태 조회
-  const { data: districtData, isLoading, isError, refetch } = useQuery<DistrictLockData | null>({
+  const { data: districtData, isLoading, isError, refetch } = useQuery<CityData | null>({
     queryKey: ['districtLock'],
     queryFn: async () => {
       const response = await districtApi.getDistrictLock();
       // const response = mockDistrictLock;
       // return (response.data?.data as DistrictLockData) ?? null;
-      return (response.data as DistrictLockData) ?? null;
+      return response.data?.data.cities[0] as CityData ?? null;
     },
   });
 
@@ -58,18 +59,13 @@ export const DistrictLock = () => {
   };
 
   // 현재 선택된 도시 데이터
-  const currentCityData = districtData?.cities?.find((city) => city.cityName === selectedCity);
+  const currentCityData = districtData?.districts;
 
   // 검색 필터링 및 정렬 (잠금 해제된 것 먼저)
-  const filteredDistricts = currentCityData?.districts
-    .filter(district =>
+  const filteredDistricts = currentCityData || []
+    .filter((district: DistrictInfo) =>
       district.name.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .sort((a, b) => {
-      // 잠금 해제된 것(isLocked: false)이 먼저 오도록 정렬
-      if (a.isLocked === b.isLocked) return 0;
-      return a.isLocked ? 1 : -1;
-    }) || [];
+    );
 
   if (isLoading) return <Spinner />;
   if (isError) return <div className="flex justify-center items-center text-red-500">정보를 불러오는데 실패했습니다.</div>;
@@ -107,16 +103,16 @@ export const DistrictLock = () => {
       {/* 요약 정보 */}
       <div className="bg-white rounded-lg p-4 mb-6 shadow-sm border border-gray-200">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold text-gray-800">{selectedCity} 총 자치구: {currentCityData?.totalDistricts}개</h2>
+          <h2 className="text-lg font-semibold text-gray-800">{selectedCity} 총 자치구: {districtData?.totalDistricts}개</h2>
         </div>
         <div className="flex gap-6">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
-            <span className="text-sm text-gray-600">잠금: {currentCityData?.lockedDistricts}</span>
+            <span className="text-sm text-gray-600">잠금: {districtData?.lockedDistricts}</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-            <span className="text-sm text-gray-600">해제: {currentCityData?.unlockedDistricts}</span>
+            <span className="text-sm text-gray-600">해제: {districtData?.unlockedDistricts}</span>
           </div>
         </div>
       </div>
