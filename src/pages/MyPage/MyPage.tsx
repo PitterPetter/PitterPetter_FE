@@ -171,12 +171,11 @@ export const MyPage = () => {
   return (
     <div
       className="
-        flex flex-col gap-8 items-center justify-start py-10 bg-primary/5
+        flex flex-col gap-8 items-center justify-start py-6 md:py-10 bg-primary/5
         w-full h-full min-h-screen
-        2xl:px-20 2xl:items-start
-        px-0
+        px-4 lg:px-8 xl:px-12 2xl:px-20
       ">
-      <div className="w-full max-w-[1200px] px-4 2xl:px-0 mx-auto flex flex-col gap-6">
+      <div className="w-full max-w-[1400px] mx-auto flex flex-col gap-6">
         <div className="relative overflow-hidden rounded-3xl border border-primary/10 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent">
           <div className="absolute inset-0 bg-white/30 mix-blend-overlay pointer-events-none" />
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 px-8 py-10">
@@ -204,64 +203,62 @@ export const MyPage = () => {
           </div>
         </div>
 
-        <div className="grid w-full gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid w-full gap-4 grid-cols-2 lg:grid-cols-4">
           {summaryCards.slice(0, 4).map(({ label, value }) => (
             <div
               key={label}
-              className="rounded-2xl border border-primary/10 bg-white/90 p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+              className="border border-primary/10 bg-white/90 p-4 lg:p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
             >
               <p className="text-xs font-medium text-primary/80">{label}</p>
-              <p className="mt-2 text-sm font-semibold text-gray-800">{value}</p>
+              <p className="mt-2 text-sm font-semibold text-gray-800 truncate">{value}</p>
             </div>
           ))}
         </div>
       </div>
 
-      {/* 상단 2단 레이아웃 */}
-      <div className="flex flex-col 2xl:flex-row gap-8 2xl:gap-4 w-full">
-        {/* 왼쪽 섹션 - 개인 온보딩 */}
-        <div className={`flex flex-col gap-8 w-full ${isOpen ? "min-w-[720px] max-w-[720px]" : "min-w-[720px] max-w-[720px] 2xl:min-w-[720px] 2xl:max-w-[850px]"}`
-        }>
-          <div className="p-8 px-2 md:px-0 border border-primary/10 rounded-2xl shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md">
-            {isProfileLoading && <Spinner />}
-            {!isProfileLoading && !isProfileError && (
-            <>
-              <PersonalOnboarding />
-              <div className="flex justify-end mt-12 px-8">
-                <div className="bg-third/60 text-white w-[120px] h-[40px] text-center py-2 rounded-md cursor-pointer border border-primary/10 text-gray-500 mt-4 hover:bg-third/80 transition-all duration-300"
-                  onClick={handleSubmit}
-                >
-                  {putMypage.isPending ? '저장하는 중...' : "저장"}
+      {/* 메인 콘텐츠 레이아웃 */}
+      <div className="w-full max-w-[1400px] mx-auto">
+        <div className="flex flex-col xl:flex-row gap-6 xl:gap-8">
+          {/* 왼쪽 섹션 - 개인 온보딩 */}
+          <div className="flex-1 min-w-0">
+            <div className="border border-primary/10 shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md p-6 lg:p-8">
+              {isProfileLoading && <Spinner />}
+              {!isProfileLoading && !isProfileError && (
+              <>
+                <PersonalOnboarding />
+                <div className="flex justify-end mt-8 lg:mt-12">
+                  <button 
+                    className="bg-primary text-white w-[120px] h-[40px] text-center py-2 border border-primary/10 hover:bg-primary/90 transition-all duration-300 disabled:opacity-50"
+                    onClick={handleSubmit}
+                    disabled={putMypage.isPending}
+                  >
+                    {putMypage.isPending ? '저장하는 중...' : "저장"}
+                  </button>
                 </div>
-              </div>
-            </>
-            )}
+              </>
+              )}
+            </div>
           </div>
-        </div>
 
-        {/* 오른쪽 섹션 - 프로필 정보 & 커플 홈 */}
-        <div className={`flex flex-col gap-8 w-full ${isOpen ? "min-w-[400px] max-w-[720px]" : "min-w-[720px] max-w-[720px] 2xl:max-w-[850px] 2xl:min-w-[400px]"}`
-        }>
-          {/* 프로필 카드 */}
-          <div className="p-8 border border-primary/10 rounded-2xl shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md">
-            <Profile />
-          </div>
-          {/* 커플 홈 섹션 */}
-          <div className={`
-            flex flex-col justify-center items-center w-full px-2 md:px-0
-            2xl:max-h-[600px]
-            border border-primary/10 rounded-2xl shadow-sm bg-white/80 
-            backdrop-blur-sm p-6 transition-all hover:shadow-md
-            ${isOpen ? "min-w-[720px] max-w-[720px] 2xl:max-w-[720px] 2xl:min-w-[400px]" : "min-w-[720px] max-w-[720px] 2xl:max-w-[850px] 2xl:min-w-[400px]"}
-          `}>
-            <CoupleHome />
+          {/* 오른쪽 섹션 - 프로필 정보 & 커플 홈 */}
+          <div className="flex-1 min-w-0 xl:max-w-[600px]">
+            <div className="flex flex-col gap-6">
+              {/* 프로필 카드 */}
+              <div className="border border-primary/10 shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md p-6 lg:p-8">
+                <Profile />
+              </div>
+              {/* 커플 홈 섹션 */}
+              <div className="border border-primary/10 shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md p-6">
+                <CoupleHome />
+              </div>
+            </div>
           </div>
         </div>
       </div>
 
       {/* 하단 - 지역구 잠금 시스템 */}
-      <div className="w-full">
-        <div id="district-lock" className="border border-primary/10 rounded-2xl shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md">
+      <div className="w-full max-w-[1400px] mx-auto px-4 lg:px-8 xl:px-12 2xl:px-20">
+        <div id="district-lock" className="border border-primary/10 shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md p-6 lg:p-8">
           <DistrictLock />
         </div>
       </div>

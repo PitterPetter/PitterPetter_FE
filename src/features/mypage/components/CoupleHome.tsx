@@ -87,7 +87,7 @@ export const CoupleHome = () => {
       deleteCoupleMutation.mutate();
     }
   };
-  const statCardClasses = "flex flex-col gap-1 rounded-2xl border border-white/50 bg-white/70 px-4 py-5 text-center shadow-sm backdrop-blur transition hover:shadow-md";
+
   const StatCard = ({
     icon,
     label,
@@ -99,22 +99,22 @@ export const CoupleHome = () => {
     value: string;
     highlight?: boolean;
   }) => (
-    <div
-      className={clsx(
-        statCardClasses,
-        highlight && "bg-gradient-to-br from-primary/20 via-white to-transparent border-primary/20"
-      )}
-    >
-      <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 text-primary">
+    <div className={clsx(
+      "flex flex-col gap-2 p-4 border border-gray-200 bg-white shadow-sm transition hover:shadow-md",
+      highlight && "bg-gradient-to-br from-primary/10 to-transparent border-primary/30"
+    )}>
+      <div className="mx-auto flex h-8 w-8 items-center justify-center bg-primary/10 text-primary">
         {icon}
       </div>
-      <p className="text-xs font-medium text-gray-500">{label}</p>
-      <p className="text-lg font-semibold text-gray-900">{value}</p>
+      <div className="text-center">
+        <p className="text-xs font-medium text-gray-500">{label}</p>
+        <p className="text-sm font-semibold text-gray-900">{value}</p>
+      </div>
     </div>
   );
 
   return (
-    <div className="flex w-full flex-col gap-6">
+    <div className="flex w-full flex-col gap-6 p-6">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-semibold text-gray-900">커플 홈</h1>
         <button
@@ -133,7 +133,7 @@ export const CoupleHome = () => {
       )}
       {!isProfileLoading && !isProfileError && (
         <>
-          <div className="rounded-3xl border border-primary/10 bg-gradient-to-r from-primary/10 via-white to-transparent p-6 shadow-sm transition hover:shadow-md">
+          <div className="from-primary/10 via-white to-transparent p-2">
             <div className="flex flex-col gap-3">
               <span className="text-xs font-medium text-primary/80">우리 커플 닉네임</span>
               <div ref={inputRef} className="flex w-full items-center gap-3 rounded-2xl border border-primary/10 bg-white px-4 py-3 text-xl font-semibold text-gray-900 shadow-sm">
@@ -171,19 +171,19 @@ export const CoupleHome = () => {
             </div>
           </div>
 
-          <div className="rounded-3xl border border-primary/10 bg-white/80 p-6 shadow-sm transition hover:shadow-md">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div className="flex items-center gap-4">
+          <div className="p-6 transition hover:shadow-sm">
+            <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
+              <div className="flex items-center gap-4 flex-shrink-0">
                 <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/15 text-primary">
                   <FontAwesomeIcon icon={faHeart} className="h-6 w-6" />
                 </div>
-                <div>
+                <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium text-gray-500">파트너</p>
-                  <p className="text-lg font-semibold text-gray-900">{partnerName || '이름 미등록'}</p>
-                  <p className="text-sm text-gray-500">{partnerEmail || '이메일 미등록'}</p>
+                  <p className="text-lg font-semibold text-gray-900 truncate">{partnerName || '이름 미등록'}</p>
+                  <p className="text-sm text-gray-500 truncate">{partnerEmail || '이메일 미등록'}</p>
                 </div>
               </div>
-              <div className="grid w-full gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="w-full lg:w-auto lg:flex-1 grid grid-cols-2 gap-3">
                 <StatCard
                   icon={<FontAwesomeIcon icon={faCalendarCheck} className="h-4 w-4" />}
                   label="우리가 만난 날"
