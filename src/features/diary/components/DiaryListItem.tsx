@@ -1,8 +1,9 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faComment } from "@fortawesome/free-solid-svg-icons";
 import { useNavigate } from "react-router-dom";
+import { Diary } from "../types";
 
-export const DiaryListItem = (item: any) => {
+export const DiaryListItem = (item: Diary) => {
   console.log(item);
   const navigate = useNavigate();
   return (
@@ -32,7 +33,7 @@ export const DiaryListItem = (item: any) => {
         <div className="w-[100px] text-sm">{item.updatedAt?.split('T')[0] || item.createdAt}</div>
         <div className="flex items-center w-[100px] flex justify-end gap-1 text-sm text-gray-500">
           <FontAwesomeIcon icon={faComment} className="w-[12px] h-[12px]" />
-          {item.commentCount || 0}
+          {item.commentCount ?? 0}
         </div>
       </div>
     </div>

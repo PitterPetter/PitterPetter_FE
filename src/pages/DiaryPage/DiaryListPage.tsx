@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { DiaryListItem } from "../../features/diary";
 import { useQuery } from "@tanstack/react-query";
 import { diaryApi } from "../../features/diary/api";
-import { Diary } from "../../features/diary/types";
+import { Diary, DiaryListResponse } from "../../features/diary/types";
 import { Spinner } from "../../shared/ui/spinner";
 import { useState, useEffect } from "react";
 
@@ -13,7 +13,7 @@ export const DiaryListPage = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 6; // 2x3 = 6개
 
-  const { data: diaryData, isLoading, error } = useQuery({
+  const { data: diaryData, isLoading, error } = useQuery<DiaryListResponse['result']>({
     queryKey: ['diaries', currentPage],
       queryFn: async () => {
         const response = await diaryApi.getDiaryList(currentPage, pageSize);

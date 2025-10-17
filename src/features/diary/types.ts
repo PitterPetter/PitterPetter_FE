@@ -13,11 +13,15 @@ export interface Diary {
   diaryId: string;
   title: string;
   excerpt: string;
+  content?: string;
   updatedAt: string;
+  createdAt?: string;
   likeCount: number;
   lat: number;
   lng: number;
   isLiked: boolean;
+  commentCount: number;
+  imageUrl?: string;
 }
 
 export type DiaryCreatePayload = {
@@ -33,3 +37,14 @@ export type DiaryCreatePayload = {
   };
   removeImage: boolean;
 };
+
+// API 응답 타입
+export interface DiaryListResponse {
+  result: {
+    content: Diary[];
+    page: {
+      totalPages: number;
+      totalElements: number;
+    };
+  };
+}
