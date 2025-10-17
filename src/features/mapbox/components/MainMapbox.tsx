@@ -6,11 +6,12 @@ import { MapboxProps, MapRefs, TimeOfDay } from '../types';
 import { useStartStore } from '../../../shared/store/recommend.store';
 import { useHeaderStore } from '../../../shared/store/header.store';
 import { DistrictInfo } from '../../mypage/types';
-// import { mapboxApi } from '../api';
+import { mapboxApi } from '../api';
 import { useDistrictStore as useDistrictSelectionStore } from '../../../shared/store/district.store';
 import MapboxRemoteController from './MapboxRemoteController';
 import mockDistrictLock from '../../district/mocks/districtLockMock.json';
-// import { districtApi } from '../../district/api';
+import { districtApi } from '../../district/api';
+import { useQuery } from '@tanstack/react-query';
 
 const MapboxMainPage: React.FC<MapboxProps> = ({
   center = [127.104, 37.505],
@@ -42,20 +43,20 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
     return 'night';
   };
 
-  // const { data: districtLockData } = useQuery({
-  //   queryKey: ['districtLockup'],
-  //   queryFn: async () => {
-  //     const response = await mapboxApi.getDistrictLockStatus();
-  //     return response.data;
-  //   },
-  //   staleTime: 5 * 60 * 1000,
-  // });
+  const { data: districtLockData } = useQuery({
+    queryKey: ['districtLockup'],
+    queryFn: async () => {
+      const response = await mapboxApi.getDistrictLockStatus();
+      return response.data;
+    },
+    staleTime: 5 * 60 * 1000,
+  });
 
-  // useEffect(() => {
-  //   const seoulDistricts =
-  //     districtLockData?.data?.cities?.find((city: any) => city.cityName === '서울시')?.districts ?? [];
-  //   districtDataRef.current = seoulDistricts;
-  // }, [districtLockData]);
+  useEffect(() => {
+    const seoulDistricts =
+      districtLockData?.data?.cities?.find((city: any) => city.cityName === '서울시')?.districts ?? [];
+    districtDataRef.current = seoulDistricts;
+  }, [districtLockData]);
 
   // districtLockMock 데이터 로드
   useEffect(() => {
@@ -63,12 +64,12 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
 
     const loadDistricts = async () => {
       try {
-        // const response = await districtApi.getDistrictLock();
-        const response = mockDistrictLock;
+        const response = await districtApi.getDistrictLock();
+        // const response = mockDistrictLock;
         if (!isMounted) return;
 
-        // const payload = response.data?.data;
-        const payload = response.data;
+        const payload = response.data?.data;
+        // const payload = response.data;
         const seoulDistricts =
           payload?.cities?.find((city: any) => city.cityName === '서울시')?.districts ?? [];
         districtDataRef.current = seoulDistricts;

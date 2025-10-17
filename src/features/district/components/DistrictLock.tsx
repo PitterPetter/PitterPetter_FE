@@ -18,8 +18,8 @@ export const DistrictLock = () => {
   const { data: districtData, isLoading, isError, refetch } = useQuery<DistrictLockData | null>({
     queryKey: ['districtLock'],
     queryFn: async () => {
-      // const response = await districtApi.getDistrictLock();
-      const response = mockDistrictLock;
+      const response = await districtApi.getDistrictLock();
+      // const response = mockDistrictLock;
       // return (response.data?.data as DistrictLockData) ?? null;
       return (response.data as DistrictLockData) ?? null;
     },
