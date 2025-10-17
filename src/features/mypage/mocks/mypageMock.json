@@ -22,7 +22,8 @@
       "partnerEmail": "지지@naver.com",
       "partnerProviderId": "지지",
       "status": "ACTIVE",
-      "coupleCreatedAt": "2025-01-01"
+      "coupleCreatedAt": "2025-01-01",
+      "ticket": 10
     }
   }
 }
