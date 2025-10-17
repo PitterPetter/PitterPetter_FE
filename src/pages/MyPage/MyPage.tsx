@@ -258,11 +258,11 @@ export const MyPage = () => {
       </div>
 
       {/* 하단 - 지역구 잠금 시스템 */}
-      {/* <div className="w-full">
+      <div className="w-full">
         <div id="district-lock" className="border border-primary/10 rounded-2xl shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md">
           <DistrictLock />
         </div>
-      </div> */}
+      </div>
     </div>
   );
 };

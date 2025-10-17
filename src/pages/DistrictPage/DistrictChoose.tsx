@@ -51,7 +51,7 @@ export const DistrictChoose = () => {
   const handleNext = () => {
     if (selectedDistricts.length === 2) {
       setStoreDistricts(selectedDistricts);
-      navigate('/district/check');
+      navigate('/home/district/check');
     }
   };
 
