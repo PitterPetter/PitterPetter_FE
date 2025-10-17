@@ -2,7 +2,7 @@ import { ConnectCourse } from "../../features/diary/components/ConnectCourse";
 import { Review } from "../../features/diary/components/Review";
 import { WriteDiary } from "../../features/diary/components/WriteDiary";
 import { useNavigate, useParams } from "react-router-dom";
-import { diaryDetailApi, diaryCreateApi, diaryUpdateApi } from "../../features/diary/api";
+import { diaryDetailApi, diaryCreateApi, diaryUpdateApi, diaryImageApi } from "../../features/diary/api";
 import { useDiaryStore } from "../../shared/store/diary.store";
 import { toast } from 'react-toastify';
 import { useQuery } from "@tanstack/react-query";
@@ -42,6 +42,22 @@ export const UpdateDiaryPage = () => {
     },
     enabled: !!id,
   });
+
+  const uploadImageToGCS = async (presignedUrl: string, imageFile: File) => {
+    const response = await fetch(presignedUrl, {
+      method: "PUT",
+      body: imageFile,
+      headers: {
+        "Content-Type": imageFile.type,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`이미지 업로드에 실패했습니다 (status: ${response.status})`);
+    }
+
+    return response;
+  };
 
   // 다이어리 데이터를 store에 설정
   useEffect(() => {
@@ -88,19 +104,45 @@ export const UpdateDiaryPage = () => {
       const requestData = {
         title: diaryTitle,
         content: diaryContent,
-        courseId: courseId,
-        courseName: courseName,
-        rating: rating.toString(),
         image: diaryImage ? {
           originalFileName: diaryImage.name,
           contentType: diaryImage.type,
           sizeBytes: diaryImage.size
         } : null,
-        removeImage: !diaryImage
+        removeImage: diaryImage ? false : true  // 새 이미지가 있으면 삭제하지 않음, 없으면 삭제
       };
 
       // PUT로 수정 요청
       const res = await diaryUpdateApi.updateDiary(id, requestData);
+      const result = res.data?.result;
+
+      if (!result) {
+        throw new Error("다이어리 수정 응답이 올바르지 않습니다.");
+      }
+
+      const uploadInfo = (result as any).imageUpload;
+
+      // 이미지가 있고 presignedURL이 있으면 GCS에 업로드
+      if (diaryImage && uploadInfo?.presignedUrl && uploadInfo?.imageId) {
+        try {
+          const uploadResponse = await uploadImageToGCS(uploadInfo.presignedUrl, diaryImage);
+          
+          // presignedURL로 이미지 업로드가 성공했으면 complete 알림
+          if (uploadResponse.ok) {
+            await diaryImageApi.notifyComplete(uploadInfo.imageId);
+          } else {
+            // presignedURL로 이미지 업로드가 실패했으면 fail 알림
+            await diaryImageApi.notifyFail(uploadInfo.imageId);
+            throw new Error(`이미지 업로드에 실패했습니다 (status: ${uploadResponse.status})`);
+          }
+        } catch (error) {
+          // 업로드 과정에서 에러가 발생했으면 fail 알림
+          await diaryImageApi.notifyFail(uploadInfo.imageId).catch(() => {
+            console.warn("이미지 업로드 실패 알림 전송에 실패했습니다.");
+          });
+          throw error;
+        }
+      }
       
       // 성공 시 토스트 메시지와 네비게이션
       toast.success('다이어리가 성공적으로 수정되었습니다.');
