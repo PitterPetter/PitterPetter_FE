@@ -172,8 +172,8 @@ export const CoupleHome = () => {
           </div>
 
           <div className="p-6 transition hover:shadow-sm">
-            <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
-              <div className="flex items-center gap-4 flex-shrink-0">
+            <div className="flex w-full flex-col gap-6 items-center lg:justify-between">
+              <div className="flex w-full items-center gap-4 flex-shrink-0">
                 <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/15 text-primary">
                   <FontAwesomeIcon icon={faHeart} className="h-6 w-6" />
                 </div>
@@ -183,7 +183,7 @@ export const CoupleHome = () => {
                   <p className="text-sm text-gray-500 truncate">{partnerEmail || '이메일 미등록'}</p>
                 </div>
               </div>
-              <div className="w-full lg:w-auto lg:flex-1 grid grid-cols-2 gap-3">
+              <div className="w-full grid grid-cols-1 md:grid-cols-2 gap-3">
                 <StatCard
                   icon={<FontAwesomeIcon icon={faCalendarCheck} className="h-4 w-4" />}
                   label="우리가 만난 날"

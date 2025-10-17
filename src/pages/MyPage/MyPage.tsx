@@ -1,11 +1,11 @@
 import { Profile } from "../../features/mypage/components/Profile";
 import { CoupleHome } from "../../features/mypage/components/CoupleHome";
 import { DistrictLock } from "../../features/district/components/DistrictLock";
-import { PersonalOnboarding } from "../../features/onboarding/PersonalOnboarding";
+import { PersonalPreferences } from "../../features/mypage/components/PersonalPreferences";
 import { useHeaderStore } from "../../shared/store/header.store";
 import { useMypageStore } from "../../shared/store/mypage.store";
 import { useOnboardingStore } from "../../shared/store/onboarding.store";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { mypageApi } from "../../features/mypage/api";
 import { Spinner } from "../../shared/ui/spinner";
@@ -151,18 +151,26 @@ export const MyPage = () => {
     return () => cancelAnimationFrame(handle);
   }, [location.hash]);
 
+  const daysCount = useMemo(() => {
+    if (!datingStartDate) return 0;
+    const startDate = new Date(datingStartDate);
+    const today = new Date();
+    const diffTime = Math.abs(today.getTime() - startDate.getTime());
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  }, [datingStartDate]);
+
   const formattedAnniversary = formatDate(datingStartDate);
   const displayedCostPreference = dateCostPreference || '선택되지 않음';
+  const formattedDaysTogether = daysCount || '미등록';
   const displayedAtmosphere = atmosphere || '선택되지 않음';
   const foodSummary = favoriteFoodCategories?.length
     ? favoriteFoodCategories.slice(0, 3).join(', ') + (favoriteFoodCategories.length > 3 ? ' 외' : '')
     : '선택되지 않음';
   const summaryCards = [
-    { label: '커플 하우스', value: coupleHomeName || '미등록' },
-    { label: '데이트 기념일', value: formattedAnniversary },
-    { label: '평균 데이트 비용', value: displayedCostPreference },
-    { label: '선호 분위기', value: displayedAtmosphere },
-    { label: '음식 취향', value: foodSummary },
+    { label: '커플 이름', value: coupleHomeName || '미등록' },
+    { label: '연결된 상대방', value: partnerName || '미등록' },
+    { label: '우리가 만난 날', value: formattedAnniversary },
+    { label: '우리가 함께한 날', value: formattedDaysTogether }
   ];
 
   const greetingName = nickname || name || '커플';
@@ -225,7 +233,7 @@ export const MyPage = () => {
               {isProfileLoading && <Spinner />}
               {!isProfileLoading && !isProfileError && (
               <>
-                <PersonalOnboarding />
+                <PersonalPreferences />
                 <div className="flex justify-end mt-8 lg:mt-12">
                   <button 
                     className="bg-primary text-white w-[120px] h-[40px] text-center py-2 border border-primary/10 hover:bg-primary/90 transition-all duration-300 disabled:opacity-50"
@@ -243,10 +251,6 @@ export const MyPage = () => {
           {/* 오른쪽 섹션 - 프로필 정보 & 커플 홈 */}
           <div className="flex-1 min-w-0 xl:max-w-[600px]">
             <div className="flex flex-col gap-6">
-              {/* 프로필 카드 */}
-              <div className="border border-primary/10 shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md p-6 lg:p-8">
-                <Profile />
-              </div>
               {/* 커플 홈 섹션 */}
               <div className="border border-primary/10 shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md p-6">
                 <CoupleHome />
