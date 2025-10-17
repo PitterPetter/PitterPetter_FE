@@ -25,6 +25,7 @@ export const MyPage = () => {
     setDatingStartDate,
     setPartnerName,
     setPartnerEmail,
+    setTicket,
     coupleHomeName,
     datingStartDate,
     partnerName,
@@ -71,7 +72,7 @@ export const MyPage = () => {
         setIsProfileError(false);
         setIsProfileLoading(true);
         const response = await mypageApi.getMypage();
-        console.log(convertCostPreference(response.data.data.dateCostPreference));
+        console.log(response.data.data);
         setName(response.data?.data.name);
         setNickname(response.data?.data.nickname);
         setEmail(response.data?.data.email);
@@ -85,6 +86,7 @@ export const MyPage = () => {
         setDatingStartDate(response.data?.data.coupleInfo.datingStartDate);
         setPartnerName(response.data?.data.coupleInfo.partnerName);
         setPartnerEmail(response.data?.data.coupleInfo.partnerEmail);
+        setTicket(response.data?.data.ticket);
         return response.data?.data;
       } catch (error) {
         console.error("mypage 불러오기 실패:", error);
