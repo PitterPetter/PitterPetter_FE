@@ -1,4 +1,4 @@
-import { useRef, useCallback } from "react";
+import { useRef, useCallback, useMemo } from "react";
 import { mypageApi } from "../api";
 import { useMutation } from "@tanstack/react-query";
 import { Spinner } from "../../../shared/ui/spinner";
@@ -9,6 +9,9 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TextField } from "@mui/material";
 import { toast } from 'react-toastify';
+import { ko } from "date-fns/locale";
+import dayjs from "dayjs";
+import "dayjs/locale/ko";
 
 export const Profile = () => {
   const { isProfileLoading, isProfileError, name, nickname, setNickname, email, birthdate, setBirthdate } = useMypageStore();
@@ -17,12 +20,10 @@ export const Profile = () => {
   const originalNickname = useRef<string>('');
   const originalBirthdate = useRef<string>('');
   
-  const formatDate = (date: Date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, '0');
-    const day = String(date.getDate()).padStart(2, '0');
-    return `${year}-${month}-${day}`;
-  };
+  const formattedBirthdateLabel = useMemo(() => {
+    if (!birthdate) return "등록되지 않음";
+    return dayjs(birthdate).locale("ko").format("YYYY년 M월 D일");
+  }, [birthdate]);
 
   const convertCostPreference = (cost: string) => {
     const costMap: { [key: string]: string } = {
@@ -79,44 +80,51 @@ export const Profile = () => {
   };
 
   const handleBirthdateChange = (date: Date | null) => {
-    if (date) {
-      const formattedDate = formatDate(date);
-      if (formattedDate !== originalBirthdate.current) {
-        originalBirthdate.current = formattedDate;
-        setBirthdate(formattedDate);
-        
-        // state 업데이트는 비동기이므로 직접 새 값으로 API 호출
-        putMypage.mutate({
-          nickname,
-          birthdate: formattedDate,
-          alcoholPreference,
-          activeBound,
-          dateCostPreference: convertCostPreference(dateCostPreference),
-          favoriteFoodCategories,
-          atmosphere
-        });
-      }
-    }
+    if (!date) return;
+    const formattedDate = dayjs(date).format("YYYY-MM-DD");
+    if (formattedDate === originalBirthdate.current) return;
+
+    originalBirthdate.current = formattedDate;
+    setBirthdate(formattedDate);
+    
+    putMypage.mutate({
+      nickname,
+      birthdate: formattedDate,
+      alcoholPreference,
+      activeBound,
+      dateCostPreference: convertCostPreference(dateCostPreference),
+      favoriteFoodCategories,
+      atmosphere
+    });
   };
 
   return (
-    <div className="flex flex-col gap-4 p-0 pt-0">
-      {/* 프로필 정보 */}
-      <div className="pb-4">
-        <h1 className="text-2xl pb-4">프로필 정보</h1>
+    <div className="flex flex-col gap-6">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-semibold text-gray-900">프로필 정보</h1>
+          <p className="mt-1 text-sm text-gray-500">기본 정보는 언제든 업데이트할 수 있어요.</p>
+        </div>
+        <span className="inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-3 py-1 text-xs font-medium text-primary">
+          {formattedBirthdateLabel}
+        </span>
+      </div>
 
-        {isProfileLoading && <Spinner />}
-        {isProfileError && <div className="flex justify-center items-center text-red-500">정보를 불러오는데 실패했습니다.</div>}
-        {!isProfileLoading && !isProfileError && (
-        <div className="grid grid-cols-2 grid-rows-2 gap-4 px-4">
-          <div className="h-full flex flex-col gap-2">
-            <h2 className="text-sm font-bold">이름</h2>
-            <div className="w-full h-[42px] rounded-md p-3 bg-gray-100 cursor-not-allowed border border-gray-300 text-gray-700">
-              {name}
-            </div>
+      {isProfileLoading && <Spinner />}
+      {isProfileError && (
+        <div className="flex h-24 items-center justify-center rounded-xl bg-red-50 text-red-500">
+          정보를 불러오는데 실패했습니다.
+        </div>
+      )}
+      {!isProfileLoading && !isProfileError && (
+        <div className="grid gap-4 md:grid-cols-2">
+          <div className="rounded-2xl border border-primary/10 bg-white/80 p-4 shadow-sm hover:shadow-md transition">
+            <p className="text-xs font-medium text-gray-500">이름</p>
+            <p className="mt-2 text-base font-semibold text-gray-900">{name}</p>
           </div>
-          <div className="h-full flex flex-col gap-2">
-            <h2 className="text-sm font-bold">닉네임</h2>
+
+          <div className="rounded-2xl border border-primary/10 bg-white/80 p-4 shadow-sm hover:shadow-md transition">
+            <p className="text-xs font-medium text-gray-500">닉네임</p>
             <input 
               type="text" 
               value={nickname} 
@@ -128,19 +136,19 @@ export const Profile = () => {
                   e.currentTarget.blur();
                 }
               }}
-              className="w-full h-[42px] rounded-md p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-transparent"
+              className="mt-2 w-full rounded-xl border border-primary/20 bg-white px-4 py-2 text-sm text-gray-900 shadow-sm transition focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30"
               placeholder="닉네임을 입력하세요"
             />
           </div>
-          <div className="h-full flex flex-col gap-2">
-            <h2 className="text-sm font-bold">이메일</h2>
-            <div className="w-full h-[42px] rounded-md p-3 bg-gray-100 cursor-not-allowed border border-gray-300 text-gray-700">
-              {email}
-            </div>
+
+          <div className="rounded-2xl border border-primary/10 bg-white/80 p-4 shadow-sm hover:shadow-md transition">
+            <p className="text-xs font-medium text-gray-500">이메일</p>
+            <p className="mt-2 text-base font-semibold text-gray-900">{email}</p>
           </div>
-          <div className="h-full flex flex-col gap-2">
-            <h2 className="text-sm font-bold">생년월일</h2>
-            <LocalizationProvider dateAdapter={AdapterDateFns}>
+
+          <div className="rounded-2xl border border-primary/10 bg-white/80 p-4 shadow-sm hover:shadow-md transition">
+            <p className="text-xs font-medium text-gray-500">생년월일</p>
+            <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={ko}>
               <DatePicker
                 value={birthdate ? new Date(birthdate) : null}
                 onChange={handleBirthdateChange}
@@ -154,21 +162,24 @@ export const Profile = () => {
                   textField: {
                     variant: "standard",
                     sx: {
-                      "& .MuiInput-underline:before": {
-                        borderBottom: "none",
-                      },
-                      "& .MuiInput-underline:after": {
-                        borderBottom: "none",
-                      },
-                      "& .MuiInput-underline:hover:not(.Mui-disabled):before": {
-                        borderBottom: "none",
-                      },
+                      width: "100%",
                       "& .MuiInputBase-root": {
                         backgroundColor: "white",
-                        borderRadius: "8px",
-                        border: "1px solid #d1d5db",
+                        borderRadius: "12px",
+                        border: "1px solid rgba(241, 110, 134, 0.2)",
                         height: "42px",
-                        padding: "0 4px 0 12px",
+                        padding: "0 12px",
+                        fontSize: "0.9rem",
+                      },
+                      "& .MuiInputBase-root:hover": {
+                        borderColor: "rgba(241, 110, 134, 0.4)",
+                      },
+                      "& .MuiInputBase-root.Mui-focused": {
+                        borderColor: "#F16E86",
+                        boxShadow: "0 0 0 4px rgba(241, 110, 134, 0.1)",
+                      },
+                      "& .MuiInput-underline:before, & .MuiInput-underline:after": {
+                        display: "none",
                       },
                     },
                   },
@@ -177,8 +188,7 @@ export const Profile = () => {
             </LocalizationProvider>
           </div>
         </div>
-        )}
-      </div>
+      )}
     </div>
   );
 };
