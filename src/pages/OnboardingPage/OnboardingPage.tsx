@@ -8,6 +8,9 @@ import { toast } from 'react-toastify';
 export const OnboardingPage = () => {
   const navigate = useNavigate();
   const { alcoholPreference, activeBound, dateCostPreference, favoriteFoodCategories, atmosphere, answeredCount } = useOnboardingStore();
+  const isComplete = answeredCount === 5;
+  const progress = Math.min(answeredCount, 5) / 5 * 100;
+
   const mutation = useMutation({
     mutationFn: onboardingApi.saveOnboarding,
     onSuccess: (data) => {
@@ -31,11 +34,11 @@ export const OnboardingPage = () => {
         '8만원 이상': '팔만원_이상',
       };
       return costMap[cost];
-    };
+  };
 
-    mutation.mutate({ 
-      alcoholPreference, 
-      activeBound, 
+  mutation.mutate({ 
+    alcoholPreference, 
+    activeBound, 
       dateCostPreference: convertCostPreference(dateCostPreference),
       favoriteFoodCategories: favoriteFoodCategories,
       preferredAtmosphere: atmosphere
@@ -43,29 +46,64 @@ export const OnboardingPage = () => {
     console.log('body data: ', {alcoholPreference, activeBound, dateCostPreference: convertCostPreference(dateCostPreference), favoriteFoodCategories, atmosphere});
   };
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-75">
-      <div className="w-full max-w-4xl mx-4 h-full bg-white shadow-2xl overflow-hidden">
-        <div className="h-full w-full p-6 pt-4 pb-8 flex flex-col gap-4 items-center justify-center">
-          {/* 개인 온보딩 */}
-          <div className="text-center mb-4">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent mb-3">
-              본인의 취향을 알려주세요
-            </h1>
-            <p className="text-gray-600 text-lg max-w-md mx-auto leading-relaxed">
-              정보를 입력해 주시면 더 정확한 추천을 해드릴 수 있어요
-            </p>
-          </div>
-          <div className="overflow-y-hidden relative flex-1 w-full">
-            <PersonalOnboarding />
-            <div className="absolute bottom-0 left-0 right-0 h-4 bg-gradient-to-t from-white via-white/80 to-transparent pointer-events-none"></div>
-          </div>
-          <div className="flex justify-center items-center mt-4">
-            <div className={`flex justify-center items-center w-[240px] h-[64px] bg-[#93000A] text-white px-4 py-2 rounded-md transition-all duration-300
-            ${answeredCount===5 ? "opacity-100 cursor-pointer hover:opacity-80" : "opacity-50 cursor-not-allowed hover:opacity-50"}`}
-            onClick={answeredCount === 5 ? handleSubmit : undefined}>
-              {mutation.isPending ? '저장하는 중...' : "저장"}
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-gradient-to-br from-black/80 via-primary/90 to-gray-900/90 backdrop-blur-sm px-4 py-10">
+      <div className="relative w-full max-w-5xl overflow-hidden rounded-4xl bg-white shadow-[0_40px_120px_rgba(0,0,0,0.25)] max-h-[calc(100vh-80px)]">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_#fde2e4_0%,_transparent_45%),radial-gradient(circle_at_bottom,_#ffe0f0_0%,_transparent_40%)] opacity-70 pointer-events-none" />
+        <div className="relative flex h-full flex-col gap-6 px-8 py-10 overflow-hidden">
+          {/* 헤더 */}
+          <header className="flex flex-col gap-6 text-center">
+            <div className="mx-auto flex w-full max-w-2xl flex-col gap-3">
+              <span className="mx-auto inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-4 py-1 text-xs font-semibold text-primary">
+                Step 1 · 나의 데이트 취향
+              </span>
+              <h1 className="text-3xl font-semibold text-gray-900 sm:text-4xl">
+                한층 더 정교한 추천을 위해 취향을 알려주세요
+              </h1>
+              <p className="text-sm text-gray-500">
+                최소 5개의 질문에 답변하면 맞춤형 추천을 바로 확인할 수 있어요.
+              </p>
             </div>
-          </div>
+
+            <div className="mx-auto flex w-full max-w-2xl flex-col gap-2">
+              <div className="flex items-center justify-between text-xs font-medium text-gray-500">
+                <span>답변 완료 {answeredCount}/5</span>
+                <span>{progress}%</span>
+              </div>
+              <div className="h-2 w-full overflow-hidden rounded-full bg-primary/10">
+                <div
+                  className="h-full rounded-full bg-primary transition-all duration-300 ease-out"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+            </div>
+          </header>
+
+          {/* 콘텐츠 */}
+          <section className="relative flex-1 overflow-y-scroll bg-white/80">
+            <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-white/90 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+            <div className="relative h-[500px] overflow-y-scroll px-6 py-8">
+              <PersonalOnboarding />
+            </div>
+          </section>
+
+          {/* 액션 영역 */}
+          <footer className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+            <p className="text-xs text-gray-500">
+              모든 답변은 언제든 마이페이지에서 수정할 수 있어요.
+            </p>
+            <button
+              type="button"
+              className={`w-full max-w-[220px] rounded-full px-6 py-3 text-sm font-semibold text-white transition ${
+                isComplete
+                  ? "bg-primary hover:bg-primary/80"
+                  : "bg-gray-400 cursor-not-allowed"
+              }`}
+              onClick={isComplete ? handleSubmit : undefined}
+            >
+              {mutation.isPending ? "저장하는 중..." : "온보딩 완료하기"}
+            </button>
+          </footer>
         </div>
       </div>
     </div>
