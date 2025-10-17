@@ -19,14 +19,22 @@ export const ConnectCourse = () => {
     queryFn: async () => {
       const response = await courseApi.getCourseList();
       console.log(response);
-      return response.data;
+      // API 응답 데이터를 정규화 (course 타입에 맞게)
+      const normalizedData = response.data?.map((item: any) => ({
+        courseId: item.courseId || item.course_id || item.id,
+        title: item.title,
+        excerpt: item.description || item.excerpt,
+        updatedAt: item.updatedAt || new Date().toISOString(),
+        likeCount: item.likeCount || 0,
+        lat: item.lat || 0,
+        lng: item.lng || 0,
+        isLiked: item.isLiked || false
+      }));
+      return normalizedData;
     }
   });
   const courseData = useMemo(() => {
-    return courseList?.map((item: any) => ({
-      ...item,
-      courseId: item.courseId
-    })) as Course[] || [];
+    return courseList || [];
   }, [courseList]);
 
   useEffect(() => {

@@ -44,11 +44,12 @@ const normalizeCourse = (candidate: unknown): Course | null => {
     .filter((poiSet): poiSet is CoursePoiSet => poiSet !== null)
     .sort((a, b) => a.order - b.order);
 
-  const courseId = asNumber(raw.course_id ?? raw.courseId ?? raw.id);
+  // courseId는 숫자 또는 문자열(UUID) 모두 허용
+  const courseId = raw.course_id ?? raw.courseId ?? raw.id;
   const title = asString(raw.title);
   const description = asString(raw.description);
 
-  if (courseId === undefined || title === undefined || description === undefined) {
+  if (courseId === undefined || courseId === null || title === undefined || description === undefined) {
     return null;
   }
 
@@ -72,9 +73,17 @@ const normalizeCoursePoiSet = (candidate: unknown): CoursePoiSet | null => {
     return null;
   }
 
+  // poi_set_id는 숫자 또는 문자열 모두 허용
+  const poiSetId = raw.poi_set_id ?? raw.poiSetId ?? raw.id;
+  const order = asNumber(raw.order ?? raw.seq) ?? 0;
+
+  if (poiSetId === undefined || poiSetId === null) {
+    return null;
+  }
+
   return {
-    poi_set_id: asNumber(raw.poi_set_id ?? raw.poiSetId ?? raw.id) ?? 0,
-    order: asNumber(raw.order ?? raw.seq) ?? 0,
+    poi_set_id: poiSetId,
+    order,
     poi,
   };
 };
@@ -96,8 +105,11 @@ const normalizePoi = (candidate: unknown): CoursePoiSet["poi"] | null => {
   const alcohol = raw.alcohol;
   const rating = asNumber(raw.ratingAvg ?? raw.avarage_review_score);
 
+  // poi_id는 숫자 또는 문자열 모두 허용
+  const poiId = raw.poi_id ?? raw.poiId ?? raw.id;
+
   return {
-    poi_id: (raw.poi_id ?? raw.poiId ?? raw.id ?? 0) as number | string,
+    poi_id: poiId ?? 0,
     name: asString(raw.name) ?? "",
     category: asString(raw.category) ?? "",
     lat,
