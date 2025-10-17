@@ -69,7 +69,7 @@ export const MyPage = () => {
         setActiveBound(response.data?.data.activeBound);
         setDateCostPreference(convertCostPreference(response.data?.data.dateCostPreference) as CostList);
         setFavoriteFoodCategories(response.data?.data.favoriteFoodCategories);
-        setAtmosphere(response.data?.data.atmosphere || '');
+        setAtmosphere(response.data?.data.atmosphere);
         setCoupleHomeName(response.data?.data.coupleInfo.coupleHomeName);
         setDatingStartDate(response.data?.data.coupleInfo.datingStartDate);
         setPartnerName(response.data?.data.coupleInfo.partnerName);
