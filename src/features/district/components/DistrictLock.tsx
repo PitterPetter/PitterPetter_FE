@@ -134,7 +134,7 @@ export const DistrictLock = () => {
           <div
             key={district.id}
             className={`p-4 rounded-lg border transition-all duration-200 hover:shadow-md ${
-              district.isLocked
+              district.locked
                 ? 'bg-orange-50 border-orange-200 hover:bg-orange-100'
                 : 'bg-green-50 border-green-200 hover:bg-green-100'
             }`}
@@ -142,12 +142,12 @@ export const DistrictLock = () => {
             <div className="flex flex-col items-center text-center">
               {/* 잠금 아이콘 */}
               <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-3 ${
-                district.isLocked ? 'bg-orange-100' : 'bg-green-100'
+                district.locked ? 'bg-orange-100' : 'bg-green-100'
               }`}>
                 <FontAwesomeIcon
-                  icon={district.isLocked ? faLock : faUnlock}
+                  icon={district.locked ? faLock : faUnlock}
                   className={`w-6 h-6 ${
-                    district.isLocked ? 'text-orange-600' : 'text-green-600'
+                    district.locked ? 'text-orange-600' : 'text-green-600'
                   }`}
                 />
               </div>
@@ -157,7 +157,7 @@ export const DistrictLock = () => {
               <p className="text-xs text-gray-600 mb-3 line-clamp-2">{district.description}</p>
               
               {/* 잠금 해제 버튼 */}
-              {district.isLocked ? (
+              {district.locked ? (
                 <button
                   onClick={() => handleUnlockDistrict(district)}
                   disabled={unlockingDistricts.has(district.id.toString())}
