@@ -9,7 +9,7 @@ import { DistrictInfo } from '../../mypage/types';
 // import { mapboxApi } from '../api';
 import { useDistrictStore as useDistrictSelectionStore } from '../../../shared/store/district.store';
 import MapboxRemoteController from './MapboxRemoteController';
-import districtLockMock from '../../mypage/mocks/districtLockMock.json';
+import { districtApi } from '../../district/api';
 
 const MapboxMainPage: React.FC<MapboxProps> = ({
   center = [127.104, 37.505],
@@ -58,8 +58,27 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
 
   // districtLockMock 데이터 로드
   useEffect(() => {
-    const seoulDistricts = districtLockMock.data.cities.find((city: any) => city.cityName === '서울시')?.districts || [];
-    districtDataRef.current = seoulDistricts;
+    let isMounted = true;
+
+    const loadDistricts = async () => {
+      try {
+        const response = await districtApi.getDistrictLock();
+        if (!isMounted) return;
+
+        const payload = response.data?.data;
+        const seoulDistricts =
+          payload?.cities?.find((city: any) => city.cityName === '서울시')?.districts ?? [];
+        districtDataRef.current = seoulDistricts;
+      } catch (err) {
+        console.error('[MainMapbox] Failed to load district lock data', err);
+      }
+    };
+
+    void loadDistricts();
+
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   type EaseOptions = Parameters<mapboxgl.Map['easeTo']>[0];
@@ -435,6 +454,10 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
       mapRef.current = null;
       setIsMapReady(false);
     };
+  }, []);
+
+  useEffect(() => {
+    mapRef.current?.resize();
   }, [isOpen]);
 
   return (

@@ -5,7 +5,7 @@ import course from '../features/course/mocks/getCourse.json';
 import diaryDetail from '../features/diary/mocks/diaryDetail.json';
 import coupleRoomCode from '../features/coupleroom/mocks/coupleCodeMock.json';
 import mypage from '../features/mypage/mocks/mypageMock.json';
-import districtLockMock from '../features/mypage/mocks/districtLockMock.json';
+import districtLockMock from '../features/district/mocks/districtLockMock.json';
 
 // 한 곳에서 베이스 URL 관리
 const API = 'https://api.loventure.us';
@@ -86,9 +86,25 @@ export const handlers = [
   }),
 
   // 지역구 잠금 상태 (지도용)
-  http.get(`${API}/api/regions/lockup`, async () => {
+  http.get(`${API}/api/regions/search`, async () => {
     await delay(500);
     return HttpResponse.json(districtLockMock);
+  }),
+
+  // 지역구 잠금 해제
+  http.post(`${API}/api/regions/unlock`, async ({ request }) => {
+    await delay(500);
+    const body = await request.json().catch(() => ({}));
+    console.log('District unlock request:', body);
+    
+    return HttpResponse.json({
+      timestamp: new Date().toISOString(),
+      code: "COMMON200",
+      result: {
+        message: "지역구 잠금이 해제되었습니다.",
+        unlockedRegions: (body as any).regions || []
+      }
+    });
   }),
 
   // 다이어리 목록

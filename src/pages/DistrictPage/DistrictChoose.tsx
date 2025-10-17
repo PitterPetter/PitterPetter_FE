@@ -7,6 +7,7 @@ import { DistrictInfo, DistrictLockData, CityData } from '../../features/mypage/
 import { Spinner } from '../../shared/ui/spinner';
 import { useDistrictStore } from '../../shared/store/district.store';
 import namsantower from '/namsantower.jpg';
+import { districtApi } from '../../features/district/api';
 
 export const DistrictChoose = () => {
   const navigate = useNavigate();
@@ -16,17 +17,16 @@ export const DistrictChoose = () => {
   const { setSelectedDistricts: setStoreDistricts } = useDistrictStore();
 
   // 지역구 잠금 상태 조회
-  const { data: districtData, isLoading, isError } = useQuery<DistrictLockData>({
+  const { data: districtData, isLoading, isError } = useQuery<DistrictLockData | null>({
     queryKey: ['districtLock'],
     queryFn: async () => {
-      // 실제 API 호출 대신 mock 데이터 사용
-      const mockData = await import('../../features/mypage/mocks/districtLockMock.json');
-      return mockData.data;
+      const response = await districtApi.getDistrictLock();
+      return (response.data?.data as DistrictLockData) ?? null;
     },
   });
 
   // 현재 선택된 도시의 모든 지역구 표시
-  const currentCityData = districtData?.cities.find(city => city.cityName === selectedCity);
+  const currentCityData = districtData?.cities?.find((city) => city.cityName === selectedCity);
   const allDistricts = currentCityData?.districts || [];
 
   // 검색 필터링
@@ -37,9 +37,9 @@ export const DistrictChoose = () => {
   // 지역구 선택/해제 핸들러
   const handleDistrictToggle = (district: DistrictInfo) => {
     setSelectedDistricts(prev => {
-      const isSelected = prev.some(d => d.id === district.id);
+      const isSelected = prev.some(d => d.name === district.name);
       if (isSelected) {
-        return prev.filter(d => d.id !== district.id);
+        return prev.filter(d => d.name !== district.name);
       } else if (prev.length < 2) {
         return [...prev, district];
       }
@@ -51,7 +51,7 @@ export const DistrictChoose = () => {
   const handleNext = () => {
     if (selectedDistricts.length === 2) {
       setStoreDistricts(selectedDistricts);
-      navigate('/home/district/check');
+      navigate('/district/check');
     }
   };
 
@@ -129,12 +129,12 @@ export const DistrictChoose = () => {
         {/* 자치구 그리드 */}
         <div className="grid grid-cols-2 gap-3 max-h-80 overflow-y-auto w-full max-w-md relative z-10">
           {filteredDistricts.map((district) => {
-            const isSelected = selectedDistricts.some(d => d.id === district.id);
+            const isSelected = selectedDistricts.some(d => d.name === district.name);
             const canSelect = selectedDistricts.length < 2 || isSelected;
             
             return (
               <div
-                key={district.id}
+                key={district.name}
                 onClick={() => canSelect && handleDistrictToggle(district)}
                 className={`px-3 py-4 rounded-lg transition-all duration-200 cursor-pointer ${
                   isSelected

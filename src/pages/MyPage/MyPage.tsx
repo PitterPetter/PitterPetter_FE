@@ -1,6 +1,6 @@
 import { Profile } from "../../features/mypage/components/Profile";
 import { CoupleHome } from "../../features/mypage/components/CoupleHome";
-import { DistrictLock } from "../../features/mypage/components/DistrictLock";
+import { DistrictLock } from "../../features/district/components/DistrictLock";
 import { PersonalOnboarding } from "../../features/onboarding/PersonalOnboarding";
 import { useHeaderStore } from "../../shared/store/header.store";
 import { useMypageStore } from "../../shared/store/mypage.store";

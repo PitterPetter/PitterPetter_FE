@@ -4,10 +4,10 @@ import { useMutation } from '@tanstack/react-query';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { useDistrictStore } from '../../shared/store/district.store';
-import { mypageApi } from '../../features/mypage/api';
 import { toast } from 'react-toastify';
 import { Spinner } from '../../shared/ui/spinner';
 import namsantower from '/namsantower.jpg';
+import { districtApi } from '../../features/district/api';
 
 export const DistrictCheck = () => {
   const navigate = useNavigate();
@@ -16,9 +16,9 @@ export const DistrictCheck = () => {
 
   // 지역구 선택 확인 API 호출
   const confirmDistrictMutation = useMutation({
-    mutationFn: async (districtIds: string[]) => {
-      // 임시 API 엔드포인트 - 실제로는 POST /api/auth/confirm-districts 등으로 변경
-      const response = await mypageApi.confirmDistrictSelection(districtIds);
+    mutationFn: async (districtNames: string[]) => {
+      console.log(districtNames);
+      const response = await districtApi.unlockDistrict(districtNames);
       return response;
     },
     onSuccess: () => {
@@ -40,12 +40,12 @@ export const DistrictCheck = () => {
     }
 
     setIsSubmitting(true);
-    const districtIds = selectedDistricts.map(district => district.id.toString());
-    confirmDistrictMutation.mutate(districtIds);
+    const districtNames = selectedDistricts.map(district => district.name);
+    confirmDistrictMutation.mutate(districtNames);
   };
 
   const handleBack = () => {
-    navigate('/home/district/choose');
+    navigate('/district/choose');
   };
 
   if (selectedDistricts.length === 0) {
@@ -79,7 +79,7 @@ export const DistrictCheck = () => {
         <div className="w-full max-w-md space-y-4 relative z-10">
           {selectedDistricts.map((district, index) => (
             <div
-              key={district.id}
+              key={district.name}
               className="bg-white border border-gray-300 rounded-lg p-4 flex items-center gap-3"
             >
               <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
