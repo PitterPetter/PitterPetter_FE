@@ -4,24 +4,15 @@ import type { Course } from "../types";
 export function CourseListItem({ course }: { course: Course }) {
   const navigate = useNavigate();
   return (
-    <div className="relative flex flex-col gap-2 h-[320px] border-gray-300 border rounded-2xl pb-6 cursor-pointer"
-      onClick={() => { navigate(`/course/${course.course_id}`); }} // 코스 상세 페이지로 이동
+    <div className="relative flex flex-col h-[320px] bg-white border border-gray-200 rounded-[20px] cursor-pointer hover:shadow-sm transition-shadow duration-200"
+      onClick={() => { navigate(`/course/${course.course_id}`); }}
     >
-      <div className="flex gap-2">
-        <div className="w-full h-[165px] bg-gray-200 rounded-t-2xl"></div>
+      <div className="h-20 bg-primary rounded-t-[20px] flex items-end px-4 pb-3">
+        <h2 className="text-white font-medium text-lg">{course.title}</h2>
       </div>
-      <div className="flex flex-col gap-2">
-        <h2 className="px-4">{course.title}</h2>
-        <p className="text-sm text-gray-500 px-2 py-4">{course.description}</p>
-      </div>
-      <div className="w-full absolute bottom-2 flex justify-between px-2 gap-2 items-center">
-        {/* <div className="w-[100px] text-sm">{item.created_at.split('T')[0]}</div> */}
-        {/* 추후에 댓글 기능 추가 시 사용
-            <div className="flex items-center w-[100px] flex justify-end gap-2 text-sm">
-              <FontAwesomeIcon icon={faComment} className="w-[12px] h-[12px]" />
-              3
-            </div>
-            */}
+      
+      <div className="flex-1 p-4">
+        <p className="text-sm text-gray-600 leading-relaxed">{course.description}</p>
       </div>
     </div>
   );
