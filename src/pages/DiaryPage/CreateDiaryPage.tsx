@@ -40,6 +40,8 @@ export const CreateDiaryPage = () => {
     if (!response.ok) {
       throw new Error(`이미지 업로드에 실패했습니다 (status: ${response.status})`);
     }
+
+    return response;
   };
 
   const { mutateAsync: createDiary, isPending } = useMutation({
@@ -57,9 +59,18 @@ export const CreateDiaryPage = () => {
 
       if (imageFile && uploadInfo?.presignedUrl && uploadInfo?.imageId) {
         try {
-          await uploadImageToGCS(uploadInfo.presignedUrl, imageFile);
-          await diaryImageApi.notifyComplete(uploadInfo.imageId);
+          const uploadResponse = await uploadImageToGCS(uploadInfo.presignedUrl, imageFile);
+          
+          // presignedURL로 이미지 업로드가 성공했으면 complete 알림
+          if (uploadResponse.ok) {
+            await diaryImageApi.notifyComplete(uploadInfo.imageId);
+          } else {
+            // presignedURL로 이미지 업로드가 실패했으면 fail 알림
+            await diaryImageApi.notifyFail(uploadInfo.imageId);
+            throw new Error(`이미지 업로드에 실패했습니다 (status: ${uploadResponse.status})`);
+          }
         } catch (error) {
+          // 업로드 과정에서 에러가 발생했으면 fail 알림
           await diaryImageApi.notifyFail(uploadInfo.imageId).catch(() => {
             console.warn("이미지 업로드 실패 알림 전송에 실패했습니다.");
           });
