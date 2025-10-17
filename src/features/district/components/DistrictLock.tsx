@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock, faUnlock, faKey, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
-import { mypageApi } from '../api';
-import { DistrictInfo, DistrictLockData, CityData } from '../types';
+import { mypageApi } from '../../mypage/api';
+import { DistrictInfo, DistrictLockData } from '../../mypage/types';
 import { Spinner } from '../../../shared/ui/spinner';
 import { toast } from 'react-toastify';
+import { districtApi } from '../api';
 
 export const DistrictLock = () => {
   const [selectedCity, setSelectedCity] = useState<string>('서울시');
@@ -13,32 +14,31 @@ export const DistrictLock = () => {
   const [unlockingDistricts, setUnlockingDistricts] = useState<Set<string>>(new Set());
 
   // 지역구 잠금 상태 조회
-  const { data: districtData, isLoading, isError, refetch } = useQuery<DistrictLockData>({
+  const { data: districtData, isLoading, isError, refetch } = useQuery<DistrictLockData | null>({
     queryKey: ['districtLock'],
     queryFn: async () => {
-      // 실제 API 호출 대신 mock 데이터 사용
-      const mockData = await import('../mocks/districtLockMock.json');
-      return mockData.data;
+      const response = await districtApi.getDistrictLock();
+      return (response.data?.data as DistrictLockData) ?? null;
     },
   });
 
   // 지역구 잠금 해제 mutation
   const unlockDistrictMutation = useMutation({
-    mutationFn: (districtId: string) => mypageApi.unlockDistrict(districtId),
-    onSuccess: (_, districtId) => {
+    mutationFn: (regions: string[]) => districtApi.unlockDistrict(regions),
+    onSuccess: (_, regions) => {
       toast.success('지역구 잠금이 해제되었습니다!');
       setUnlockingDistricts(prev => {
         const newSet = new Set(prev);
-        newSet.delete(districtId);
+        regions.forEach(region => newSet.delete(region));
         return newSet;
       });
       refetch();
     },
-    onError: (_, districtId) => {
+    onError: (_, regions) => {
       toast.error('잠금 해제에 실패했습니다.');
       setUnlockingDistricts(prev => {
         const newSet = new Set(prev);
-        newSet.delete(districtId);
+        regions.forEach(region => newSet.delete(region));
         return newSet;
       });
     },
@@ -48,13 +48,13 @@ export const DistrictLock = () => {
   const handleUnlockDistrict = (district: DistrictInfo) => {
     const answer = window.confirm(`${district.name}의 잠금을 해제하시겠습니까?`);
     if (answer) {
-      setUnlockingDistricts(prev => new Set(prev).add(district.id));
-      unlockDistrictMutation.mutate(district.id);
+      setUnlockingDistricts(prev => new Set(prev).add(district.id.toString()));
+      unlockDistrictMutation.mutate([district.id.toString()]);
     }
   };
 
   // 현재 선택된 도시 데이터
-  const currentCityData = districtData?.cities.find(city => city.cityName === selectedCity);
+  const currentCityData = districtData?.cities?.find((city) => city.cityName === selectedCity);
 
   // 검색 필터링 및 정렬 (잠금 해제된 것 먼저)
   const filteredDistricts = currentCityData?.districts
@@ -160,10 +160,10 @@ export const DistrictLock = () => {
               {district.isLocked ? (
                 <button
                   onClick={() => handleUnlockDistrict(district)}
-                  disabled={unlockingDistricts.has(district.id)}
+                  disabled={unlockingDistricts.has(district.id.toString())}
                   className="w-full px-3 py-2 rounded-md text-sm font-medium bg-primary text-white hover:bg-primary/80 disabled:opacity-50 transition-all duration-200"
                 >
-                  {unlockingDistricts.has(district.id) ? '해제 중...' : '잠금 해제'}
+                  {unlockingDistricts.has(district.id.toString()) ? '해제 중...' : '잠금 해제'}
                 </button>
               ) : (
                 <div className="w-full px-3 py-2 rounded-md text-sm font-medium bg-green-100 text-green-700 text-center">
