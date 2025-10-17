@@ -22,12 +22,12 @@ export const DistrictChoose = () => {
     queryFn: async () => {
       const response = await districtApi.getDistrictLock();
       console.log(response.data.data);
-      return (response.data?.data[0] as DistrictLockData) ?? null;
+      return response.data?.data as DistrictLockData ?? null;
     },
   });
 
   // 현재 선택된 도시의 모든 지역구 표시
-  const currentCityData = districtData?.cities?.find((city) => city.cityName === selectedCity);
+  const currentCityData = districtData?.cities?.find((city: any) => city.cityName === selectedCity);
   const allDistricts = currentCityData?.districts || [];
 
   // 검색 필터링
