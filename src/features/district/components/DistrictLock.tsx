@@ -62,10 +62,15 @@ export const DistrictLock = () => {
   const currentCityData = districtData?.districts;
 
   // 검색 필터링 및 정렬 (잠금 해제된 것 먼저)
-  const filteredDistricts = currentCityData || []
+  const filteredDistricts = (currentCityData || [])
     .filter((district: DistrictInfo) =>
       district.name.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    )
+    .sort((a: DistrictInfo, b: DistrictInfo) => {
+      // locked: false (해제됨)가 먼저, locked: true (잠김)가 나중에
+      if (a.locked === b.locked) return 0;
+      return a.locked ? 1 : -1;
+    });
 
   if (isLoading) return <Spinner />;
   if (isError) return <div className="flex justify-center items-center text-red-500">정보를 불러오는데 실패했습니다.</div>;
