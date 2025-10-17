@@ -1,3 +1,29 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.scrollbar-soft {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(241, 110, 134, 0.35) transparent;
+}
+
+.scrollbar-soft:hover {
+  scrollbar-color: rgba(241, 110, 134, 0.6) transparent;
+}
+
+.scrollbar-soft::-webkit-scrollbar {
+  width: 8px;
+}
+
+.scrollbar-soft::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-soft::-webkit-scrollbar-thumb {
+  background-color: rgba(241, 110, 134, 0.35);
+  border-radius: 9999px;
+}
+
+.scrollbar-soft:hover::-webkit-scrollbar-thumb {
+  background-color: rgba(241, 110, 134, 0.6);
+}
