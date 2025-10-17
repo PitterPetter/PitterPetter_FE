@@ -19,8 +19,8 @@ export const MyPage = () => {
   const {
     isProfileLoading, setIsProfileLoading,
     isProfileError, setIsProfileError,
-    setName, setNickname, setEmail, setBirthdate,
-    nickname, birthdate,
+    name, setName, setNickname, setEmail, setBirthdate,
+    nickname, birthdate, email,
     setCoupleHomeName,
     setDatingStartDate,
     setPartnerName,
@@ -51,6 +51,17 @@ export const MyPage = () => {
       '팔만원_이상': '8만원 이상',
     };
     return costMap[cost] || cost;
+  };
+
+  const formatDate = (value: string) => {
+    if (!value) return '미등록';
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return value;
+    return new Intl.DateTimeFormat('ko-KR', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    }).format(date);
   };
 
   const { data: mypage } = useQuery({
@@ -138,6 +149,23 @@ export const MyPage = () => {
     return () => cancelAnimationFrame(handle);
   }, [location.hash]);
 
+  const formattedAnniversary = formatDate(datingStartDate);
+  const displayedCostPreference = dateCostPreference || '선택되지 않음';
+  const displayedAtmosphere = atmosphere || '선택되지 않음';
+  const foodSummary = favoriteFoodCategories?.length
+    ? favoriteFoodCategories.slice(0, 3).join(', ') + (favoriteFoodCategories.length > 3 ? ' 외' : '')
+    : '선택되지 않음';
+  const summaryCards = [
+    { label: '커플 하우스', value: coupleHomeName || '미등록' },
+    { label: '데이트 기념일', value: formattedAnniversary },
+    { label: '평균 데이트 비용', value: displayedCostPreference },
+    { label: '선호 분위기', value: displayedAtmosphere },
+    { label: '음식 취향', value: foodSummary },
+  ];
+
+  const greetingName = nickname || name || '커플';
+  const partnerLabel = partnerName ? `${partnerName}님과 함께` : '데이터를 채워보세요';
+
   return (
     <div
       className="
@@ -146,13 +174,53 @@ export const MyPage = () => {
         2xl:px-20 2xl:items-start
         px-0
       ">
+      <div className="w-full max-w-[1200px] px-4 2xl:px-0 mx-auto flex flex-col gap-6">
+        <div className="relative overflow-hidden rounded-3xl border border-primary/10 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent">
+          <div className="absolute inset-0 bg-white/30 mix-blend-overlay pointer-events-none" />
+          <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 px-8 py-10">
+            <div>
+              <span className="inline-flex items-center rounded-full bg-white/70 px-3 py-1 text-xs font-medium text-primary shadow-sm">
+                {email || '프로필'}
+              </span>
+              <h1 className="mt-4 text-3xl font-semibold text-gray-900">
+                {greetingName} 마이페이지
+              </h1>
+              <p className="mt-2 text-sm text-gray-600">
+                {partnerLabel}
+              </p>
+            </div>
+            <div className="grid grid-cols-2 gap-3 text-sm">
+              <div className="rounded-xl border border-white/60 bg-white/80 px-4 py-3 text-gray-700 shadow-sm">
+                <p className="text-xs text-gray-500">데이트 온보딩</p>
+                <p className="mt-1 font-medium">{displayedAtmosphere}</p>
+              </div>
+              <div className="rounded-xl border border-white/60 bg-white/80 px-4 py-3 text-gray-700 shadow-sm">
+                <p className="text-xs text-gray-500">기념일</p>
+                <p className="mt-1 font-medium">{formattedAnniversary}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div className="grid w-full gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {summaryCards.slice(0, 4).map(({ label, value }) => (
+            <div
+              key={label}
+              className="rounded-2xl border border-primary/10 bg-white/90 p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+            >
+              <p className="text-xs font-medium text-primary/80">{label}</p>
+              <p className="mt-2 text-sm font-semibold text-gray-800">{value}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* 상단 2단 레이아웃 */}
       <div className="flex flex-col 2xl:flex-row gap-8 2xl:gap-4 w-full">
         {/* 왼쪽 섹션 - 개인 온보딩 */}
         <div className={`flex flex-col gap-8 w-full ${isOpen ? "min-w-[720px] max-w-[720px]" : "min-w-[720px] max-w-[720px] 2xl:min-w-[720px] 2xl:max-w-[850px]"}`
         }>
           <div className="p-8 px-2 md:px-0 border border-primary/10 rounded-2xl shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md">
-            <h2 className="text-2xl mb-4 text-gray-800 px-2 md:px-8">개인 온보딩</h2>
             {isProfileLoading && <Spinner />}
             {!isProfileLoading && !isProfileError && (
             <>
