@@ -2,7 +2,7 @@ import { ConnectCourse } from "../../features/diary/components/ConnectCourse";
 import { Review } from "../../features/diary/components/Review";
 import { WriteDiary } from "../../features/diary/components/WriteDiary";
 import { useNavigate } from "react-router-dom";
-import { diaryCreateApi } from "../../features/diary/api";
+import { diaryCreateApi, diaryImageApi } from "../../features/diary/api";
 import { useDiaryStore } from "../../shared/store/diary.store";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
@@ -28,11 +28,46 @@ export const CreateDiaryPage = () => {
     resetDiaryForm();
   }, [resetDiaryForm]);
 
+  const uploadImageToGCS = async (presignedUrl: string, imageFile: File) => {
+    const response = await fetch(presignedUrl, {
+      method: "PUT",
+      body: imageFile,
+      headers: {
+        "Content-Type": imageFile.type,
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error(`이미지 업로드에 실패했습니다 (status: ${response.status})`);
+    }
+  };
+
   const { mutateAsync: createDiary, isPending } = useMutation({
     mutationKey: ["diaryCreate"],
-    mutationFn: async (payload: DiaryCreatePayload) => {
+    mutationFn: async ({ payload, imageFile }: { payload: DiaryCreatePayload; imageFile: File | null }) => {
       console.log("payload", payload);
-      return diaryCreateApi.createDiary(payload);
+      const response = await diaryCreateApi.createDiary(payload);
+      const result = response.data?.result;
+
+      if (!result) {
+        throw new Error("다이어리 생성 응답이 올바르지 않습니다.");
+      }
+
+      const uploadInfo = (result as any).imageUpload;
+
+      if (imageFile && uploadInfo?.presignedUrl && uploadInfo?.imageId) {
+        try {
+          await uploadImageToGCS(uploadInfo.presignedUrl, imageFile);
+          await diaryImageApi.notifyComplete(uploadInfo.imageId);
+        } catch (error) {
+          await diaryImageApi.notifyFail(uploadInfo.imageId).catch(() => {
+            console.warn("이미지 업로드 실패 알림 전송에 실패했습니다.");
+          });
+          throw error;
+        }
+      }
+
+      return result;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["diaries"] });
@@ -42,7 +77,8 @@ export const CreateDiaryPage = () => {
     },
     onError: (err) => {
       console.error("Failed to create diary:", err);
-      toast.error("다이어리 저장에 실패했습니다.");
+      const message = err instanceof Error ? err.message : "다이어리 저장에 실패했습니다.";
+      toast.error(message);
     },
   });
 
@@ -86,7 +122,7 @@ export const CreateDiaryPage = () => {
       removeImage: !diaryImage,
     };
 
-    await createDiary(requestData);
+    await createDiary({ payload: requestData, imageFile: diaryImage });
   };
 
   return (

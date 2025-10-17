@@ -192,6 +192,22 @@ export const handlers = [
     return HttpResponse.json({ status: 'success' });
   }),
 
+  // 이미지 업로드 완료 알림
+  http.patch(`${API}/api/images/:imageId/complete`, async ({ params }) => {
+    await delay(300);
+    const { imageId } = params;
+    console.log('Image upload complete for ID:', imageId);
+    return HttpResponse.json({ status: 'success' });
+  }),
+
+  // 이미지 업로드 실패 알림
+  http.patch(`${API}/api/images/:imageId/fail`, async ({ params }) => {
+    await delay(300);
+    const { imageId } = params;
+    console.log('Image upload failed for ID:', imageId);
+    return HttpResponse.json({ status: 'success' });
+  }),
+
   // 커플 방 생성
   http.post(`${API}/api/home/coupleroom`, async () => {
     await delay(500);
