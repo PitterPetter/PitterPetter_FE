@@ -89,6 +89,10 @@ export type DiaryStore = {
   setDiaryImage: (diaryImage: File | null) => void;
   existingImageUrl: string | null;
   setExistingImageUrl: (existingImageUrl: string | null) => void;
+  isImageRemoved: boolean;
+  setIsImageRemoved: (isImageRemoved: boolean) => void;
+  isImageChanged: boolean;
+  setIsImageChanged: (isImageChanged: boolean) => void;
   
   // store 초기화
   resetDiaryForm: () => void;
@@ -108,8 +112,6 @@ export type MypageStore = {
   setEmail: (email: string) => void;
   birthdate: string;
   setBirthdate: (birthdate: string) => void;
-  ticket: number;
-  setTicket: (ticket: number) => void;
 };
 
 // CoupleInfoStore

@@ -18,6 +18,10 @@ export const useDiaryStore = create<DiaryStore>((set) => ({
   setDiaryImage: (diaryImage: File | null) => set({ diaryImage }),
   existingImageUrl: null as string | null,
   setExistingImageUrl: (existingImageUrl: string | null) => set({ existingImageUrl }),
+  isImageRemoved: false,
+  setIsImageRemoved: (isImageRemoved: boolean) => set({ isImageRemoved }),
+  isImageChanged: false,
+  setIsImageChanged: (isImageChanged: boolean) => set({ isImageChanged }),
   
   // store 초기화
   resetDiaryForm: () => set({ 
@@ -25,6 +29,8 @@ export const useDiaryStore = create<DiaryStore>((set) => ({
     diaryContent: '', 
     diaryImage: null,
     existingImageUrl: null,
+    isImageRemoved: false,
+    isImageChanged: false,
     courseId: '',
     courseName: '',
     rating: 0
