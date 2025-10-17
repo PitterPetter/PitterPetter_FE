@@ -4,6 +4,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock, faUnlock, faKey, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { mypageApi } from '../../mypage/api';
 import { DistrictInfo, DistrictLockData } from '../../mypage/types';
+import { useMypageStore } from '../../../shared/store/mypage.store';
 import { Spinner } from '../../../shared/ui/spinner';
 import { toast } from 'react-toastify';
 import { districtApi } from '../api';
@@ -13,7 +14,7 @@ export const DistrictLock = () => {
   const [selectedCity, setSelectedCity] = useState<string>('서울시');
   const [searchTerm, setSearchTerm] = useState('');
   const [unlockingDistricts, setUnlockingDistricts] = useState<Set<string>>(new Set());
-
+  const { ticket } = useMypageStore();
   // 지역구 잠금 상태 조회
   const { data: districtData, isLoading, isError, refetch } = useQuery<DistrictLockData | null>({
     queryKey: ['districtLock'],
@@ -79,7 +80,7 @@ export const DistrictLock = () => {
         <h1 className="text-2xl font-bold text-gray-800">자치구 잠금 시스템</h1>
         <div className="flex items-center gap-2">
           <FontAwesomeIcon icon={faKey} className="w-6 h-6 text-primary" />
-          <span className="text-sm text-gray-600">보유 키: {districtData?.totalKeys}개</span>
+          <span className="text-sm text-gray-600">보유 키: {ticket || 0}개</span>
         </div>
       </div>
 
