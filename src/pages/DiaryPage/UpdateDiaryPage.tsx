@@ -21,6 +21,10 @@ export const UpdateDiaryPage = () => {
     setDiaryImage,
     existingImageUrl,
     setExistingImageUrl,
+    isImageRemoved,
+    setIsImageRemoved,
+    isImageChanged,
+    setIsImageChanged,
     courseId,
     courseName,
     setCourseId,
@@ -93,6 +97,23 @@ export const UpdateDiaryPage = () => {
     console.log('임시저장');
   };
 
+  // 다이어리 수정 시 이미지 상태 관리
+  const handleImageSelect = (file: File | null) => {
+    setDiaryImage(file);
+    setIsImageChanged(true); // 이미지가 변경되었음을 표시
+    
+    // 이미지 상태 관리
+    if (file) {
+      // 새 이미지가 선택되면 삭제 상태 해제
+      setIsImageRemoved(false);
+    } else {
+      // 이미지가 제거되면 삭제 상태 설정 (기존 이미지가 있는 경우에만)
+      if (existingImageUrl) {
+        setIsImageRemoved(true);
+      }
+    }
+  };
+
   const handleSave = async () => {
     if (!id) {
       toast.error('다이어리 ID가 없습니다.');
@@ -104,12 +125,12 @@ export const UpdateDiaryPage = () => {
       const requestData = {
         title: diaryTitle,
         content: diaryContent,
-        image: diaryImage ? {
+        image: isImageChanged && diaryImage ? {
           originalFileName: diaryImage.name,
           contentType: diaryImage.type,
           sizeBytes: diaryImage.size
         } : null,
-        removeImage: diaryImage ? false : true  // 새 이미지가 있으면 삭제하지 않음, 없으면 삭제
+        removeImage: isImageChanged ? isImageRemoved : false
       };
 
       // PUT로 수정 요청
@@ -122,8 +143,8 @@ export const UpdateDiaryPage = () => {
 
       const uploadInfo = (result as any).imageUpload;
 
-      // 이미지가 있고 presignedURL이 있으면 GCS에 업로드
-      if (diaryImage && uploadInfo?.presignedUrl && uploadInfo?.imageId) {
+      // 이미지가 변경되었고 새 이미지가 있고 presignedURL이 있으면 GCS에 업로드
+      if (isImageChanged && diaryImage && !isImageRemoved && uploadInfo?.presignedUrl && uploadInfo?.imageId) {
         try {
           const uploadResponse = await uploadImageToGCS(uploadInfo.presignedUrl, diaryImage);
           
@@ -184,9 +205,9 @@ export const UpdateDiaryPage = () => {
         <Review />
       </div>
 
-      {/* 게시물 작성 */}
-      <div className="h-full rounded-2xl p-4 pb-6 w-[800px] bg-white">
-        <WriteDiary />
+        {/* 게시물 작성 */}
+        <div className="h-full rounded-2xl p-4 pb-6 w-[800px] bg-white">
+          <WriteDiary onImageSelect={handleImageSelect} />
         <div className="flex justify-end gap-4 p-4">
           <div
             onClick={handleCancel}
