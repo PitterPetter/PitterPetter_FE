@@ -60,9 +60,7 @@ export default function AuthBootstrap() {
     if (status === "ONBOARDING_REQUIRED") {
       targetPath = "/onboarding";
     } else if (status === "COUPLE_MATCHING_REQUIRED") {
-      targetPath = "/coupleroom";
-    } else if (status === "LOCK_REQUIRED") {
-      targetPath = "/district";
+      targetPath = "/home/coupleroom";
     } else if (status === "COMPLETED") {
       targetPath = "/home";
     } else {
