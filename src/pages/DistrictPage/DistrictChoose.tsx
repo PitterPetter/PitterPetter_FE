@@ -21,6 +21,7 @@ export const DistrictChoose = () => {
     queryKey: ['districtLock'],
     queryFn: async () => {
       const response = await districtApi.getDistrictLock();
+      console.log(response.data.data);
       return (response.data?.data as DistrictLockData) ?? null;
     },
   });
