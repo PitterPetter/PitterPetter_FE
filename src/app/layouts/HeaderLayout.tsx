@@ -5,8 +5,6 @@ import shineIcon from "../../shared/ui/assets/shineIcon.png";
 import pageIcon from "../../shared/ui/assets/pageIcon.png";
 import bookIcon from "../../shared/ui/assets/bookIcon.png";
 import userIcon from "../../shared/ui/assets/userIcon.png";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronLeft, faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { useHeaderStore } from "../../shared/store/header.store";
 
 const NAV_ITEMS = [
@@ -20,7 +18,7 @@ const NAV_ITEMS = [
 export const HeaderLayout = () => {
   const isOpen = useHeaderStore((s) => s.isOpen);
 
-  const sidebarWidth = isOpen ? 256 : 64;
+  const sidebarWidth = 256;
 
   return (
     <div className="flex w-full min-h-dvh">
@@ -43,7 +41,6 @@ export const HeaderLayout = () => {
 
 export const Header = () => {
   const isOpen = useHeaderStore((s) => s.isOpen);
-  const setIsOpen = useHeaderStore((s) => s.setIsOpen);
   const navigate = useNavigate();
 
   return (
@@ -93,18 +90,6 @@ export const Header = () => {
           </NavLink>
         ))}
       </nav>
-
-
-      {/* 열기/닫기 토글 */}
-      <button
-        type="button"
-        aria-label={isOpen ? "사이드바 접기" : "사이드바 펼치기"}
-        aria-expanded={isOpen}
-        onClick={() => setIsOpen(!isOpen)}
-        className="absolute top-1/2 -right-4 -translate-y-1/2 flex w-8 h-8 items-center justify-center border rounded-full bg-white shadow transition-colors duration-200 hover:bg-gray-100"
-      >
-        <FontAwesomeIcon icon={isOpen ? faChevronLeft : faChevronRight} />
-      </button>
     </div>
   );
 };
