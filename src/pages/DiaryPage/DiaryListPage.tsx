@@ -13,7 +13,7 @@ export const DiaryListPage = () => {
   const [currentPage, setCurrentPage] = useState(0);
   const pageSize = 6; // 2x3 = 6개
 
-  const { data: diaryData, isLoading, error } = useQuery<DiaryListResponse['result']>({
+  const { data: diaryData, isLoading, error } = useQuery<DiaryListResponse>({
     queryKey: ['diaries', currentPage],
       queryFn: async () => {
         const response = await diaryApi.getDiaryList(currentPage, pageSize);
