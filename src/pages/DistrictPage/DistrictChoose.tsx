@@ -22,7 +22,7 @@ export const DistrictChoose = () => {
     queryFn: async () => {
       const response = await districtApi.getDistrictLock();
       console.log(response.data.data);
-      return (response.data?.data as DistrictLockData) ?? null;
+      return (response.data?.data[0] as DistrictLockData) ?? null;
     },
   });
 
