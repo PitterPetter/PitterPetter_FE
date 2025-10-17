@@ -77,6 +77,14 @@ export const handlers = [
     return HttpResponse.json({ message: 'Home endpoint' });
   }),
 
+  // 사용자 인증 상태 조회
+  http.get(`${API}/api/auth/status`, async () => {
+    await delay(300);
+    return HttpResponse.json({
+      status: "COMPLETED" // 테스트용으로 COMPLETED 상태 반환
+    });
+  }),
+
   // 지역구 잠금 상태 (지도용)
   http.get(`${API}/api/regions/lockup`, async () => {
     await delay(500);
