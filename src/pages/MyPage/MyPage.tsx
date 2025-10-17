@@ -35,7 +35,9 @@ export const MyPage = () => {
     alcoholPreference, activeBound, dateCostPreference, favoriteFoodCategories, atmosphere
    } = useOnboardingStore();
 
-   const convertCostPreference = (cost: string) => {
+   const convertCostPreference = (cost: string | undefined) => {
+    if (!cost) return '';
+    
     const costMap: { [key: string]: string } = {
       '1만원 이하': '만원_미만',
       '1 ~ 3만원': '만원_삼만원',
@@ -48,7 +50,7 @@ export const MyPage = () => {
       '오만원_팔만원': '5 ~ 8만원',
       '팔만원_이상': '8만원 이상',
     };
-    return costMap[cost];
+    return costMap[cost] || cost;
   };
 
   const { data: mypage } = useQuery({
@@ -67,7 +69,7 @@ export const MyPage = () => {
         setActiveBound(response.data?.data.activeBound);
         setDateCostPreference(convertCostPreference(response.data?.data.dateCostPreference) as CostList);
         setFavoriteFoodCategories(response.data?.data.favoriteFoodCategories);
-        setAtmosphere(response.data?.data.atmosphere);
+        setAtmosphere(response.data?.data.atmosphere || '');
         setCoupleHomeName(response.data?.data.coupleInfo.coupleHomeName);
         setDatingStartDate(response.data?.data.coupleInfo.datingStartDate);
         setPartnerName(response.data?.data.coupleInfo.partnerName);

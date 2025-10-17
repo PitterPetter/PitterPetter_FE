@@ -18,7 +18,7 @@ export const PersonalOnboarding = () => {
     if (activeBound !== 0) count++;
     if (favoriteFoodCategories.length > 0) count++;
     if (dateCostPreference !== '') count++;
-    if (atmosphere.trim() !== '') count++;
+    if (atmosphere && atmosphere.trim() !== '') count++;
     return count;
   };
   
