@@ -9,7 +9,7 @@ import { Spinner } from "../../../shared/ui/spinner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencil, faHeart, faCalendarCheck, faEnvelopeOpenText } from "@fortawesome/free-solid-svg-icons";
 import { toast } from 'react-toastify';
-import classNames from "classnames";
+import clsx from "clsx";
 
 export const CoupleHome = () => {
   const navigate = useNavigate();
@@ -100,7 +100,7 @@ export const CoupleHome = () => {
     highlight?: boolean;
   }) => (
     <div
-      className={classNames(
+      className={clsx(
         statCardClasses,
         highlight && "bg-gradient-to-br from-primary/20 via-white to-transparent border-primary/20"
       )}

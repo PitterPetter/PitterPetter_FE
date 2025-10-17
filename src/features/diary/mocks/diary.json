@@ -5,10 +5,65 @@
     "content": [
       {
         "diaryId": "0N8SSD5F928EK",
-        "title": "hi",
-        "excerpt": "hi",
+        "title": "제주도 첫 여행",
+        "excerpt": "드디어 함께 떠난 첫 여행...",
         "updatedAt": "2025-10-16T13:34:47.090485",
-        "likeCount": 0,
+        "commentCount": 3,
+        "imageId": null,
+        "imageUrl": null,
+        "imageStatus": null,
+        "imageExpiresIn": null
+      },
+      {
+        "diaryId": "1A2B3C4D5E6F7G",
+        "title": "서울 한강 피크닉",
+        "excerpt": "날씨가 좋아서 한강으로 피크닉을 갔어요",
+        "updatedAt": "2025-10-15T10:20:30.123456",
+        "commentCount": 7,
+        "imageId": null,
+        "imageUrl": null,
+        "imageStatus": null,
+        "imageExpiresIn": null
+      },
+      {
+        "diaryId": "2B3C4D5E6F7G8H",
+        "title": "맛집 투어",
+        "excerpt": "이번 주말에 맛집들을 돌아다녔습니다",
+        "updatedAt": "2025-10-14T15:45:20.789012",
+        "commentCount": 0,
+        "imageId": null,
+        "imageUrl": null,
+        "imageStatus": null,
+        "imageExpiresIn": null
+      },
+      {
+        "diaryId": "3C4D5E6F7G8H9I",
+        "title": "영화 데이트",
+        "excerpt": "새로 나온 영화를 함께 봤어요",
+        "updatedAt": "2025-10-13T20:30:15.456789",
+        "commentCount": 1,
+        "imageId": null,
+        "imageUrl": null,
+        "imageStatus": null,
+        "imageExpiresIn": null
+      },
+      {
+        "diaryId": "4D5E6F7G8H9I0J",
+        "title": "카페 투어",
+        "excerpt": "동네 카페들을 탐방했습니다",
+        "updatedAt": "2025-10-12T14:15:30.234567",
+        "commentCount": 5,
+        "imageId": null,
+        "imageUrl": null,
+        "imageStatus": null,
+        "imageExpiresIn": null
+      },
+      {
+        "diaryId": "5E6F7G8H9I0J1K",
+        "title": "산책 데이트",
+        "excerpt": "공원에서 산책하며 대화를 나눴어요",
+        "updatedAt": "2025-10-11T09:25:45.345678",
+        "commentCount": 2,
         "imageId": null,
         "imageUrl": null,
         "imageStatus": null,
@@ -18,7 +73,7 @@
     "page": {
       "page": 0,
       "size": 6,
-      "totalElements": 1,
+      "totalElements": 6,
       "totalPages": 1
     }
   }
