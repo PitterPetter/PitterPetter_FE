@@ -7,6 +7,8 @@ export const useOnboardingStore = create<Onboarding>((set) => ({
   dateCostPreference: '',
   favoriteFoodCategories: [],
   atmosphere: '',
+  answeredCount: 0,
+  setAnsweredCount: (value: number) => set({ answeredCount: value }),
   setAlcoholPreference: (value: DrinkingList) => set({ alcoholPreference: value }),
   setActiveBound: (value: ActiveList) => set({ activeBound: value }),
   setDateCostPreference: (value: CostList) => set({ dateCostPreference: value }),

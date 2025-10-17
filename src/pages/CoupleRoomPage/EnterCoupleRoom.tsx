@@ -84,7 +84,7 @@ export const EnterCoupleRoom = () => {
 
   return (
     <div className="flex items-center justify-center w-full h-full">
-      <div className="relative h-[800px] w-[700px] bg-[#DED6D6] border-gray-300 border rounded-2xl p-4 py-16 flex flex-col gap-2 justify-center items-center">
+      <div className="relative h-[800px] w-[800px] bg-[#DED6D6] border-gray-300 border rounded-2xl p-4 py-16 flex flex-col gap-2 justify-center items-center">
         <h1 className="text-2xl">코드를 입력하고 <span className="bg-pink-200 py-1">커플인증</span>하기</h1>
         <p>서비스를 이용하기 위해 커플 인증이 필요해요</p>
         <p className="text-sm text-gray-600 mt-8">연인의 화면에 표시된 6자리 코드를 입력해 주세요</p>

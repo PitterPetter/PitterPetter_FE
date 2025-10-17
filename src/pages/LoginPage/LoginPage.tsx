@@ -20,7 +20,7 @@ export const LoginPage = () => {
         </div>
       </div>
       {/* background */}
-      <div className="absolute top-0 left-0 w-full max-h-[100vh] z-10 flex justify-center items-center">
+      <div className="absolute top-0 left-0 w-full h-[100vh] z-10 flex justify-center items-center overflow-hidden">
         <LoginMapbox />
       </div>
     </div>

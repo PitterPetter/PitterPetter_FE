@@ -13,6 +13,7 @@ import { CourseDetailPage } from './pages/CourseDetailPage';
 import { CourseDetailSidebar, PlaceDetailSidebar } from './features/course';
 import { DiaryDetailPage } from './pages/DiaryDetailPage';
 import { OnboardingPage } from './pages/OnboardingPage';
+import { PersonalOnboarding } from './features/onboarding/PersonalOnboarding';
 import { CoupleRoomPage, EnterCoupleRoom, CreateCoupleRoom } from './pages/CoupleRoomPage';
 import AuthBootstrap from './app/providers/AuthBootstrap';
 import { CoupleRoomModal } from './pages/CoupleRoomPage/CoupleRoomModal';
@@ -36,10 +37,12 @@ function App() {
         {/* 로그인 페이지 */}
         <Route path="/login" element={<LoginPage />} />
 
-        <Route path="/onboarding" element={<OnboardingPage />} />
         {/* 헤더 레이아웃 */}
         <Route element={<HeaderLayout />}>
           <Route path="/home" element={<MainPage />}>
+            <Route path="onboarding" element={<OnboardingPage />}>
+              <Route index element={<PersonalOnboarding />} />
+            </Route>
             <Route path="coupleroom" element={<CoupleRoomModal />}>
               <Route index element={<CoupleRoomPage />} />
               <Route path="create" element={<CreateCoupleRoom />} />

@@ -46,7 +46,7 @@ export const PhotoStack = () => {
       </div>
       <div className={`
         ${imageStyle}
-        absolute bottom-[0px] right-[50px] z-40 rotate-[4deg] group-hover:rotate-[1deg]
+        absolute bottom-[0px] right-[50px] z-40 rotate-[4deg] group-hover:rotate-[-10deg]
         group-hover:right-[40px] group-hover:bottom-[0px] group-hover:rotate-[-18deg]
         lg:group-hover:right-[180px] lg:group-hover:bottom-[70px] lg:group-hover:rotate-[-10deg]
         lg:right-[240px] lg:bottom-[120px]
@@ -57,7 +57,7 @@ export const PhotoStack = () => {
       <div className={`
         ${buttonStyle}
         absolute top-8 left-[15px] z-20 rotate-[15deg] group-hover:rotate-[12deg] w-[168px] h-[48px]
-        group-hover:left-[0px] group-hover:top-[100px] group-hover:rotate-[1deg] 
+        group-hover:left-[0px] group-hover:top-[60px] group-hover:rotate-[1deg] 
         lg:group-hover:left-[30px] lg:group-hover:top-[170px] lg:group-hover:rotate-[1deg]
         lg:w-[200px] lg:h-[60px] lg:left-[70px] lg:top-[170px]
       `}>
@@ -68,7 +68,7 @@ export const PhotoStack = () => {
       </div>
       <div className={`
         ${buttonStyle}
-        absolute bottom-[20px] left-[60px] z-50 rotate-[-12deg] group-hover:rotate-[-12deg] w-[204px] h-[48px]
+        absolute bottom-[20px] left-[60px] z-50 rotate-[-12deg] group-hover:rotate-[-6deg] w-[204px] h-[48px]
         group-hover:left-[80px] group-hover:bottom-[10px]
         lg:group-hover:left-[180px] lg:group-hover:bottom-[150px]
         lg:w-[250px] lg:h-[60px] lg:left-[170px] lg:bottom-[170px]

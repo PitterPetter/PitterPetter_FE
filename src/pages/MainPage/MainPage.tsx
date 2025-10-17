@@ -5,11 +5,13 @@ import { useNavigate, useLocation, Link } from "react-router-dom";
 import { CoupleRoomModal } from "../CoupleRoomPage/CoupleRoomModal";
 import { DistrictModal } from "../DistrictPage/DistrictModal";
 import { useDistrictStore } from "../../shared/store/district.store";
+import { OnboardingPage } from "../OnboardingPage/OnboardingPage";
 
 export const MainPage = () => {
   const { isMarkers } = useMarkerStore();
   const [isCoupleRoom, setIsCoupleRoom] = useState(false);
   const [isDistrict, setIsDistrict] = useState(false);
+  const [isOnboarding, setIsOnboarding] = useState(false);
   const [clicked, setClicked] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
@@ -22,12 +24,19 @@ export const MainPage = () => {
     if (location.pathname.includes("/coupleroom")) {
       setIsCoupleRoom(true);
       setIsDistrict(false);
+      setIsOnboarding(false);
     } else if (location.pathname.includes("/district")) {
       setIsDistrict(true);
       setIsCoupleRoom(false);
+      setIsOnboarding(false);
+    } else if (location.pathname.includes("/onboarding")) {
+      setIsOnboarding(true);
+      setIsCoupleRoom(false);
+      setIsDistrict(false);
     } else {
       setIsCoupleRoom(false);
       setIsDistrict(false);
+      setIsOnboarding(false);
     }
   }, [location.pathname]);
   
@@ -94,6 +103,7 @@ export const MainPage = () => {
 
       {isCoupleRoom && <CoupleRoomModal />}
       {isDistrict && <DistrictModal />}
+      {isOnboarding && <OnboardingPage />}
     </div>
   );
 };
