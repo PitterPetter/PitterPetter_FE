@@ -1,6 +1,6 @@
 import './App.css';
 import { LoginPage } from './pages/LoginPage';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 // import { AuthInitializer } from './app/providers/AuthInitializer';
 import { MainPage } from './pages/MainPage';
 import { HeaderLayout } from './app/layouts';
@@ -39,6 +39,9 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* 기본 경로 - 로그인으로 리디렉션 */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        
         {/* 로그인 페이지 */}
         <Route path="/login" element={<LoginPageWithBootstrap />} />
         
