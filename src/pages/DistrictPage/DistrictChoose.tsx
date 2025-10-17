@@ -17,18 +17,17 @@ export const DistrictChoose = () => {
   const { setSelectedDistricts: setStoreDistricts } = useDistrictStore();
 
   // 지역구 잠금 상태 조회
-  const { data: districtData, isLoading, isError } = useQuery<DistrictLockData | null>({
+  const { data: districtData, isLoading, isError } = useQuery<CityData | null>({
     queryKey: ['districtLock'],
     queryFn: async () => {
       const response = await districtApi.getDistrictLock();
-      console.log(response.data.data);
-      return response.data?.data as DistrictLockData ?? null;
+      console.log(response.data.data.cities[0].districts);
+      return response.data?.data.cities[0] as CityData ?? null;
     },
   });
 
-  // 현재 선택된 도시의 모든 지역구 표시
-  const currentCityData = districtData?.cities?.find((city: any) => city.cityName === selectedCity);
-  const allDistricts = currentCityData?.districts || [];
+  // 현재 선택된 도시의 모든 지역구 표시 (서울시만)
+  const allDistricts = districtData?.districts || [];
 
   // 검색 필터링
   const filteredDistricts = allDistricts.filter(district =>
