@@ -14,11 +14,77 @@ import { toast } from 'react-toastify';
 import { saveRecommendToSession } from "../../features/recommend/utils/sessionStorage";
 import { COURSE_STORAGE_KEY } from "../../features/course/utils/normalizeCourse";
 import { RecommendStop } from "./type";
+import {
+  RecommendCategory,
+  RecommendCoursePayload,
+} from "../../features/course/types/recommendCoursePayload";
 
 const formatCategory = (category?: string) => (category ? category.toUpperCase() : "UNKNOWN");
 const formatPrice = (price_level?: number) => (typeof price_level === "number" ? `가격대: ${price_level}` : "");
 const formatAlcohol = (alcohol?: boolean | 0 | 1) => (alcohol ? "음주 가능" : "음주 불가");
 const formatIndoor = (indoor?: boolean) => (indoor ? "실내" : "실외");
+
+const CATEGORY_VALUES = new Set(Object.values(RecommendCategory));
+
+const clampNumber = (value: unknown, min: number, max: number, fallback: number) => {
+  const candidate =
+    typeof value === "string" && value.trim() !== "" ? Number(value) : value;
+  if (typeof candidate !== "number" || Number.isNaN(candidate)) {
+    return fallback;
+  }
+  return Math.min(max, Math.max(min, candidate));
+};
+
+const normalizeCategory = (category?: string): RecommendCategory => {
+  const upper = (category ?? "").toUpperCase();
+  if (CATEGORY_VALUES.has(upper as RecommendCategory)) {
+    return upper as RecommendCategory;
+  }
+  return RecommendCategory.OTHER;
+};
+
+const normalizeUrl = (link?: string): string => {
+  if (typeof link !== "string") {
+    return "";
+  }
+  const trimmed = link.trim();
+  if (!trimmed) {
+    return "";
+  }
+  if (/^https?:\/\//i.test(trimmed)) {
+    return trimmed;
+  }
+  return "";
+};
+
+const normalizeString = (value: unknown, maxLength: number): string => {
+  if (typeof value !== "string") {
+    return "";
+  }
+  const trimmed = value.trim();
+  return trimmed.slice(0, Math.max(0, maxLength));
+};
+
+const normalizeFoodTags = (foodTag: unknown): string[] => {
+  if (!Array.isArray(foodTag)) {
+    return [];
+  }
+
+  return foodTag
+    .filter((tag): tag is string => typeof tag === "string")
+    .map((tag) => tag.trim())
+    .filter((tag) => tag.length >= 1)
+    .map((tag) => tag.slice(0, 30));
+};
+
+const normalizeOpenHours = (input: unknown): Record<string, string> => {
+  if (input && typeof input === "object" && !Array.isArray(input)) {
+    const entries = Object.entries(input as Record<string, unknown>)
+      .filter(([key, value]) => typeof key === "string" && typeof value === "string");
+    return Object.fromEntries(entries.map(([key, value]) => [key, (value as string).trim().slice(0, 50)]));
+  }
+  return {};
+};
 
 export const RecommendCoursePage = () => {
   const navigate = useNavigate();
@@ -162,28 +228,44 @@ export const RecommendCoursePage = () => {
   });
 
   const saveCourse = () => {
-    const courseData = {
+    const payload: RecommendCoursePayload = {
       title: "추천 코스",
-      explain: explain || "옵션에서 추천받은 코스",
-      data: stops.map((stop, index) => ({
-        seq: stop.seq,
-        name: stop.name,
-        category: stop.category,
-        lat: stop.lat || 0,
-        lng: stop.lng || 0,
-        indoor: stop.indoor || false,
-        priceLevel: stop.price_level,
-        openHours: stop.open_hours,
-        alcohol: stop.alcohol,
-        moodTag: stop.mood_tag || "0",
-        foodTag: Array.isArray(stop.food_tag) ? stop.food_tag : [],
-        link: stop.link,
-        ratingAvg: stop.rating_avg
-      }))
+      explain: normalizeString(explain || "옵션에서 추천받은 코스", 1000) || "옵션에서 추천받은 코스",
+      data: [...stops]
+        .sort((a, b) => (a.seq ?? 0) - (b.seq ?? 0))
+        .map((stop) => {
+          const seqValue = clampNumber(stop.seq, 1, Number.MAX_SAFE_INTEGER, 1);
+
+          return {
+            seq: Math.max(1, Math.floor(seqValue)),
+            name: normalizeString(stop.name ?? "", 200) || "이름 없는 장소",
+            category: normalizeCategory(stop.category),
+            lat: clampNumber(stop.lat, -90, 90, 0),
+            lng: clampNumber(stop.lng, -180, 180, 0),
+            indoor: Boolean(stop.indoor),
+            priceLevel: Math.round(clampNumber(stop.price_level, 0, 5, 0)),
+            openHours: normalizeOpenHours(stop.open_hours),
+            alcohol: Math.round(
+              clampNumber(
+                typeof stop.alcohol === "number" ? stop.alcohol : stop.alcohol ? 1 : 0,
+                0,
+                5,
+                0
+              )
+            ),
+          moodTag: normalizeString(
+            typeof stop.mood_tag === "number" ? String(stop.mood_tag) : stop.mood_tag ?? "",
+            50
+          ),
+          foodTag: normalizeFoodTags(stop.food_tag),
+          ratingAvg: clampNumber(stop.rating_avg, 0, 5, 0),
+          link: normalizeUrl(stop.link),
+          };
+        }),
     };
     
-    saveCourseMutation.mutate(courseData);
-  }
+    saveCourseMutation.mutate(payload);
+  };
 
   // URL 파라미터에 따른 모달 상태 설정
   useEffect(() => {

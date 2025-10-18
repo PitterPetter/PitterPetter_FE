@@ -257,34 +257,10 @@ export const PlaceDetailSidebar = ({ placeData }: PlaceDetailSidebarProps) => {
                   <span className="truncate text-right font-medium text-gray-800">{formatIndoor(placeData.indoor)}</span>
                 </div>
               )}
-              
-              {placeData.price_level !== undefined && (
-                <div className="flex justify-between gap-4 text-sm">
-                  <span className="text-gray-500">가격대</span>
-                  <span className="truncate text-right font-medium text-gray-800">{formatPriceLevel(placeData.price_level)}</span>
-                </div>
-              )}
-              
-              {placeData.alcohol !== undefined && (
-                <div className="flex justify-between gap-4 text-sm">
-                  <span className="text-gray-500">주류</span>
-                  <span className="truncate text-right font-medium text-gray-800">{formatAlcohol(placeData.alcohol)}</span>
-                </div>
-              )}
-              
               {placeData.seq && (
                 <div className="flex justify-between gap-4 text-sm">
                   <span className="text-gray-500">순서</span>
                   <span className="truncate text-right font-medium text-gray-800">{placeData.seq}번째 장소</span>
-                </div>
-              )}
-              
-              {(typeof placeData.lat === "number" && typeof placeData.lng === "number") && (
-                <div className="flex justify-between gap-4 text-sm">
-                  <span className="text-gray-500">좌표</span>
-                  <span className="truncate text-right font-medium text-gray-800">
-                    {placeData.lat.toFixed(4)}, {placeData.lng.toFixed(4)}
-                  </span>
                 </div>
               )}
             </div>
