@@ -50,20 +50,8 @@ export const SessionCoursesModal: React.FC<SessionCoursesModalProps> = ({ isOpen
     
     // 재추천 API에 필요한 데이터 구성
     const requestData = {
-      exclude_pois: places.filter(place => selectedPlaces.has(place.seq)).map(place => ({
-        category: place.category,
-        name: place.name,
-        lat: place.lat,
-        lng: place.lng,
-        seq: place.seq
-      })),
-      previous_recommendations: places.map(place => ({
-        category: place.category,
-        name: place.name,
-        lat: place.lat,
-        lng: place.lng,
-        seq: place.seq
-      })),
+      exclude_pois: places.filter(place => selectedPlaces.has(place.seq)),
+      previous_recommendations: places,
       user_choice: optionData?.user_choice || {}
     };
 
