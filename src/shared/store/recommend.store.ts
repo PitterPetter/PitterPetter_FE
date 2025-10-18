@@ -11,6 +11,8 @@ export const useStartStore = create<start>((set) => ({
 export const useRecommendStore = create<RecommendStore>((set, get) => ({
   explain: "",
   data: [],
+  lawData: [],
+  setLawData: (lawData: any[]) => set({ lawData }),
   selectedPlace: null,
   setRecommend: (recommend: { explain: string; data: Place[] }) => {
     set(recommend);
