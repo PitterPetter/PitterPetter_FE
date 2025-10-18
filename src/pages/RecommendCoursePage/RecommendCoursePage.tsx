@@ -162,7 +162,6 @@ export const RecommendCoursePage = () => {
   });
 
   const saveCourse = () => {
-    // recommend 데이터를 course 형태로 변환 (스웨거 스펙에 맞춤)
     const courseData = {
       title: "추천 코스",
       explain: explain || "옵션에서 추천받은 코스",
@@ -177,7 +176,7 @@ export const RecommendCoursePage = () => {
         openHours: stop.open_hours,
         alcohol: stop.alcohol,
         moodTag: stop.mood_tag || "0",
-        foodTag: stop.food_tag || [],
+        foodTag: Array.isArray(stop.food_tag) ? stop.food_tag : [],
         link: stop.link,
         ratingAvg: stop.rating_avg
       }))
