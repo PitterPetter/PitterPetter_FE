@@ -7,7 +7,7 @@ import { DistrictInfo, DistrictLockData, CityData } from '../../features/mypage/
 import { Spinner } from '../../shared/ui/spinner';
 import { useDistrictStore } from '../../shared/store/district.store';
 import namsantower from '/namsantower.jpg';
-import { getDistrictData } from '../../features/district/utils/districtStorage';
+import { districtApi } from '../../features/district/api';
 
 export const DistrictChoose = () => {
   const navigate = useNavigate();
@@ -17,13 +17,13 @@ export const DistrictChoose = () => {
   const [isBackgroundLoaded, setIsBackgroundLoaded] = useState(false);
   const { setSelectedDistricts: setStoreDistricts } = useDistrictStore();
 
-  const { data: districtData, isLoading, isError } = useQuery<CityData | null>({
+  const { data: districtData, isLoading, isError } = useQuery<DistrictLockData | null>({
     queryKey: ['districtLock'],
     queryFn: async () => {
-      // sessionStorage에서 데이터 가져오기 (없으면 목데이터 사용)
-      const data = getDistrictData();
-      console.log('DistrictChoose - Loaded districts:', data?.districts);
-      return data;
+      console.log('DistrictChoose - Loading districts');
+      const response = await districtApi.getDistrictLock();
+      console.log('DistrictChoose - Loaded districts:', response.data.data);
+      return response.data.data;
     },
   });
 
@@ -44,7 +44,7 @@ export const DistrictChoose = () => {
   }, []);
 
   // 현재 선택된 도시의 모든 지역구 표시 (서울시만)
-  const allDistricts = districtData?.districts || [];
+  const allDistricts = districtData?.cities[0]?.districts || [];
 
   // 검색 필터링
   const filteredDistricts = allDistricts.filter(district =>
