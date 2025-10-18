@@ -116,7 +116,7 @@ export const CourseDetailSidebar = () => {
               }}
             >
               <div className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-[#662B2B] text-white rounded-full flex items-center justify-center text-sm font-semibold">
+                <div className="min-w-8 min-h-8 bg-[#662B2B] text-white rounded-full flex items-center justify-center text-sm font-semibold">
                   {stop.order}
                 </div>
                 <span className="text-[#662B2B] text-lg font-medium truncate">{stop.poi.name}</span>
