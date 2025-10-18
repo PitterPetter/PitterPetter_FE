@@ -343,7 +343,7 @@ export const RecommendCoursePage = () => {
           </div>
         ) : (
           <div className="flex h-full items-center justify-center bg-white p-6 text-sm text-gray-500">
-            추천 코스 데이터가 없습니다. 온보딩을 완료해주세요.
+            추천 코스 데이터가 없습니다. 홈에서 추천을 받아보세요!
           </div>
         )}
       </div>
