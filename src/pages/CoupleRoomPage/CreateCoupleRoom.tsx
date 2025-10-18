@@ -16,6 +16,7 @@ export const CreateCoupleRoom = () => {
   const navigate = useNavigate();
   const [coupleName, setCoupleName] = useState("");
   const [coupleDate, setCoupleDate] = useState<Date | null>(new Date());
+  const [dateError, setDateError] = useState<string>("");
   const { mutateAsync: createCoupleRoom, isPending } = useMutation({
     mutationFn: async (coupleRoom: PostCoupleRoom) => {
       const res = await coupleRoomApi.createCoupleRoom(coupleRoom);
@@ -30,8 +31,35 @@ export const CreateCoupleRoom = () => {
     return `${year}-${month}-${day}`;
   };
 
+  const validateDate = (date: Date | null) => {
+    if (!date) {
+      setDateError("날짜를 선택해주세요.");
+      return false;
+    }
+    
+    const today = new Date();
+    today.setHours(0, 0, 0, 0); // 시간을 00:00:00으로 설정
+    
+    if (date > today) {
+      setDateError("교제 시작일은 오늘보다 이전 날짜여야 합니다.");
+      return false;
+    }
+    
+    setDateError("");
+    return true;
+  };
+
+  const handleDateChange = (date: Date | null) => {
+    setCoupleDate(date);
+    validateDate(date);
+  };
+
   const handleSave = async () => {
     if (!coupleDate || coupleName.trim() === "") return;
+    
+    if (!validateDate(coupleDate)) {
+      return;
+    }
 
     try {
       const formattedDate = formatDate(coupleDate);
@@ -58,7 +86,7 @@ export const CreateCoupleRoom = () => {
     }
   };
 
-  const isDisabled = coupleName.trim() === "" || coupleDate === null || isPending;
+  const isDisabled = coupleName.trim() === "" || coupleDate === null || isPending || dateError !== "";
 
   return (
     <div className="pt-[80px] sm:pt-[40px] relative w-full h-full sm:h-auto overflow-hidden rounded-none bg-white shadow-[0_30px_90px_rgba(0,0,0,0.25)] sm:rounded-4xl sm:h-[500px] sm:max-w-[1000px] md:rounded-xl">
@@ -105,7 +133,8 @@ export const CreateCoupleRoom = () => {
             <LocalizationProvider dateAdapter={AdapterDateFns}>
               <DatePicker
                 value={coupleDate}
-                onChange={(date) => setCoupleDate(date)}
+                onChange={handleDateChange}
+                maxDate={new Date()} // 오늘까지만 선택 가능
                 enableAccessibleFieldDOMStructure={false}
                 slots={{
                   textField: TextField,
@@ -113,6 +142,8 @@ export const CreateCoupleRoom = () => {
                 slotProps={{
                   textField: {
                     variant: "standard",
+                    error: dateError !== "",
+                    helperText: dateError,
                     sx: {
                       "& .MuiInput-underline:before": {
                         borderBottom: "none",

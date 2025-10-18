@@ -19,6 +19,7 @@ export const OptionsPage = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [startTime, setStartTime] = useState<Date>(new Date());
   const [endTime, setEndTime] = useState<Date>(new Date());
+  const [timeError, setTimeError] = useState<string>("");
   const start = useStartStore.getState();
   const { setRecommend } = useRecommendStore();
   const mutation = useMutation({
@@ -63,7 +64,43 @@ export const OptionsPage = () => {
       alert("옵션 전송 실패");
     }
   });
+  const validateTime = () => {
+    const startTimeOnly = new Date();
+    startTimeOnly.setHours(startTime.getHours(), startTime.getMinutes(), 0, 0);
+    
+    const endTimeOnly = new Date();
+    endTimeOnly.setHours(endTime.getHours(), endTime.getMinutes(), 0, 0);
+    
+    if (startTimeOnly >= endTimeOnly) {
+      setTimeError("시작 시간은 종료 시간보다 빨라야 합니다.");
+      return false;
+    }
+    
+    setTimeError("");
+    return true;
+  };
+
+  const handleStartTimeChange = (newStartTime: Date | null) => {
+    if (newStartTime) {
+      setStartTime(newStartTime);
+      // 시작 시간 변경 시 검증
+      setTimeout(() => validateTime(), 0);
+    }
+  };
+
+  const handleEndTimeChange = (newEndTime: Date | null) => {
+    if (newEndTime) {
+      setEndTime(newEndTime);
+      // 종료 시간 변경 시 검증
+      setTimeout(() => validateTime(), 0);
+    }
+  };
+
   const handleSubmit = () => {
+    if (!validateTime()) {
+      return;
+    }
+    
     setIsLoading(true);
     console.log({ user_choice: { start: [start.lat, start.lng], condition, drink_intent, food, startTime, endTime } });
     mutation.mutate({ user_choice: { start: [start.lat, start.lng], condition, drink_intent, food, startTime, endTime } });
@@ -84,7 +121,7 @@ export const OptionsPage = () => {
             <TimePicker
               label="Start Time"
               value={startTime}
-              onChange={(e) => setStartTime(e as Date)}
+              onChange={handleStartTimeChange}
               viewRenderers={{
                 hours: renderTimeViewClock,
                 minutes: renderTimeViewClock,
@@ -95,13 +132,16 @@ export const OptionsPage = () => {
             <TimePicker
               label="End Time"
               value={endTime}
-              onChange={(e) => setEndTime(e as Date)}
+              onChange={handleEndTimeChange}
               viewRenderers={{
                 hours: renderTimeViewClock,
                 minutes: renderTimeViewClock,
                 seconds: renderTimeViewClock,
               }}
             />
+            {timeError && (
+              <p className="text-red-500 text-sm mt-1">{timeError}</p>
+            )}
           </div>
         </div>
         {/* Condition */}
@@ -151,9 +191,15 @@ export const OptionsPage = () => {
         </div>
         {/* Button */}
         <div className="flex justify-center items-center mt-12">
-            <div className="flex justify-center items-center w-[304px] h-[64px] bg-[#FFEDED] text-[#121920] px-4 py-2 rounded-md cursor-pointer"
+            <div className={`flex justify-center items-center w-[304px] h-[64px] px-4 py-2 rounded-md cursor-pointer ${
+              timeError 
+                ? "bg-gray-300 text-gray-500 cursor-not-allowed" 
+                : "bg-[#FFEDED] text-[#121920] hover:bg-[#FFE0E0]"
+            }`}
             onClick={() => {
-              handleSubmit();
+              if (!timeError) {
+                handleSubmit();
+              }
             }}>
               저장하기
             </div>
