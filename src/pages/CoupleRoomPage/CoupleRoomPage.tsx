@@ -69,14 +69,14 @@ export const CoupleRoomPage = () => {
             <button
               type="button"
               className="w-full rounded-full bg-primary px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-primary/80 focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-white sm:w-auto"
-              onClick={() => navigate("/home/coupleroom/create")}
+              onClick={() => navigate("/coupleroom/create")}
             >
               커플 방 생성
             </button>
             <button
               type="button"
               className="w-full rounded-full border border-primary/40 bg-white px-6 py-3 text-sm font-semibold text-primary shadow-sm transition hover:bg-primary/10 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:ring-offset-2 focus:ring-offset-white sm:w-auto"
-              onClick={() => navigate("/home/coupleroom/enter")}
+              onClick={() => navigate("/coupleroom/enter")}
             >
               커플 방 입장
             </button>

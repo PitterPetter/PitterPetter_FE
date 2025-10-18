@@ -39,42 +39,43 @@ function App() {
 
         {/* 헤더 레이아웃 */}
           <Route element={<HeaderLayout />}>
-          <Route element={<PrivateRoute permissionLevel="COMPLETED" />}>
+          <Route element={<PrivateRoute permissionLevel="ONBOARDING_REQUIRED" />}>
             <Route path="/onboarding" element={<OnboardingPage />} />
           </Route>
             <Route element={<PrivateRoute permissionLevel="COUPLE_MATCHING_REQUIRED" />}>
-              <Route path="/home" element={<MainPage />}>
-                <Route path="coupleroom" element={<CoupleRoomModal />}>
-                  <Route index element={<CoupleRoomPage />} />
-                  <Route path="create" element={<CreateCoupleRoom />} />
-                  <Route path="create/:id" element={<CoupleCodeRoom />} />
-                  <Route path="enter" element={<EnterCoupleRoom />} />
-                </Route>
-                <Route path="district" element={<DistrictModal />}>
-                  <Route path="choose" element={<DistrictChoose />} />
-                  <Route path="check" element={<DistrictCheck />} />
-                </Route>
+              <Route path="coupleroom" element={<CoupleRoomModal />}>
+                <Route index element={<CoupleRoomPage />} />
+                <Route path="create" element={<CreateCoupleRoom />} />
+                <Route path="create/:id" element={<CoupleCodeRoom />} />
+                <Route path="enter" element={<EnterCoupleRoom />} />
+              </Route>
+              <Route element={<PrivateRoute permissionLevel="LOCK_REQUIRED" />}>
+              <Route path="district" element={<DistrictModal />}>
+                <Route path="choose" element={<DistrictChoose />} />
+                <Route path="check" element={<DistrictCheck />} />
               </Route>
             </Route>
-            <Route element={<PrivateRoute permissionLevel="COMPLETED" />}>
-            <Route path="/options" element={<OptionsPage />} />
-            {/* 코스 추천 페이지 */}
-            <Route path="/recommend" element={<RecommendCoursePage />}>
-              <Route index element={<CourseDetailSidebar />} />
-              <Route path=":id" element={<PlaceDetailSidebar />} />
-            </Route>
+          </Route>
+          <Route element={<PrivateRoute permissionLevel="COMPLETED" />}>
+            <Route path="/home" element={<MainPage />} />
+              <Route path="/options" element={<OptionsPage />} />
+              {/* 코스 추천 페이지 */}
+              <Route path="/recommend" element={<RecommendCoursePage />}>
+                <Route index element={<CourseDetailSidebar />} />
+                <Route path=":id" element={<PlaceDetailSidebar />} />
+              </Route>
 
-            {/* 코스 상세 페이지 */}
-            <Route path="/course/:id" element={<CourseDetailPage />}>
-              <Route index element={<CourseDetailSidebar />} />
-              <Route path="place/:placeId" element={null} />
-            </Route>
+              {/* 코스 상세 페이지 */}
+              <Route path="/course/:id" element={<CourseDetailPage />}>
+                <Route index element={<CourseDetailSidebar />} />
+                <Route path="place/:placeId" element={null} />
+              </Route>
 
-            {/* 코스 목록 페이지 */}
-            <Route path="/course" element={<CourseListPage />} />
+              {/* 코스 목록 페이지 */}
+              <Route path="/course" element={<CourseListPage />} />
 
-            {/* 마이페이지 */}
-            <Route path="/mypage" element={<MyPage />} />
+              {/* 마이페이지 */}
+              <Route path="/mypage" element={<MyPage />} />
 
             {/* 다이어리 페이지 */}
             <Route path="/diary" element={<DiaryListPage />} />

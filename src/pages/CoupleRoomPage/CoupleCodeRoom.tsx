@@ -33,7 +33,7 @@ export const CoupleCodeRoom = () => {
         <button
           type="button"
           className="absolute left-6 top-6 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-gray-600 hover:shadow-md transition duration-300 hover:bg-white focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-white"
-          onClick={() => navigate('/home/coupleroom')}
+          onClick={() => navigate('/coupleroom')}
           aria-label="뒤로 가기"
         >
           <FontAwesomeIcon icon={faChevronLeft} className="h-4 w-4" />
