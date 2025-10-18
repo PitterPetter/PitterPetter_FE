@@ -7,29 +7,36 @@ import { DistrictInfo, DistrictLockData } from '../../mypage/types';
 import { useMypageStore } from '../../../shared/store/mypage.store';
 import { Spinner } from '../../../shared/ui/spinner';
 import { toast } from 'react-toastify';
-import { districtApi } from '../api';
-import mockDistrictLock from '../mocks/districtLockMock.json';
 import { CityData } from '../../mypage/types';
+import { getDistrictData, unlockSingleDistrict } from '../utils/districtStorage';
 
 export const DistrictLock = () => {
   const [selectedCity, setSelectedCity] = useState<string>('서울시');
   const [searchTerm, setSearchTerm] = useState('');
   const [unlockingDistricts, setUnlockingDistricts] = useState<Set<string>>(new Set());
   const { ticket } = useMypageStore();
-  // 지역구 잠금 상태 조회
   const { data: districtData, isLoading, isError, refetch } = useQuery<CityData | null>({
     queryKey: ['districtLock'],
     queryFn: async () => {
-      const response = await districtApi.getDistrictLock();
-      // const response = mockDistrictLock;
-      // return (response.data?.data as DistrictLockData) ?? null;
-      return response.data?.data.cities[0] as CityData ?? null;
+      // sessionStorage에서 데이터 가져오기 (없으면 목데이터 사용)
+      return getDistrictData();
     },
   });
-
-  // 지역구 잠금 해제 mutation (티켓 해금)
   const unlockDistrictMutation = useMutation({
-    mutationFn: (regions: string[]) => districtApi.rewardUnlockDistrict(regions),
+    mutationFn: async (regions: string[]) => {
+      console.log('잠금 해제할 지역구:', regions);
+      
+      // 각 지역구를 순차적으로 잠금 해제
+      for (const regionId of regions) {
+        const result = unlockSingleDistrict(regionId);
+        if (!result) {
+          throw new Error(`지역구 ${regionId} 잠금 해제 실패`);
+        }
+      }
+      
+      await new Promise(resolve => setTimeout(resolve, 500));
+      return { success: true, unlockedRegions: regions };
+    },
     onSuccess: (_, regions) => {
       toast.success('지역구 잠금이 해제되었습니다!');
       setUnlockingDistricts(prev => {
@@ -53,6 +60,7 @@ export const DistrictLock = () => {
   const handleUnlockDistrict = (district: DistrictInfo) => {
     const answer = window.confirm(`${district.name}의 잠금을 해제하시겠습니까?`);
     if (answer) {
+      console.log('[DistrictLock] Unlocking district:', district.id, district.name);
       setUnlockingDistricts(prev => new Set(prev).add(district.id.toString()));
       unlockDistrictMutation.mutate([district.id.toString()]);
     }

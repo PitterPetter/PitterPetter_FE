@@ -112,6 +112,8 @@ export type MypageStore = {
   setEmail: (email: string) => void;
   birthdate: string;
   setBirthdate: (birthdate: string) => void;
+  ticket: number;
+  setTicket: (ticket: number) => void;
 };
 
 // CoupleInfoStore

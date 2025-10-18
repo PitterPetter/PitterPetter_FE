@@ -9,7 +9,7 @@ import { DistrictInfo } from '../../mypage/types';
 import { mapboxApi } from '../api';
 import { useDistrictStore as useDistrictSelectionStore } from '../../../shared/store/district.store';
 import MapboxRemoteController from './MapboxRemoteController';
-import mockDistrictLock from '../../district/mocks/districtLockMock.json';
+import { getDistrictData } from '../../district/utils/districtStorage';
 import { districtApi } from '../../district/api';
 import { useQuery } from '@tanstack/react-query';
 
@@ -43,36 +43,37 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
     return 'night';
   };
 
-  const { data: districtLockData } = useQuery({
-    queryKey: ['districtLockup'],
-    queryFn: async () => {
-      const response = await mapboxApi.getDistrictLockStatus();
-      return response.data;
-    },
-    staleTime: 5 * 60 * 1000,
-  });
+  // API 데이터 대신 sessionStorage 사용
+  // const { data: districtLockData } = useQuery({
+  //   queryKey: ['districtLockup'],
+  //   queryFn: async () => {
+  //     const response = await mapboxApi.getDistrictLockStatus();
+  //     return response.data;
+  //   },
+  //   staleTime: 5 * 60 * 1000,
+  // });
 
-  useEffect(() => {
-    const seoulDistricts =
-      districtLockData?.data?.cities?.find((city: any) => city.cityName === '서울시')?.districts ?? [];
-    districtDataRef.current = seoulDistricts;
-  }, [districtLockData]);
+  // useEffect(() => {
+  //   const seoulDistricts =
+  //     districtLockData?.data?.cities?.find((city: any) => city.cityName === '서울시')?.districts ?? [];
+  //   districtDataRef.current = seoulDistricts;
+  // }, [districtLockData]);
 
-  // districtLockMock 데이터 로드
+  // districtLockMock 데이터 로드 (sessionStorage 사용)
   useEffect(() => {
     let isMounted = true;
 
     const loadDistricts = async () => {
       try {
-        const response = await districtApi.getDistrictLock();
-        // const response = mockDistrictLock;
         if (!isMounted) return;
 
-        const payload = response.data?.data;
-        // const payload = response.data;
-        const seoulDistricts =
-          payload?.cities?.find((city: any) => city.cityName === '서울시')?.districts ?? [];
-        districtDataRef.current = seoulDistricts;
+        // sessionStorage에서 데이터 가져오기 (없으면 목데이터 사용)
+        const data = getDistrictData();
+        if (data?.districts) {
+          districtDataRef.current = data.districts as DistrictInfo[];
+          console.log('[MainMapbox] Loaded districts from sessionStorage:', data.districts.length);
+          console.log('[MainMapbox] Sample districts data:', data.districts.slice(0, 3).map(d => ({ name: d.name, isLocked: d.isLocked })));
+        }
       } catch (err) {
         console.error('[MainMapbox] Failed to load district lock data', err);
       }
@@ -80,8 +81,17 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
 
     void loadDistricts();
 
+    // 지역구 잠금 해제 이벤트 리스너
+    const handleDistrictUnlocked = (event: CustomEvent) => {
+      console.log('[MainMapbox] District unlocked event received:', event.detail);
+      void loadDistricts();
+    };
+
+    window.addEventListener('districtUnlocked', handleDistrictUnlocked as EventListener);
+
     return () => {
       isMounted = false;
+      window.removeEventListener('districtUnlocked', handleDistrictUnlocked as EventListener);
     };
   }, []);
 
@@ -89,6 +99,10 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
 
   // 좌표를 기반으로 지역구 찾기 (간단한 근사치)
   const findDistrictByCoordinates = (lat: number, lng: number): DistrictInfo | null => {
+    console.log('[MainMapbox] Finding district for coordinates:', lat, lng);
+    console.log('[MainMapbox] Available districts count:', districtDataRef.current.length);
+    console.log('[MainMapbox] Current districts data:', districtDataRef.current.slice(0, 3).map(d => ({ name: d.name, isLocked: d.isLocked })));
+    
     // 서울시 경계 좌표 범위 체크
     const seoulBounds = {
       north: 37.7151,  // 도봉구 북쪽
@@ -100,6 +114,7 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
     // 서울시 범위를 벗어나면 null 반환
     if (lat < seoulBounds.south || lat > seoulBounds.north || 
         lng < seoulBounds.west || lng > seoulBounds.east) {
+      console.log('[MainMapbox] Coordinates outside Seoul bounds');
       return null;
     }
 
@@ -108,6 +123,7 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
 
     for (const district of districtDataRef.current) {
       if (typeof district.lat !== 'number' || typeof district.lng !== 'number') {
+        console.log('[MainMapbox] Invalid coordinates for district:', district.name, district.lat, district.lng);
         continue;
       }
 
@@ -118,6 +134,7 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
       }
     }
 
+    console.log('[MainMapbox] Closest district found:', closestDistrict?.name, 'distance:', minDistance);
     return closestDistrict;
   };
 
@@ -435,8 +452,17 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
         // 클릭한 좌표의 지역구 찾기
         const district = findDistrictByCoordinates(e.lngLat.lat, e.lngLat.lng);
         if (district) {
+          console.log('[MainMapbox] Selected district:', district.name, 'isLocked:', district.isLocked);
           setSelectedDistrict(district);
+          
+          // 잠금 상태에 따른 알림
+          if (district.isLocked) {
+            console.log(`[MainMapbox] ${district.name}은(는) 잠겨있습니다.`);
+          } else {
+            console.log(`[MainMapbox] ${district.name}은(는) 잠금 해제되어 있습니다.`);
+          }
         } else {
+          console.log('[MainMapbox] No district found for coordinates:', e.lngLat.lat, e.lngLat.lng);
           setSelectedDistrict(null);
         }
 

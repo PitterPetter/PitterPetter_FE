@@ -1,3 +1,4 @@
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { PersonalOnboarding } from "../../features/onboarding/PersonalOnboarding";
 import { useMutation } from "@tanstack/react-query";
@@ -7,9 +8,19 @@ import { toast } from 'react-toastify';
 
 export const OnboardingPage = () => {
   const navigate = useNavigate();
-  const { alcoholPreference, activeBound, dateCostPreference, favoriteFoodCategories, atmosphere, answeredCount } = useOnboardingStore();
+  const { alcoholPreference, activeBound, dateCostPreference, favoriteFoodCategories, atmosphere, answeredCount, setAnsweredCount } = useOnboardingStore();
   const isComplete = answeredCount === 5;
   const progress = Math.min(answeredCount, 5) / 5 * 100;
+  const scrollBoxRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const el = scrollBoxRef.current;
+    if (!el) return;
+    el.scrollTo({
+      top:  Math.min(el.scrollHeight, (answeredCount) * 180),
+      behavior: "smooth",
+    });
+  }, [answeredCount]);
 
   const mutation = useMutation({
     mutationFn: onboardingApi.saveOnboarding,
@@ -19,10 +30,11 @@ export const OnboardingPage = () => {
       navigate("/home/coupleroom");
     },
     onError: (error: any) => {
-      console.log('error:',error);
+      console.log('error:', error);
       toast.error('온보딩 정보 저장 실패');
     }
   });
+
   const handleSubmit = () => {
     // 백엔드 API 형식에 맞게 데이터 변환
     const convertCostPreference = (cost: string) => {
@@ -34,29 +46,37 @@ export const OnboardingPage = () => {
         '8만원 이상': '팔만원_이상',
       };
       return costMap[cost];
-  };
+    };
 
-  mutation.mutate({ 
-    alcoholPreference, 
-    activeBound, 
+    mutation.mutate({
+      alcoholPreference,
+      activeBound,
       dateCostPreference: convertCostPreference(dateCostPreference),
-      favoriteFoodCategories: favoriteFoodCategories,
+      favoriteFoodCategories,
       preferredAtmosphere: atmosphere
     });
-    console.log('body data: ', {alcoholPreference, activeBound, dateCostPreference: convertCostPreference(dateCostPreference), favoriteFoodCategories, atmosphere});
+
+    console.log('body data: ', {
+      alcoholPreference,
+      activeBound,
+      dateCostPreference: convertCostPreference(dateCostPreference),
+      favoriteFoodCategories,
+      atmosphere
+    });
   };
+
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-gradient-to-br from-black/80 via-primary/90 to-gray-900/90 backdrop-blur-sm px-4 py-10">
-      <div className="relative w-full max-w-5xl overflow-hidden rounded-4xl bg-white shadow-[0_40px_120px_rgba(0,0,0,0.25)] max-h-[calc(100vh-80px)]">
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-gradient-to-br from-black/80 via-primary/90 to-gray-900/90 backdrop-blur-sm md:px-4 md:py-6 sm:items-center sm:px-6 lg:px-10">
+      <div className="relative w-full max-w-5xl overflow-hidden rounded-none md:rounded-xl bg-white shadow-[0_30px_90px_rgba(0,0,0,0.25)] sm:rounded-4xl sm:max-h-[calc(100vh-80px)]">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_#fde2e4_0%,_transparent_45%),radial-gradient(circle_at_bottom,_#ffe0f0_0%,_transparent_40%)] opacity-70 pointer-events-none" />
-        <div className="relative flex h-full flex-col gap-6 px-8 py-10 overflow-hidden">
+        <div className="relative flex h-full flex-col gap-6 px-5 py-7 sm:px-8 sm:py-10 overflow-hidden">
           {/* 헤더 */}
           <header className="flex flex-col gap-6 text-center">
             <div className="mx-auto flex w-full max-w-2xl flex-col gap-3">
               <span className="mx-auto inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-4 py-1 text-xs font-semibold text-primary">
                 Step 1 · 나의 데이트 취향
               </span>
-              <h1 className="text-3xl font-semibold text-gray-900 sm:text-4xl">
+              <h1 className="text-xl md:text-3xl font-semibold text-gray-900 sm:text-4xl">
                 한층 더 정교한 추천을 위해 취향을 알려주세요
               </h1>
               <p className="text-sm text-gray-500">
@@ -79,27 +99,30 @@ export const OnboardingPage = () => {
           </header>
 
           {/* 콘텐츠 */}
-          <section className="relative flex-1 overflow-y-scroll bg-white/80">
+          <section className="h-full relative flex-1 overflow-hidden bg-white/80 shadow-inner">
             <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-white/90 to-transparent" />
             <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-white to-transparent pointer-events-none" />
-            <div className="relative h-[500px] overflow-y-scroll px-6 py-8">
+            <div
+              ref={scrollBoxRef}
+              className="relative max-h-[530px] overflow-y-auto px-4 py-6 sm:max-h-[500px] sm:px-6 sm:py-8 md:max-h-[500px]"
+            >
               <PersonalOnboarding />
             </div>
           </section>
 
           {/* 액션 영역 */}
-          <footer className="flex flex-col items-center gap-4 sm:flex-row sm:justify-between">
+          <footer className="flex flex-col items-center gap-4 text-center sm:flex-row sm:justify-between sm:text-left">
             <p className="text-xs text-gray-500">
               모든 답변은 언제든 마이페이지에서 수정할 수 있어요.
             </p>
             <button
               type="button"
-              className={`w-full max-w-[220px] rounded-full px-6 py-3 text-sm font-semibold text-white transition ${
+              className={`w-full max-w-[220px] transform rounded-full px-6 py-3 text-sm font-semibold text-white transition ${
                 isComplete
                   ? "bg-primary hover:bg-primary/80"
                   : "bg-gray-400 cursor-not-allowed"
               }`}
-              onClick={isComplete ? handleSubmit : undefined}
+              onClick={handleSubmit}
             >
               {mutation.isPending ? "저장하는 중..." : "온보딩 완료하기"}
             </button>
