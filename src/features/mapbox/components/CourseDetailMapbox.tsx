@@ -38,13 +38,6 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
     }
     return recommendData;
   }, [courseData, recommendData]);
-  const getTimeOfDay = (date = new Date()): TimeOfDay => {
-    const hour = date.getHours();
-    if (hour >= 5 && hour < 9) return 'dawn';
-    if (hour >= 9 && hour < 17) return 'day';
-    if (hour >= 17 && hour < 21) return 'dusk';
-    return 'night';
-  }
 
   // 데이터가 있을 때만 center 계산
   const mapCenter = useMemo(() => {
@@ -82,7 +75,7 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
       // 시간에 따라 조명 프리셋 변경
       config: {
         basemap: {
-          lightPreset: getTimeOfDay().toLowerCase() as 'dawn' | 'day' | 'dusk' | 'night',
+          lightPreset: 'day',
         }
       },
       center: mapCenter,

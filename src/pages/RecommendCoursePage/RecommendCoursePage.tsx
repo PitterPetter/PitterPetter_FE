@@ -56,12 +56,17 @@ export const RecommendCoursePage = () => {
     const handlePlaceClick = useCallback((place: RecommendStop) => {
       setSelectedPlace(place);
       setIsPlaceModalOpen(true);
+      let lat = place.lat || 0;
+      let lng = place.lng || 0;
+      if (typeof lat === "number" || typeof lng === "number") {
+        lng = lng + 0.001;
+      }
       setStoreSelectedPlace({
         seq: place.seq,
         name: place.name,
         category: place.category,
-        lat: place.lat || 0,
-        lng: place.lng || 0,
+        lat: lat,
+        lng: lng,
         indoor: place.indoor || false,
         price_level: place.price_level,
         alcohol: typeof place.alcohol === 'number' ? place.alcohol : (place.alcohol ? 1 : 0),
@@ -343,7 +348,7 @@ export const RecommendCoursePage = () => {
           </div>
         ) : (
           <div className="flex h-full items-center justify-center bg-white p-6 text-sm text-gray-500">
-            추천 코스 데이터가 없습니다. 온보딩을 완료해주세요.
+            추천 코스 데이터가 없습니다. 홈에서 추천을 받아보세요!
           </div>
         )}
       </div>
