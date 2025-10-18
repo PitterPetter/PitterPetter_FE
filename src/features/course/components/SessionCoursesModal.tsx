@@ -91,7 +91,9 @@ export const SessionCoursesModal: React.FC<SessionCoursesModalProps> = ({ isOpen
             </div>
           ) : (
             <div className="space-y-4 overflow-y-auto h-full max-h-[350px]">
-              {places.map((place, index) => {
+              {places
+                .filter(place => !selectedPlaces.has(place.seq))
+                .map((place, index) => {
                 const isSelected = selectedPlaces.has(place.seq);
                 return (
                   <div

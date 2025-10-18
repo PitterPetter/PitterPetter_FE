@@ -7,7 +7,7 @@
     "poiList": [
       {
         "poiSetId": 1,
-        "order": 1,
+        "seq": 5,
         "poi": {
           "poiId": 1,
           "name": "연남동 카페거리klklklklklklklklklklklklklklklklklklklklkl",
@@ -34,7 +34,7 @@
       },
       {
         "poiSetId": 2,
-        "order": 2,
+        "seq": 2,
         "poi": {
           "poiId": 2,
           "name": "경의선 숲길",
@@ -61,7 +61,7 @@
       },
       {
         "poiSetId": 3,
-        "order": 3,
+        "seq": 3,
         "poi": {
           "poiId": 3,
           "name": "연남동 이탈리안 레스토랑",
@@ -88,7 +88,7 @@
       },
       {
         "poiSetId": 4,
-        "order": 4,
+        "seq": 4,
         "poi": {
           "poiId": 4,
           "name": "홍대 루프탑 바",
@@ -123,7 +123,7 @@
     "poiList": [
       {
         "poiSetId": 5,
-        "order": 1,
+        "seq": 1,
         "poi": {
           "poiId": 5,
           "name": "서울숲",

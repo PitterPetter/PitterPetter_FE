@@ -58,6 +58,7 @@ export const OptionsPage = () => {
       navigation("/recommend");
     },
     onError: (error) => {
+      setIsLoading(false);
       console.error(error);
       alert("옵션 전송 실패");
     }
