@@ -5,6 +5,9 @@ import { useMutation } from "@tanstack/react-query";
 import { onboardingApi } from "../../features/onboarding/api";
 import { useOnboardingStore } from "../../shared/store/onboarding.store";
 import { toast } from 'react-toastify';
+import { LoginMapbox } from "../../features/mapbox";
+import { useUIStore } from "../../shared/store/ui.store";
+import { Spinner } from "../../shared/ui/spinner";
 
 export const OnboardingPage = () => {
   const navigate = useNavigate();
@@ -12,6 +15,7 @@ export const OnboardingPage = () => {
   const isComplete = answeredCount === 5;
   const progress = Math.min(answeredCount, 5) / 5 * 100;
   const scrollBoxRef = useRef<HTMLDivElement | null>(null);
+  const { isMapReady } = useUIStore();
 
   useEffect(() => {
     const el = scrollBoxRef.current;
@@ -67,6 +71,10 @@ export const OnboardingPage = () => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-gradient-to-r from-rose-100 via-rose-100 to-white backdrop-blur-md md:px-4 md:py-6 sm:items-center sm:px-6 lg:px-10">
+      <div className="absolute top-0 left-0 w-full h-[100vh] z-0 flex justify-center items-center overflow-hidden">
+        <LoginMapbox />
+      </div>
+      {isMapReady && (
       <div className="relative w-full max-w-5xl overflow-hidden rounded-none md:rounded-xl bg-white shadow-[0_30px_90px_rgba(0,0,0,0.25)] sm:rounded-4xl sm:max-h-[calc(100vh-80px)]">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_#fde2e4_0%,_transparent_45%),radial-gradient(circle_at_bottom,_#ffe0f0_0%,_transparent_40%)] opacity-70 pointer-events-none" />
         <div className="relative flex h-full flex-col gap-6 px-5 py-7 sm:px-8 sm:py-10 overflow-hidden">
@@ -129,6 +137,12 @@ export const OnboardingPage = () => {
           </footer>
         </div>
       </div>
+      )}
+      {!isMapReady && (
+        <div className="absolute top-0 left-0 w-full h-[100vh] z-10 flex justify-center items-center overflow-hidden">
+          
+        </div>
+      )}
     </div>
   );
 };
