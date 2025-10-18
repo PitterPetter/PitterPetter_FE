@@ -5,13 +5,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import { diaryDetailApi, diaryCreateApi, diaryUpdateApi, diaryImageApi } from "../../features/diary/api";
 import { useDiaryStore } from "../../shared/store/diary.store";
 import { toast } from 'react-toastify';
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { Spinner } from "../../shared/ui/spinner";
 
 export const UpdateDiaryPage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
+  const queryClient = useQueryClient();
   const { 
     diaryTitle, 
     diaryContent, 
@@ -168,7 +169,12 @@ export const UpdateDiaryPage = () => {
       // 성공 시 토스트 메시지와 네비게이션
       toast.success('다이어리가 성공적으로 수정되었습니다.');
       resetDiaryForm(); // store 초기화
-      navigate('/diary');
+      
+      // 다이어리 목록과 상세보기 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ["diaries"] });
+      queryClient.invalidateQueries({ queryKey: ["diaryDetail", id] });
+      
+      navigate(`/diary/${id}`);
       
       console.log('Diary updated successfully:', res);
     } catch (error) {
