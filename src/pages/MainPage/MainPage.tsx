@@ -17,7 +17,7 @@ export const MainPage = () => {
   const location = useLocation();
   const selectedDistrict = useDistrictStore((state) => state.selectedDistrict);
   const isOutsideSeoul = Boolean(!selectedDistrict && isMarkers);
-  const isLockedDistrict = Boolean(selectedDistrict?.isLocked);
+  const isLockedDistrict = Boolean(selectedDistrict?.locked);
   const isRecommendDisabled = !isMarkers || isOutsideSeoul || isLockedDistrict;
 
   useEffect(() => {
