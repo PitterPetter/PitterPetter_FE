@@ -39,7 +39,7 @@ function App() {
 
         <Route path="/onboarding" element={<OnboardingPage />} />
         {/* 헤더 레이아웃 */}
-        <Route element={<PrivateRoute permissionLevel="COMPLETED" />}>
+        {/* <Route element={<PrivateRoute permissionLevel="COMPLETED" />}> */}
           <Route element={<HeaderLayout />}>
             <Route path="/home" element={<MainPage />}>
               <Route path="coupleroom" element={<CoupleRoomModal />}>
@@ -81,7 +81,7 @@ function App() {
             <Route path="/diary/update/:id" element={<UpdateDiaryPage />} />
             <Route path="/diary/:id" element={<DiaryDetailPage />} />
           </Route>
-        </Route>
+        {/* </Route> */}
       </Routes>
       <ToastContainer 
         position="top-right"
