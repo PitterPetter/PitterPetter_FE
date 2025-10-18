@@ -3,6 +3,7 @@ import { faCheck } from '@fortawesome/free-solid-svg-icons';
 import { FoodList, CostList } from "./types";
 import { useOnboardingStore } from "../../shared/store/onboarding.store";
 import { useEffect } from "react";
+import { Input } from "../../shared/ui/input";
 
 const FOOD_CATEGORIES = ['한식', '중식', '양식', '일식', '분식'];
 const COST_PREFERENCE = ['1만원 이하', '1 ~ 3만원', '3 ~ 5만원', '5 ~ 8만원', '8만원 이상'];
@@ -188,7 +189,12 @@ export const PersonalOnboarding = () => {
             <h3 className="text-lg font-semibold text-gray-900">선호하는 데이트 분위기는 무엇인가요?</h3>
             <span className="text-xs text-gray-500">평소에 어떤 분위기를 좋아하는지 떠올려 보세요.</span>
           </header>
-          <input type="text" className="w-[360px] md:w-full p-2 h-14 rounded-md transition-all duration-250 flex justify-center items-center border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#93000A]/50 mx-auto" placeholder="예: 조용하고 로맨틱한, 활기찬, 자연스러운" value={atmosphere} onChange={(e) => setAtmosphere(e.target.value)} />
+          <Input 
+            id="outlined-basic" 
+            placeholder="예: 조용하고 로맨틱한, 활기찬, 자연스러운" 
+            value={atmosphere} 
+            onChange={(e) => setAtmosphere(e.target.value)}
+          />
         </div>
       </div>
     </div>

@@ -37,26 +37,27 @@ function App() {
         {/* 로그인 페이지 */}
         <Route path="/login" element={<LoginPage />} />
 
-        <Route path="/onboarding" element={<OnboardingPage />} />
         {/* 헤더 레이아웃 */}
-        {/* <Route element={<PrivateRoute permissionLevel="COMPLETED" />}> */}
           <Route element={<HeaderLayout />}>
-            <Route path="/home" element={<MainPage />}>
-              <Route path="coupleroom" element={<CoupleRoomModal />}>
-                <Route index element={<CoupleRoomPage />} />
-                <Route path="create" element={<CreateCoupleRoom />} />
-                <Route path="create/:id" element={<CoupleCodeRoom />} />
-                <Route path="enter" element={<EnterCoupleRoom />} />
-              </Route>
-              <Route path="district" element={<DistrictModal />}>
-                <Route path="choose" element={<DistrictChoose />} />
-                <Route path="check" element={<DistrictCheck />} />
+          <Route element={<PrivateRoute permissionLevel="COMPLETED" />}>
+            <Route path="/onboarding" element={<OnboardingPage />} />
+          </Route>
+            <Route element={<PrivateRoute permissionLevel="COUPLE_MATCHING_REQUIRED" />}>
+              <Route path="/home" element={<MainPage />}>
+                <Route path="coupleroom" element={<CoupleRoomModal />}>
+                  <Route index element={<CoupleRoomPage />} />
+                  <Route path="create" element={<CreateCoupleRoom />} />
+                  <Route path="create/:id" element={<CoupleCodeRoom />} />
+                  <Route path="enter" element={<EnterCoupleRoom />} />
+                </Route>
+                <Route path="district" element={<DistrictModal />}>
+                  <Route path="choose" element={<DistrictChoose />} />
+                  <Route path="check" element={<DistrictCheck />} />
+                </Route>
               </Route>
             </Route>
+            <Route element={<PrivateRoute permissionLevel="COMPLETED" />}>
             <Route path="/options" element={<OptionsPage />} />
-
-            {/* 커플 룸 페이지 */}
-
             {/* 코스 추천 페이지 */}
             <Route path="/recommend" element={<RecommendCoursePage />}>
               <Route index element={<CourseDetailSidebar />} />
@@ -81,7 +82,7 @@ function App() {
             <Route path="/diary/update/:id" element={<UpdateDiaryPage />} />
             <Route path="/diary/:id" element={<DiaryDetailPage />} />
           </Route>
-        {/* </Route> */}
+        </Route>
       </Routes>
       <ToastContainer 
         position="top-right"

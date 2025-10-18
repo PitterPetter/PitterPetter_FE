@@ -8,6 +8,7 @@ import { Spinner } from '../../shared/ui/spinner';
 import { useDistrictStore } from '../../shared/store/district.store';
 import namsantower from '/namsantower.jpg';
 import { districtApi } from '../../features/district/api';
+import { Input } from '../../shared/ui/input';
 
 export const DistrictChoose = () => {
   const navigate = useNavigate();
@@ -139,12 +140,11 @@ export const DistrictChoose = () => {
 
         {/* 검색바 */}
         <div className="w-full max-w-md relative z-10">
-          <input
-            type="text"
+          <Input
             placeholder="자치구 검색..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full h-12 px-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-transparent transition-all duration-200"
+            className="bg-white"
           />
         </div>
 

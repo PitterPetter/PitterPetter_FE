@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Slider, Button, TextField } from "@mui/material";
+import { Slider, Button } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import { postOption } from "../../features/option/api";
 import { Option } from "./type";
@@ -10,6 +10,7 @@ import { renderTimeViewClock } from "@mui/x-date-pickers/timeViewRenderers";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { Spinner } from "../../shared/ui/spinner";
+import { Input } from "../../shared/ui/input";
 
 export const OptionsPage = () => {
   const navigation = useNavigate();
@@ -248,25 +249,11 @@ export const OptionsPage = () => {
               {/* 불호음식 카드 */}
               <div className="border border-primary/10 bg-white/90 p-6 rounded-xl shadow-sm">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">불호음식 (선택사항)</h3>
-                <TextField 
+                <Input 
                   id="outlined-basic" 
-                  variant="outlined" 
                   placeholder="예: 매운 음식, 생선 등" 
                   value={food} 
                   onChange={(e) => setFood(e.target.value)}
-                  fullWidth
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      borderRadius: '12px',
-                      '&:hover .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#93000A',
-                      },
-                      '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                        borderColor: '#93000A',
-                        borderWidth: 2,
-                      },
-                    },
-                  }}
                 />
               </div>
             </div>
