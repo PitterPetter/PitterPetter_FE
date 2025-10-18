@@ -38,7 +38,7 @@ export const PersonalOnboarding = () => {
           <header className="flex flex-col gap-1">
             <p className="text-sm font-medium text-primary/80">Q1.</p>
             <h3 className="text-lg font-semibold text-gray-900">술을 즐기는 편인가요?</h3>
-            <span className="text-xs text-gray-500">어떤 자리에서 즐겨 마시는지 떠올려 보세요.</span>
+            <span className="text-xs text-gray-500">평소에 얼마나 즐겨 마시는지 떠올려 보세요.</span>
           </header>
           <div className="flex items-center justify-between text-xs text-gray-500">
             <span>거의 마시지 않아요</span>
@@ -160,7 +160,7 @@ export const PersonalOnboarding = () => {
           <header className="flex flex-col gap-1">
             <p className="text-sm font-medium text-primary/80">Q3.</p>
             <h3 className="text-lg font-semibold text-gray-900">어떤 음식을 좋아하시나요?</h3>
-            <span className="text-xs text-gray-500">최대 3개까지 선택할 수 있어요.</span>
+            <span className="text-xs text-gray-500">여러 개를 선택할 수 있어요.</span>
           </header>
           <div className="flex gap-2 w-full justify-between w-full">
             {FOOD_CATEGORIES.map((category) => (
@@ -173,6 +173,7 @@ export const PersonalOnboarding = () => {
           <header className="flex flex-col gap-1">
             <p className="text-sm font-medium text-primary/80">Q4.</p>
             <h3 className="text-lg font-semibold text-gray-900">평균 데이트 비용은 어느 정도인가요?</h3>
+            <span className="text-xs text-gray-500">평균적으로 얼마나 사용하는지 떠올려 보세요.</span>
           </header>
           <div className="flex gap-2 w-full justify-between w-full">
             {COST_PREFERENCE.map((preference) => (
@@ -185,8 +186,9 @@ export const PersonalOnboarding = () => {
           <header className="flex flex-col gap-1">
             <p className="text-sm font-medium text-primary/80">Q5.</p>
             <h3 className="text-lg font-semibold text-gray-900">선호하는 데이트 분위기는 무엇인가요?</h3>
+            <span className="text-xs text-gray-500">평소에 어떤 분위기를 좋아하는지 떠올려 보세요.</span>
           </header>
-          <input type="text" className="w-[360px] md:w-full p-2 h-14 rounded-md transition-all duration-250 flex justify-center items-center border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#93000A]/50 mx-auto" placeholder="입력해주세요." value={atmosphere} onChange={(e) => setAtmosphere(e.target.value)} />
+          <input type="text" className="w-[360px] md:w-full p-2 h-14 rounded-md transition-all duration-250 flex justify-center items-center border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#93000A]/50 mx-auto" placeholder="예: 조용하고 로맨틱한, 활기찬, 자연스러운" value={atmosphere} onChange={(e) => setAtmosphere(e.target.value)} />
         </div>
       </div>
     </div>
