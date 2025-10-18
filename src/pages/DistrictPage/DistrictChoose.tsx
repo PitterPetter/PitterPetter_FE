@@ -14,6 +14,7 @@ export const DistrictChoose = () => {
   const [selectedDistricts, setSelectedDistricts] = useState<DistrictInfo[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCity, setSelectedCity] = useState<string>('서울시');
+  const [isBackgroundLoaded, setIsBackgroundLoaded] = useState(false);
   const { setSelectedDistricts: setStoreDistricts } = useDistrictStore();
 
   const { data: districtData, isLoading, isError } = useQuery<CityData | null>({
@@ -25,6 +26,22 @@ export const DistrictChoose = () => {
       return data;
     },
   });
+
+  useEffect(() => {
+    const image = new Image();
+    const handleLoad = () => setIsBackgroundLoaded(true);
+    image.src = namsantower;
+    if (image.complete) {
+      setIsBackgroundLoaded(true);
+      return;
+    }
+    image.addEventListener('load', handleLoad);
+    image.addEventListener('error', handleLoad);
+    return () => {
+      image.removeEventListener('load', handleLoad);
+      image.removeEventListener('error', handleLoad);
+    };
+  }, []);
 
   // 현재 선택된 도시의 모든 지역구 표시 (서울시만)
   const allDistricts = districtData?.districts || [];
@@ -61,10 +78,15 @@ export const DistrictChoose = () => {
   return (
     <div className="flex items-center justify-center w-full h-full">
       <div className="relative h-[800px] w-[700px] bg-[#DED6D6] border-gray-300 border rounded-2xl p-4 py-16 flex flex-col gap-4 justify-start items-center overflow-hidden">
+        {!isBackgroundLoaded && (
+          <div className="absolute inset-0 z-20 flex items-center justify-center bg-white/70">
+            <Spinner />
+          </div>
+        )}
         {/* 배경 이미지 */}
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30"
-          style={{ backgroundImage: `url(${namsantower})` }}
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30 transition-opacity duration-300"
+          style={isBackgroundLoaded ? { backgroundImage: `url(${namsantower})` } : undefined}
         />
         <h1 className="text-2xl font-bold text-gray-800 relative z-10">데이트 지역 선택</h1>
         <p className="text-gray-600 text-center relative z-10">함께 데이트하고 싶은 2개의 자치구를 선택해주세요</p>
