@@ -101,12 +101,9 @@ export const DiaryDetailPage = () => {
         </div>
 
         {/* 코스 정보 */}
-        <div className="flex flex-col gap-4 p-4 h-full border-y border-gray-300">
-          <h2 className="text-lg text-gray-800">연관된 코스</h2>
+        <div className="flex gap-2 p-4 h-full border-y border-gray-300">
+          <h2 className="flex justify-center items-center text-lg text-gray-800">연관된 코스</h2>
           <div className="flex items-center justify-start gap-2 bg-white p-4 rounded-md">
-            <div className="w-[80px] h-[80px] bg-gray-300 rounded-md">
-
-            </div>
             <div className="flex flex-col w-full h-full gap-2 items-start justify-start">
               <p className="text-sm text-gray-500">코스 코드: {diaryData?.result.contentId}</p>
               <div className="text-sm text-gray-500">
