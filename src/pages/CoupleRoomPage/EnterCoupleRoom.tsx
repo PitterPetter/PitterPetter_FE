@@ -70,7 +70,7 @@ export const EnterCoupleRoom = () => {
 
       if (result.status === 'success') {
         toast.success('커플 인증이 완료되었습니다');
-        navigate('/district/choose');
+        navigate('/home/district/choose');
       } else {
         setIsError(true);
         throw new Error('커플 인증에 실패했습니다');
@@ -86,7 +86,7 @@ export const EnterCoupleRoom = () => {
   const isDisabled = codes.some(code => code === '') || isPending;
 
   return (
-    <div className="pt-[80px] sm:pt-[20px] relative w-full overflow-hidden h-full sm:h-auto rounded-none bg-white shadow-[0_30px_90px_rgba(0,0,0,0.25)] sm:rounded-4xl sm:min-h-[500px] sm:max-w-[1000px] md:rounded-xl">
+    <div className="pt-[80px] sm:pt-[20px] relative w-full overflow-hidden h-full sm:h-auto rounded-none bg-gradient-to-r from-rose-100/90 via-rose-100/90 to-white/70 shadow-[0_30px_90px_rgba(0,0,0,0.25)] sm:rounded-4xl sm:min-h-[500px] sm:max-w-[1000px] md:rounded-xl">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_#fde2e4_0%,_transparent_45%),radial-gradient(circle_at_bottom,_#ffe0f0_0%,_transparent_40%)] opacity-70" />
       <button
         type="button"

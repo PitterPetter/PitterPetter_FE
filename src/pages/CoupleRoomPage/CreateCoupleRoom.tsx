@@ -11,6 +11,7 @@ import { coupleRoomApi } from "../../features/coupleroom/api";
 import { PostCoupleRoom } from "../../features/coupleroom/types";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from 'react-toastify';
+import { LoginMapbox } from "../../features/mapbox";
 
 export const CreateCoupleRoom = () => {
   const navigate = useNavigate();
@@ -89,7 +90,7 @@ export const CreateCoupleRoom = () => {
   const isDisabled = coupleName.trim() === "" || coupleDate === null || isPending || dateError !== "";
 
   return (
-    <div className="pt-[80px] sm:pt-[40px] relative w-full h-full sm:h-auto overflow-hidden rounded-none bg-white shadow-[0_30px_90px_rgba(0,0,0,0.25)] sm:rounded-4xl sm:h-[500px] sm:max-w-[1000px] md:rounded-xl">
+    <div className="pt-[80px] sm:pt-[40px] relative w-full h-full sm:h-auto overflow-hidden rounded-none bg-gradient-to-r from-rose-100/90 via-rose-100/90 to-white/70 shadow-[0_30px_90px_rgba(0,0,0,0.25)] sm:rounded-4xl sm:h-[500px] sm:max-w-[1000px] md:rounded-xl">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_top,_#fde2e4_0%,_transparent_45%),radial-gradient(circle_at_bottom,_#ffe0f0_0%,_transparent_40%)] opacity-70" />
       <button
         type="button"
