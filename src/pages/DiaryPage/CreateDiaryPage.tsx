@@ -158,13 +158,6 @@ export const CreateDiaryPage = () => {
             취소
           </button>
           <button
-            onClick={handleSaveAsDraft}
-            className="flex items-center justify-center w-[120px] h-[45px] bg-third/40 text-white rounded-md cursor-pointer border border-primary/10 hover:bg-third/60 transition-all duration-300"
-            type="button"
-          >
-            임시저장
-          </button>
-          <button
             onClick={handleSave}
             disabled={isPending}
             className="flex items-center justify-center w-[120px] h-[45px] bg-third/60 text-white rounded-md cursor-pointer border border-primary/10 hover:bg-third/80 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"

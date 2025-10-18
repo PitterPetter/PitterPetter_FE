@@ -1,10 +1,7 @@
 import { Outlet } from "react-router-dom";
 
-export const CoupleRoomModal = () => {
-
-  return (
-    <div className="fixed top-0 left-0 w-full h-full z-50 bg-black bg-opacity-50">
-      <Outlet />
-    </div>
-  );
-};
+export const CoupleRoomModal = () => (
+  <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-gradient-to-r from-rose-100 via-rose-100 to-white md:px-4 md:py-6 sm:items-center sm:px-6 lg:px-10">
+    <Outlet />
+  </div>
+);

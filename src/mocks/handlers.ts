@@ -233,7 +233,7 @@ export const handlers = [
   }),
 
   // 커플 방 생성
-  http.post(`${API}/api/home/coupleroom`, async () => {
+  http.post(`${API}/api/couples/room`, async () => {
     await delay(500);
     return HttpResponse.json(coupleRoomCode);
   }),
