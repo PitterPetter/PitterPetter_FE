@@ -92,14 +92,6 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
     }
   }, [displayData, isMapReady]);
 
-  const getTimeOfDay = (date = new Date()): TimeOfDay => {
-    const hour = date.getHours();
-    if (hour >= 5 && hour < 9) return 'dawn';
-    if (hour >= 9 && hour < 17) return 'day';
-    if (hour >= 17 && hour < 21) return 'dusk';
-    return 'night';
-  };
-
   const mapCenter = useMemo(() => {
     if (displayData && displayData.length > 0) {
       const validData = displayData.filter((v: any) => 
@@ -127,7 +119,7 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
       style: 'mapbox://styles/mapbox/standard',
       config: {
         basemap: {
-          lightPreset: getTimeOfDay().toLowerCase() as 'dawn' | 'day' | 'dusk' | 'night',
+          lightPreset: 'day',
         }
       },
       center: mapCenter,

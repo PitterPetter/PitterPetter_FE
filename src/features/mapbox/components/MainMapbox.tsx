@@ -13,9 +13,9 @@ import { districtApi } from '../../district/api';
 import { useQuery } from '@tanstack/react-query';
 
 const MapboxMainPage: React.FC<MapboxProps> = ({
-  center = [127.104, 37.505],
-  zoom = 16,
-  pitch = 60
+  center = [126.9807454596028, 37.553551790177854],
+  zoom = 15.6,
+  pitch = 72
 }) => {
   const mapContainerRef = useRef<MapRefs['container']>(null);
   const mapRef = useRef<MapRefs['map']>(null);
@@ -33,14 +33,6 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
 
   const popupMapRef = useRef<Map<number, mapboxgl.Popup>>(new Map());
   const districtDataRef = useRef<DistrictInfo[]>([]);
-
-  const getTimeOfDay = (date = new Date()): TimeOfDay => {
-    const hour = date.getHours();
-    if (hour >= 5 && hour < 9) return 'dawn';
-    if (hour >= 9 && hour < 17) return 'day';
-    if (hour >= 17 && hour < 21) return 'dusk';
-    return 'night';
-  };
 
   const { data: districtLockData } = useQuery({
     queryKey: ['districtLockup'],
@@ -310,12 +302,13 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
       style: 'mapbox://styles/mapbox/standard',
       config: {
         basemap: {
-          lightPreset: getTimeOfDay() as 'dawn' | 'day' | 'dusk' | 'night',
+          lightPreset: 'day',
         },
       },
       center,
       zoom,
       pitch,
+      bearing: 30,
       minZoom: 13,
       maxZoom: 18
     });
