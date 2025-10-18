@@ -60,7 +60,7 @@ export const DistrictLock = () => {
   };
 
   // 현재 선택된 도시 데이터
-  const currentCityData = districtData?.cities?.find((city) => city.cityName === selectedCity);
+  const currentCityData = districtData?.cities[0];
 
   // 검색 필터링 및 정렬 (잠금 해제된 것 먼저)
   const filteredDistricts = currentCityData?.districts
