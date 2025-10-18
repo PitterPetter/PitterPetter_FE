@@ -27,9 +27,9 @@ export const DistrictLock = () => {
     },
   });
 
-  // 지역구 잠금 해제 mutation
+  // 지역구 잠금 해제 mutation (티켓 해금)
   const unlockDistrictMutation = useMutation({
-    mutationFn: (regions: string[]) => districtApi.unlockDistrict(regions),
+    mutationFn: (regions: string[]) => districtApi.rewardUnlockDistrict(regions),
     onSuccess: (_, regions) => {
       toast.success('지역구 잠금이 해제되었습니다!');
       setUnlockingDistricts(prev => {
