@@ -11,11 +11,11 @@ import { mypageApi } from "../../features/mypage/api";
 import { Spinner } from "../../shared/ui/spinner";
 import { toast } from 'react-toastify';
 import { CostList } from "../../features/onboarding/types";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 export const MyPage = () => {
   const location = useLocation();
-  const isOpen = useHeaderStore((s) => s.isOpen);
+  const navigate = useNavigate();
   const {
     isProfileLoading, setIsProfileLoading,
     isProfileError, setIsProfileError,
@@ -184,7 +184,7 @@ export const MyPage = () => {
         px-4 lg:px-8 xl:px-12 2xl:px-20
       ">
       <div className="w-full max-w-[1400px] mx-auto flex flex-col gap-6">
-        <div className="relative overflow-hidden rounded-3xl border border-primary/10 bg-gradient-to-r from-primary/20 via-primary/10 to-transparent">
+        <div className="relative overflow-hidden bg-gradient-to-r from-primary/20 via-primary/10 to-transparent">
           <div className="absolute inset-0 bg-white/30 mix-blend-overlay pointer-events-none" />
           <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6 px-8 py-10">
             <div>
@@ -198,18 +198,34 @@ export const MyPage = () => {
                 {partnerLabel}
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-3 text-sm">
-              <div className="rounded-xl border border-white/60 bg-white/80 px-4 py-3 text-gray-700 shadow-sm">
-                <p className="text-xs text-gray-500">데이트 온보딩</p>
-                <p className="mt-1 font-medium">{displayedAtmosphere}</p>
-              </div>
-              <div className="rounded-xl border border-white/60 bg-white/80 px-4 py-3 text-gray-700 shadow-sm">
-                <p className="text-xs text-gray-500">기념일</p>
-                <p className="mt-1 font-medium">{formattedAnniversary}</p>
-              </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => {
+                  if (window.confirm('정말 로그아웃하시겠습니까?')) {
+                    navigate("/login");
+                  }
+                }}
+                className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-gray-600 border border-gray-300 rounded-lg hover:bg-gray-50 hover:text-gray-900 hover:border-gray-400 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-gray-200"
+                aria-label="로그아웃"
+              >
+                <svg 
+                  className="w-4 h-4" 
+                  fill="none" 
+                  stroke="currentColor" 
+                  viewBox="0 0 24 24"
+                >
+                  <path 
+                    strokeLinecap="round" 
+                    strokeLinejoin="round" 
+                    strokeWidth={2} 
+                    d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" 
+                  />
+                </svg>
+                로그아웃
+              </button>
             </div>
           </div>
-        </div>
+        </div> 
 
         <div className="grid w-full gap-4 grid-cols-2 lg:grid-cols-4">
           {summaryCards.slice(0, 4).map(({ label, value }) => (

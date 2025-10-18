@@ -7,7 +7,7 @@ import { DistrictInfo, DistrictLockData, CityData } from '../../features/mypage/
 import { Spinner } from '../../shared/ui/spinner';
 import { useDistrictStore } from '../../shared/store/district.store';
 import namsantower from '/namsantower.jpg';
-import { districtApi } from '../../features/district/api';
+import { getDistrictData } from '../../features/district/utils/districtStorage';
 
 export const DistrictChoose = () => {
   const navigate = useNavigate();
@@ -16,13 +16,13 @@ export const DistrictChoose = () => {
   const [selectedCity, setSelectedCity] = useState<string>('서울시');
   const { setSelectedDistricts: setStoreDistricts } = useDistrictStore();
 
-  // 지역구 잠금 상태 조회
   const { data: districtData, isLoading, isError } = useQuery<CityData | null>({
     queryKey: ['districtLock'],
     queryFn: async () => {
-      const response = await districtApi.getDistrictLock();
-      console.log(response.data.data.cities[0].districts);
-      return response.data?.data.cities[0] as CityData ?? null;
+      // sessionStorage에서 데이터 가져오기 (없으면 목데이터 사용)
+      const data = getDistrictData();
+      console.log('DistrictChoose - Loaded districts:', data?.districts);
+      return data;
     },
   });
 
