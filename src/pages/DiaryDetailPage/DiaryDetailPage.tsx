@@ -8,6 +8,8 @@ import { Spinner } from "../../shared/ui/spinner";
 import { CommentSection } from "../../features/diary/components/CommentSection";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 export const DiaryDetailPage = () => {
   const navigate = useNavigate();
@@ -96,14 +98,21 @@ export const DiaryDetailPage = () => {
               </div>
             );
           })()}
-          {/* 추후 추가 예정 */}
-          <p className="w-full h-full p-2">{diaryData?.result.content}</p>
+          {/* 다이어리 내용 - 마크다운 렌더링 */}
+          <div className="w-full p-4 prose prose-sm max-w-none">
+            <ReactMarkdown remarkPlugins={[remarkGfm]}>
+              {diaryData?.result.content || ''}
+            </ReactMarkdown>
+          </div>
         </div>
 
         {/* 코스 정보 */}
-        <div className="flex gap-2 p-4 h-full border-y border-gray-300">
-          <h2 className="flex justify-center items-center text-lg text-gray-800">연관된 코스</h2>
+        <div className="flex flex-col gap-4 p-4 h-full border-y border-gray-300">
+          <h2 className="text-lg text-gray-800">연관된 코스</h2>
           <div className="flex items-center justify-start gap-2 bg-white p-4 rounded-md">
+            <div className="w-[80px] h-[80px] bg-gray-300 rounded-md">
+
+            </div>
             <div className="flex flex-col w-full h-full gap-2 items-start justify-start">
               <p className="text-sm text-gray-500">코스 코드: {diaryData?.result.contentId}</p>
               <div className="text-sm text-gray-500">
