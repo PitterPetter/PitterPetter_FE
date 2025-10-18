@@ -66,7 +66,7 @@ export const OnboardingPage = () => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-gradient-to-br from-black/80 via-primary/90 to-gray-900/90 backdrop-blur-sm md:px-4 md:py-6 sm:items-center sm:px-6 lg:px-10">
+    <div className="fixed inset-0 z-50 flex items-start justify-center overflow-y-auto bg-gradient-to-r from-rose-100 via-rose-100 to-white backdrop-blur-md md:px-4 md:py-6 sm:items-center sm:px-6 lg:px-10">
       <div className="relative w-full max-w-5xl overflow-hidden rounded-none md:rounded-xl bg-white shadow-[0_30px_90px_rgba(0,0,0,0.25)] sm:rounded-4xl sm:max-h-[calc(100vh-80px)]">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_#fde2e4_0%,_transparent_45%),radial-gradient(circle_at_bottom,_#ffe0f0_0%,_transparent_40%)] opacity-70 pointer-events-none" />
         <div className="relative flex h-full flex-col gap-6 px-5 py-7 sm:px-8 sm:py-10 overflow-hidden">

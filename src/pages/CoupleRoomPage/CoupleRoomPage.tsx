@@ -53,6 +53,9 @@ export const CoupleRoomPage = () => {
       <div className="relative grid gap-10 px-6 py-10 sm:px-12 sm:py-0 md:grid-cols-[1.1fr_0.9fr]">
         <div className="flex flex-col justify-center gap-6 text-center md:text-left">
           <div className="flex flex-col gap-3">
+            <span className="mx-auto inline-flex items-center rounded-full border border-primary/20 bg-primary/10 px-4 py-1 text-xs font-semibold text-primary">
+              Step 2 · 커플 연동
+            </span>
             <h1 className="text-2xl font-semibold text-gray-900 sm:text-3xl md:text-4xl">
               안녕하세요,
               <br className="hidden sm:block" />
