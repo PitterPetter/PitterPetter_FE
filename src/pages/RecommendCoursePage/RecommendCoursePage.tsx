@@ -56,12 +56,17 @@ export const RecommendCoursePage = () => {
     const handlePlaceClick = useCallback((place: RecommendStop) => {
       setSelectedPlace(place);
       setIsPlaceModalOpen(true);
+      let lat = place.lat || 0;
+      let lng = place.lng || 0;
+      if (typeof lat === "number" || typeof lng === "number") {
+        lng = lng + 0.001;
+      }
       setStoreSelectedPlace({
         seq: place.seq,
         name: place.name,
         category: place.category,
-        lat: place.lat || 0,
-        lng: place.lng || 0,
+        lat: lat,
+        lng: lng,
         indoor: place.indoor || false,
         price_level: place.price_level,
         alcohol: typeof place.alcohol === 'number' ? place.alcohol : (place.alcohol ? 1 : 0),
