@@ -8,6 +8,7 @@ interface ImageUploadProps {
   maxSize?: number; // MB
   acceptedTypes?: string[];
   existingImageUrl?: string | null;
+  onExistingImageRemove?: () => void;
 }
 
 export const ImageUpload: React.FC<ImageUploadProps> = ({
@@ -15,7 +16,8 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
   className = '',
   maxSize = 5, // 5MB 기본값
   acceptedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'],
-  existingImageUrl
+  existingImageUrl,
+  onExistingImageRemove
 }) => {
   const [isDragOver, setIsDragOver] = useState(false);
   const [preview, setPreview] = useState<string | null>(null);
@@ -94,7 +96,11 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
-  }, [onFileSelect]);
+    // 기존 이미지가 있는 경우 기존 이미지 제거 콜백 호출
+    if (existingImageUrl && onExistingImageRemove) {
+      onExistingImageRemove();
+    }
+  }, [onFileSelect, existingImageUrl, onExistingImageRemove]);
 
   return (
     <div className={`w-full ${className}`}>

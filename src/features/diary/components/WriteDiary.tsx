@@ -4,9 +4,10 @@ import { useDiaryStore } from '../../../shared/store/diary.store';
 
 interface WriteDiaryProps {
   onImageSelect?: (file: File | null) => void;
+  onExistingImageRemove?: () => void;
 }
 
-export const WriteDiary = ({ onImageSelect }: WriteDiaryProps) => {
+export const WriteDiary = ({ onImageSelect, onExistingImageRemove }: WriteDiaryProps) => {
   const { diaryTitle, setDiaryTitle, diaryContent, setDiaryContent, diaryImage, setDiaryImage, existingImageUrl } = useDiaryStore();
 
   const handleImageSelect = (file: File | null) => {
@@ -46,6 +47,7 @@ export const WriteDiary = ({ onImageSelect }: WriteDiaryProps) => {
             maxSize={10}
             acceptedTypes={['image/jpeg', 'image/jpg', 'image/png', 'image/gif']}
             existingImageUrl={existingImageUrl}
+            onExistingImageRemove={onExistingImageRemove}
           />
         </div>
 
