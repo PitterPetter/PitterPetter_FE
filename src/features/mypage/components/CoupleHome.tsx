@@ -195,16 +195,6 @@ export const CoupleHome = () => {
                   label="함께한 일수"
                   value={`${daysCount}일`}
                 />
-                <StatCard
-                  icon={<FontAwesomeIcon icon={faEnvelopeOpenText} className="h-4 w-4" />}
-                  label="특별한 날"
-                  value={formatDate(datingStartDate)}
-                />
-                <StatCard
-                  icon={<FontAwesomeIcon icon={faHeart} className="h-4 w-4" />}
-                  label="함께한 코스"
-                  value="0"
-                />
               </div>
             </div>
           </div>

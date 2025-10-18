@@ -7,25 +7,19 @@ import { useDistrictStore } from '../../shared/store/district.store';
 import { toast } from 'react-toastify';
 import { Spinner } from '../../shared/ui/spinner';
 import namsantower from '/namsantower.jpg';
-import { unlockSelectedDistricts } from '../../features/district/utils/districtStorage';
+import { districtApi } from '../../features/district/api';
 
 export const DistrictCheck = () => {
   const navigate = useNavigate();
   const { selectedDistricts, clearSelectedDistricts } = useDistrictStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // 지역구 선택 확인 (POST /api/regions/unlock 시뮬레이션)
+  // 지역구 선택 확인 API 호출 (초기 해금)
   const confirmDistrictMutation = useMutation({
     mutationFn: async (districtNames: string[]) => {
-      console.log('선택된 지역구:', districtNames);
-      
-      const result = unlockSelectedDistricts(districtNames);
-      if (!result) {
-        throw new Error('지역구 잠금 해제 실패');
-      }
-      
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      return { success: true, unlockedRegions: districtNames };
+      console.log(districtNames);
+      const response = await districtApi.initUnlockDistrict(districtNames);
+      return response;
     },
     onSuccess: () => {
       toast.success('지역구 선택이 완료되었습니다!');
