@@ -11,7 +11,7 @@
           {
             "id": "gangnam",
             "name": "강남구",
-            "isLocked": true,
+            "isLocked": false,
             "description": "서울의 중심가, 강남역 일대",
             "lat": 37.5172,
             "lng": 127.0473
