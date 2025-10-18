@@ -9,7 +9,6 @@ import { DistrictInfo } from '../../mypage/types';
 import { mapboxApi } from '../api';
 import { useDistrictStore as useDistrictSelectionStore } from '../../../shared/store/district.store';
 import MapboxRemoteController from './MapboxRemoteController';
-import mockDistrictLock from '../../district/mocks/districtLockMock.json';
 import { districtApi } from '../../district/api';
 import { useQuery } from '@tanstack/react-query';
 
@@ -52,10 +51,44 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
     staleTime: 5 * 60 * 1000,
   });
 
+  const extractSeoulDistricts = (rawData: unknown): DistrictInfo[] => {
+    const digForCities = (data: any): any[] => {
+      if (!data || typeof data !== 'object') return [];
+      if (Array.isArray(data.cities)) return data.cities;
+      if (data.districts) return digForCities({ cities: data });
+      if (data.data) return digForCities(data.data);
+      return [];
+    };
+
+    const cities = digForCities(rawData);
+    if (!Array.isArray(cities)) return [];
+
+    const seoul = cities.find(
+      (city: any) =>
+        city &&
+        typeof city === 'object' &&
+        (city.cityName === '서울특별시' || city.cityName === '서울시')
+    );
+
+    if (!seoul || !Array.isArray(seoul.districts)) return [];
+
+    return seoul.districts.map((district: any) => ({
+      id: district.id,
+      name: district.name,
+      locked: Boolean(
+        district.locked ??
+          district.isLocked ??
+          district?.status === 'LOCKED' ??
+          district?.lockedAt
+      ),
+      description: district.description,
+      lat: typeof district.lat === 'number' ? district.lat : undefined,
+      lng: typeof district.lng === 'number' ? district.lng : undefined,
+    }));
+  };
+
   useEffect(() => {
-    const seoulDistricts =
-      districtLockData?.data?.cities?.find((city: any) => city.cityName === '서울시')?.districts ?? [];
-    districtDataRef.current = seoulDistricts;
+    districtDataRef.current = extractSeoulDistricts(districtLockData);
   }, [districtLockData]);
 
   // districtLockMock 데이터 로드
@@ -65,14 +98,10 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
     const loadDistricts = async () => {
       try {
         const response = await districtApi.getDistrictLock();
-        // const response = mockDistrictLock;
         if (!isMounted) return;
 
-        const payload = response.data?.data;
-        // const payload = response.data;
-        const seoulDistricts =
-          payload?.cities?.find((city: any) => city.cityName === '서울시')?.districts ?? [];
-        districtDataRef.current = seoulDistricts;
+        const payload = response.data;
+        districtDataRef.current = extractSeoulDistricts(payload);
       } catch (err) {
         console.error('[MainMapbox] Failed to load district lock data', err);
       }
