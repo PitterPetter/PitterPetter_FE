@@ -14,11 +14,11 @@ export const DistrictCheck = () => {
   const { selectedDistricts, clearSelectedDistricts } = useDistrictStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // 지역구 선택 확인 API 호출
+  // 지역구 선택 확인 API 호출 (초기 해금)
   const confirmDistrictMutation = useMutation({
     mutationFn: async (districtNames: string[]) => {
       console.log(districtNames);
-      const response = await districtApi.unlockDistrict(districtNames);
+      const response = await districtApi.initUnlockDistrict(districtNames);
       return response;
     },
     onSuccess: () => {
