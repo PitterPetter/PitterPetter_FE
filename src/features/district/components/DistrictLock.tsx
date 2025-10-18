@@ -7,36 +7,28 @@ import { DistrictInfo, DistrictLockData } from '../../mypage/types';
 import { useMypageStore } from '../../../shared/store/mypage.store';
 import { Spinner } from '../../../shared/ui/spinner';
 import { toast } from 'react-toastify';
-import { CityData } from '../../mypage/types';
-import { getDistrictData, unlockSingleDistrict } from '../utils/districtStorage';
+import { districtApi } from '../api';
+import mockDistrictLock from '../mocks/districtLockMock.json';
 
 export const DistrictLock = () => {
   const [selectedCity, setSelectedCity] = useState<string>('서울시');
   const [searchTerm, setSearchTerm] = useState('');
   const [unlockingDistricts, setUnlockingDistricts] = useState<Set<string>>(new Set());
   const { ticket } = useMypageStore();
-  const { data: districtData, isLoading, isError, refetch } = useQuery<CityData | null>({
+  // 지역구 잠금 상태 조회
+  const { data: districtData, isLoading, isError, refetch } = useQuery<DistrictLockData | null>({
     queryKey: ['districtLock'],
     queryFn: async () => {
-      // sessionStorage에서 데이터 가져오기 (없으면 목데이터 사용)
-      return getDistrictData();
+      const response = await districtApi.getDistrictLock();
+      // const response = mockDistrictLock;
+      // return (response.data?.data as DistrictLockData) ?? null;
+      return (response.data as DistrictLockData) ?? null;
     },
   });
+
+  // 지역구 잠금 해제 mutation
   const unlockDistrictMutation = useMutation({
-    mutationFn: async (regions: string[]) => {
-      console.log('잠금 해제할 지역구:', regions);
-      
-      // 각 지역구를 순차적으로 잠금 해제
-      for (const regionId of regions) {
-        const result = unlockSingleDistrict(regionId);
-        if (!result) {
-          throw new Error(`지역구 ${regionId} 잠금 해제 실패`);
-        }
-      }
-      
-      await new Promise(resolve => setTimeout(resolve, 500));
-      return { success: true, unlockedRegions: regions };
-    },
+    mutationFn: (regions: string[]) => districtApi.rewardUnlockDistrict(regions),
     onSuccess: (_, regions) => {
       toast.success('지역구 잠금이 해제되었습니다!');
       setUnlockingDistricts(prev => {
@@ -60,25 +52,24 @@ export const DistrictLock = () => {
   const handleUnlockDistrict = (district: DistrictInfo) => {
     const answer = window.confirm(`${district.name}의 잠금을 해제하시겠습니까?`);
     if (answer) {
-      console.log('[DistrictLock] Unlocking district:', district.id, district.name);
       setUnlockingDistricts(prev => new Set(prev).add(district.id.toString()));
       unlockDistrictMutation.mutate([district.id.toString()]);
     }
   };
 
   // 현재 선택된 도시 데이터
-  const currentCityData = districtData?.districts;
+  const currentCityData = districtData?.cities?.find((city) => city.cityName === selectedCity);
 
   // 검색 필터링 및 정렬 (잠금 해제된 것 먼저)
-  const filteredDistricts = (currentCityData || [])
-    .filter((district: DistrictInfo) =>
+  const filteredDistricts = currentCityData?.districts
+    .filter(district =>
       district.name.toLowerCase().includes(searchTerm.toLowerCase())
     )
-    .sort((a: DistrictInfo, b: DistrictInfo) => {
-      // locked: false (해제됨)가 먼저, locked: true (잠김)가 나중에
-      if (a.locked === b.locked) return 0;
-      return a.locked ? 1 : -1;
-    });
+    .sort((a, b) => {
+      // 잠금 해제된 것(isLocked: false)이 먼저 오도록 정렬
+      if (a.isLocked === b.isLocked) return 0;
+      return a.isLocked ? 1 : -1;
+    }) || [];
 
   if (isLoading) return <Spinner />;
   if (isError) return <div className="flex justify-center items-center text-red-500">정보를 불러오는데 실패했습니다.</div>;
@@ -116,16 +107,16 @@ export const DistrictLock = () => {
       {/* 요약 정보 */}
       <div className="bg-white rounded-lg p-4 mb-6 shadow-sm border border-gray-200">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-lg font-semibold text-gray-800">{selectedCity} 총 자치구: {districtData?.totalDistricts}개</h2>
+          <h2 className="text-lg font-semibold text-gray-800">{selectedCity} 총 자치구: {currentCityData?.totalDistricts}개</h2>
         </div>
         <div className="flex gap-6">
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
-            <span className="text-sm text-gray-600">잠금: {districtData?.lockedDistricts}</span>
+            <span className="text-sm text-gray-600">잠금: {currentCityData?.lockedDistricts}</span>
           </div>
           <div className="flex items-center gap-2">
             <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-            <span className="text-sm text-gray-600">해제: {districtData?.unlockedDistricts}</span>
+            <span className="text-sm text-gray-600">해제: {currentCityData?.unlockedDistricts}</span>
           </div>
         </div>
       </div>
@@ -147,7 +138,7 @@ export const DistrictLock = () => {
           <div
             key={district.id}
             className={`p-4 rounded-lg border transition-all duration-200 hover:shadow-md ${
-              district.locked
+              district.isLocked
                 ? 'bg-orange-50 border-orange-200 hover:bg-orange-100'
                 : 'bg-green-50 border-green-200 hover:bg-green-100'
             }`}
@@ -155,12 +146,12 @@ export const DistrictLock = () => {
             <div className="flex flex-col items-center text-center">
               {/* 잠금 아이콘 */}
               <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-3 ${
-                district.locked ? 'bg-orange-100' : 'bg-green-100'
+                district.isLocked ? 'bg-orange-100' : 'bg-green-100'
               }`}>
                 <FontAwesomeIcon
-                  icon={district.locked ? faLock : faUnlock}
+                  icon={district.isLocked ? faLock : faUnlock}
                   className={`w-6 h-6 ${
-                    district.locked ? 'text-orange-600' : 'text-green-600'
+                    district.isLocked ? 'text-orange-600' : 'text-green-600'
                   }`}
                 />
               </div>
@@ -170,7 +161,7 @@ export const DistrictLock = () => {
               <p className="text-xs text-gray-600 mb-3 line-clamp-2">{district.description}</p>
               
               {/* 잠금 해제 버튼 */}
-              {district.locked ? (
+              {district.isLocked ? (
                 <button
                   onClick={() => handleUnlockDistrict(district)}
                   disabled={unlockingDistricts.has(district.id.toString())}
