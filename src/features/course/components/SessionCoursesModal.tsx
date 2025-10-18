@@ -7,13 +7,14 @@ import { rerecommendCourseApi } from '../api';
 import { useMutation } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { useRecommendStore } from '../../../shared/store/recommend.store';
 
 export const SessionCoursesModal: React.FC<SessionCoursesModalProps> = ({ isOpen, onClose, onSuccess }) => {
   const navigate = useNavigate();
   const sessionData = loadRecommendFromSession();
   const places: Place[] = sessionData?.data || [];
   const [selectedPlaces, setSelectedPlaces] = useState<Set<number>>(new Set());
-
+  const { lawData } = useRecommendStore();
   const rerecommendCourseMutation = useMutation({
     mutationFn: rerecommendCourseApi,
     onSuccess: (response) => {
@@ -56,7 +57,10 @@ export const SessionCoursesModal: React.FC<SessionCoursesModalProps> = ({ isOpen
     };
 
     console.log('재추천 요청 데이터:', requestData);
-    rerecommendCourseMutation.mutate(requestData);
+    rerecommendCourseMutation.mutate({
+      ...requestData,
+      law_data: lawData
+    });
   };
 
   if (!isOpen) return null;
@@ -92,7 +96,7 @@ export const SessionCoursesModal: React.FC<SessionCoursesModalProps> = ({ isOpen
           ) : (
             <div className="space-y-4 overflow-y-auto h-full max-h-[350px]">
               {places
-                .filter(place => !selectedPlaces.has(place.seq))
+                .sort((a, b) => a.seq - b.seq)
                 .map((place, index) => {
                 const isSelected = selectedPlaces.has(place.seq);
                 return (

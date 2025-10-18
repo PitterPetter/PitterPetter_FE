@@ -21,7 +21,7 @@ export const OptionsPage = () => {
   const [endTime, setEndTime] = useState<Date>(new Date());
   const [timeError, setTimeError] = useState<string>("");
   const start = useStartStore.getState();
-  const { setRecommend } = useRecommendStore();
+  const { setRecommend, setLawData } = useRecommendStore();
   const mutation = useMutation({
     mutationFn: postOption,
     onSuccess: (data) => {
@@ -41,10 +41,12 @@ export const OptionsPage = () => {
         
         setRecommend({ 
           explain: data.explain,
-          data: mapData 
+          data: data.data,
         });
         
-        console.log('Set recommend data:', { explain: data.explain, data: mapData });
+        console.log('Set recommend data:', { explain: data.explain, data: data.data });
+        setLawData(data.lawData);
+        console.log('Set law data:', data.lawData);
       } else {
         // 기존 방식 (배열 직접 반환)
         const mapData = Array.isArray(data) ? data : data?.courses || [];

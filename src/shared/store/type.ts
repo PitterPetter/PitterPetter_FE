@@ -49,8 +49,10 @@ export type Place = {
 export type RecommendStore = {
   explain: string;
   data: Place[];
+  lawData: any[];
   selectedPlace: Place | null;
   setRecommend: (recommend: { explain: string; data: Place[] }) => void;
+  setLawData: (lawData: any[]) => void;
   setSelectedPlace: (place: Place | null) => void;
   restoreFromSession: () => boolean;
   clearSession: () => void;
