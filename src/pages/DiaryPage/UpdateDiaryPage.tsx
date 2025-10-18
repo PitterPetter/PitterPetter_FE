@@ -200,11 +200,6 @@ export const UpdateDiaryPage = () => {
       {/* 코스 연결 */}
       <ConnectCourse />
 
-      {/* 리뷰 */}
-      <div className="h-full rounded-2xl p-4 pb-6 w-[800px] bg-white">
-        <Review />
-      </div>
-
         {/* 게시물 작성 */}
         <div className="h-full rounded-2xl p-4 pb-6 w-[800px] bg-white">
           <WriteDiary onImageSelect={handleImageSelect} />
