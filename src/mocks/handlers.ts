@@ -217,7 +217,7 @@ export const handlers = [
   }),
 
   // 이미지 업로드 완료 알림
-  http.patch(`${API}/api/images/:imageId/complete`, async ({ params }) => {
+  http.post(`${API}/api/images/:imageId/complete`, async ({ params }) => {
     await delay(300);
     const { imageId } = params;
     console.log('Image upload complete for ID:', imageId);
@@ -225,7 +225,7 @@ export const handlers = [
   }),
 
   // 이미지 업로드 실패 알림
-  http.patch(`${API}/api/images/:imageId/fail`, async ({ params }) => {
+  http.post(`${API}/api/images/:imageId/fail`, async ({ params }) => {
     await delay(300);
     const { imageId } = params;
     console.log('Image upload failed for ID:', imageId);

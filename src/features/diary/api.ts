@@ -34,8 +34,8 @@ export const diaryDeleteApi = {
 
 // 이미지 업로드 상태 알림 API
 export const diaryImageApi = {
-  notifyComplete: (imageId: string) => api.patch(`/api/images/${imageId}/complete`),
-  notifyFail: (imageId: string) => api.patch(`/api/images/${imageId}/fail`),
+  notifyComplete: (imageId: string) => api.post(`/api/images/${imageId}/complete`),
+  notifyFail: (imageId: string) => api.post(`/api/images/${imageId}/fail`),
 };
 
 // 댓글 API
