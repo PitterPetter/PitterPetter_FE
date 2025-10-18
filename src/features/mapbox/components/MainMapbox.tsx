@@ -34,15 +34,7 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
 
   const popupMapRef = useRef<Map<number, mapboxgl.Popup>>(new Map());
   const districtDataRef = useRef<DistrictInfo[]>([]);
-
-  const getTimeOfDay = (date = new Date()): TimeOfDay => {
-    const hour = date.getHours();
-    if (hour >= 5 && hour < 9) return 'dawn';
-    if (hour >= 9 && hour < 17) return 'day';
-    if (hour >= 17 && hour < 21) return 'dusk';
-    return 'night';
-  };
-
+  
   // API 데이터 대신 sessionStorage 사용
   // const { data: districtLockData } = useQuery({
   //   queryKey: ['districtLockup'],
@@ -298,7 +290,7 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
       style: 'mapbox://styles/mapbox/standard',
       config: {
         basemap: {
-          lightPreset: getTimeOfDay() as 'dawn' | 'day' | 'dusk' | 'night',
+          lightPreset: 'day',
         },
       },
       center,
