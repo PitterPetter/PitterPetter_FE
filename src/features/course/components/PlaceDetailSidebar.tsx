@@ -74,10 +74,6 @@ const buildInfoRows = (poi: CoursePoiSet["poi"]): DetailRow[] => {
     rows.push({ label: "공간", value: poi.indoor ? "실내" : "실외" });
   }
 
-  if (typeof poi.price_level === "number" && poi.price_level > 0) {
-    rows.push({ label: "가격대", value: formatPriceLevel(poi.price_level) });
-  }
-
   if (poi.mood_tag) {
     rows.push({ label: "무드", value: `#${poi.mood_tag}` });
   }
@@ -344,7 +340,7 @@ export const PlaceDetailSidebar = ({ placeData }: PlaceDetailSidebarProps) => {
             </div>
           ) : null}
 
-          {poi.open_hours ? (
+          {poi.open_hours && Object.values(poi.open_hours).some(hours => hours !== "Not Available") ? (
             <div>
               <p className="text-xs font-medium uppercase tracking-wide text-gray-500">Open Hours</p>
               <div className="mt-2 space-y-2">

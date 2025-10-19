@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { Spinner } from "../../../shared/ui/spinner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPencil, faHeart, faCalendarCheck, faEnvelopeOpenText } from "@fortawesome/free-solid-svg-icons";
+import logo from '/logo.png';
 import { toast } from 'react-toastify';
 import clsx from "clsx";
 
@@ -174,8 +175,8 @@ export const CoupleHome = () => {
           <div className="p-6 transition hover:shadow-sm">
             <div className="flex w-full flex-col gap-6 items-center lg:justify-between">
               <div className="flex w-full items-center gap-4 flex-shrink-0">
-                <div className="flex h-16 w-16 items-center justify-center rounded-full bg-primary/15 text-primary">
-                  <FontAwesomeIcon icon={faHeart} className="h-6 w-6" />
+                <div className="flex h-16 w-16 items-center justify-center bg-primary/15 rounded-full">
+                  <img src={logo} alt="heart pattern" className="w-8 h-8" />
                 </div>
                 <div className="min-w-0 flex-1">
                   <p className="text-sm font-medium text-gray-500">파트너</p>
