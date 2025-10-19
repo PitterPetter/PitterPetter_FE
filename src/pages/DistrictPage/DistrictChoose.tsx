@@ -144,7 +144,7 @@ export const DistrictChoose = () => {
             placeholder="자치구 검색..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="bg-white"
+            className="bg-white rounded-xl"
           />
         </div>
 
