@@ -5,7 +5,7 @@ import { Button } from "@mui/material";
 import { useRecommendStore } from "../../shared/store/recommend.store";
 import { useCallback, useMemo, useState, useEffect } from "react";
 import { PlaceDetailModal, SessionCoursesModal } from "../../features/course";
-import { useQueries, useMutation } from '@tanstack/react-query';
+import { useQueries, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchRoute, routeQueryKey } from '../../shared/api/routes.api';
 import { useUIStore } from '../../shared/store/ui.store';
 import { useHeaderStore } from '../../shared/store/header.store';
@@ -90,6 +90,7 @@ export const RecommendCoursePage = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const location = useLocation();
+  const queryClient = useQueryClient();
   const { data: recommendData, explain, setRecommend, setSelectedPlace: setStoreSelectedPlace } = useRecommendStore();
   const { isMapReady } = useUIStore();
   const { isOpen } = useHeaderStore();
@@ -219,6 +220,10 @@ export const RecommendCoursePage = () => {
       } catch (error) {
         console.error("[course] 코스 세션을 비우지 못했습니다.", error);
       }
+      
+      // React Query 캐시 무효화 - 코스 목록을 새로고침
+      queryClient.invalidateQueries({ queryKey: ['courses'] });
+      
       navigate(`/course`);
       toast.success("코스가 저장되었습니다.");
     },

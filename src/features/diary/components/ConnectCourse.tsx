@@ -31,7 +31,10 @@ export const ConnectCourse = () => {
         isLiked: item.isLiked || false
       }));
       return normalizedData;
-    }
+    },
+    staleTime: 0, // 항상 최신 데이터를 가져오도록 설정
+    refetchOnMount: true, // 컴포넌트 마운트 시 항상 새로고침
+    refetchOnWindowFocus: false // 윈도우 포커스 시에는 새로고침하지 않음
   });
   const courseData = useMemo(() => {
     return courseList || [];
@@ -48,7 +51,7 @@ export const ConnectCourse = () => {
 
   // 코스 선택
   const handleCourseSelect = (courseId: number | string) => {
-    const selectedCourse = courseData.find(course => course.courseId === courseId);
+    const selectedCourse = courseData.find((course: Course) => course.courseId === courseId);
     setSearchTerm(String(courseId));
     setCourseId(String(courseId));
     if (selectedCourse) {
@@ -63,7 +66,7 @@ export const ConnectCourse = () => {
     setSearchTerm(value);
     
     if (value.trim()) {
-      const filtered = courseData.filter(item => 
+      const filtered = courseData.filter((item: Course) => 
         String(item.courseId).toLowerCase().includes(value.toLowerCase()) ||
         String(item.title).toLowerCase().includes(value.toLowerCase())
       );
@@ -76,7 +79,7 @@ export const ConnectCourse = () => {
   // 검색어 입력 키
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') {
-      const exactMatch = courseData.find(item => 
+      const exactMatch = courseData.find((item: Course) => 
         String(item.courseId).toLowerCase() === searchTerm.toLowerCase()
       );
       

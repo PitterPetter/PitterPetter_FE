@@ -14,6 +14,14 @@ const API = 'https://api.loventure.us';
 const mockStore = {
   // 다이어리별 댓글 저장소
   comments: new Map<string, any[]>(),
+  // 코스 목록 저장소
+  courses: [...course],
+  // 지역 잠금 상태 저장소
+  districtData: JSON.parse(JSON.stringify(districtLockMock)),
+  // 다이어리 목록 저장소
+  diaries: JSON.parse(JSON.stringify(diary.result.content)),
+  // 인증 상태 저장소
+  authStatus: "ONBOARDING_REQUIRED",
   
   // 초기 데이터 설정
   init() {
@@ -65,6 +73,133 @@ const mockStore = {
         comments
       }
     };
+  },
+  
+  // 코스 추가
+  addCourse(courseData: any) {
+    const newCourse = {
+      courseId: Date.now(),
+      course_id: Date.now(),
+      id: Date.now(),
+      title: courseData.title || "새 코스",
+      description: courseData.explain || courseData.description || "",
+      excerpt: courseData.explain || courseData.description || "",
+      updatedAt: new Date().toISOString(),
+      likeCount: 0,
+      lat: 0,
+      lng: 0,
+      isLiked: false,
+      ...courseData
+    };
+    this.courses.push(newCourse);
+    return newCourse;
+  },
+  
+  // 코스 목록 반환
+  getCourses() {
+    return this.courses;
+  },
+  
+  // 지역 잠금 해제 (초기 해제)
+  unlockDistrictsInit(regions: string[]) {
+    console.log('[MockStore] Unlocking districts (init):', regions);
+    this.districtData.cities[0].districts.forEach((district: any) => {
+      if (regions.includes(district.name) || regions.includes(district.id.toString())) {
+        district.locked = false;
+        console.log(`[MockStore] Unlocked district: ${district.name}`);
+      }
+    });
+    
+    // 통계 업데이트
+    const unlockedCount = this.districtData.cities[0].districts.filter((d: any) => !d.locked).length;
+    const lockedCount = this.districtData.cities[0].districts.filter((d: any) => d.locked).length;
+    this.districtData.cities[0].unlockedDistricts = unlockedCount;
+    this.districtData.cities[0].lockedDistricts = lockedCount;
+    
+    return this.districtData;
+  },
+  
+  // 지역 잠금 해제 (티켓 사용)
+  unlockDistrictsReward(regions: string[]) {
+    console.log('[MockStore] Unlocking districts (reward):', regions);
+    this.districtData.cities[0].districts.forEach((district: any) => {
+      if (regions.includes(district.id.toString())) {
+        district.locked = false;
+        console.log(`[MockStore] Unlocked district: ${district.name}`);
+      }
+    });
+    
+    // 통계 업데이트
+    const unlockedCount = this.districtData.cities[0].districts.filter((d: any) => !d.locked).length;
+    const lockedCount = this.districtData.cities[0].districts.filter((d: any) => d.locked).length;
+    this.districtData.cities[0].unlockedDistricts = unlockedCount;
+    this.districtData.cities[0].lockedDistricts = lockedCount;
+    
+    return this.districtData;
+  },
+  
+  // 지역 잠금 상태 반환
+  getDistrictData() {
+    return this.districtData;
+  },
+  
+  // 다이어리 추가
+  addDiary(diaryData: any) {
+    const newDiary = {
+      diaryId: Date.now().toString(),
+      contentId: Date.now().toString(),
+      title: diaryData.title || "새 다이어리",
+      content: diaryData.content || "",
+      courseId: diaryData.courseId || "",
+      courseName: diaryData.courseName || "",
+      rating: diaryData.rating || "0",
+      userId: "7610272898923",
+      author: "양지훈",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      comments: [],
+      imageId: "string",
+      imageUrl: null,
+      imageStatus: "PENDING",
+      imageExpiresIn: 0,
+      ...diaryData
+    };
+    
+    // 다이어리를 맨 앞에 추가 (최신순)
+    this.diaries.unshift(newDiary);
+    return newDiary;
+  },
+  
+  // 다이어리 목록 반환 (페이지네이션)
+  getDiaries(page: number = 0, size: number = 6) {
+    const startIndex = page * size;
+    const endIndex = startIndex + size;
+    const paginatedDiaries = this.diaries.slice(startIndex, endIndex);
+    
+    const totalElements = this.diaries.length;
+    const totalPages = Math.ceil(totalElements / size);
+    
+    return {
+      content: paginatedDiaries,
+      page: {
+        page,
+        size,
+        totalElements,
+        totalPages
+      }
+    };
+  },
+  
+  // 인증 상태 업데이트
+  updateAuthStatus(newStatus: string) {
+    console.log('[MockStore] Updating auth status from', this.authStatus, 'to', newStatus);
+    this.authStatus = newStatus;
+    return this.authStatus;
+  },
+  
+  // 인증 상태 반환
+  getAuthStatus() {
+    return this.authStatus;
   }
 };
 
@@ -81,28 +216,55 @@ export const handlers = [
   http.get(`${API}/api/auth/status`, async () => {
     await delay(300);
     return HttpResponse.json({
-      status: "COMPLETED" // 테스트용으로 COMPLETED 상태 반환
+      status: mockStore.getAuthStatus()
     });
   }),
 
   // 지역구 잠금 상태 (지도용)
   http.get(`${API}/api/regions/search`, async () => {
     await delay(500);
-    return HttpResponse.json(districtLockMock);
+    return HttpResponse.json(mockStore.getDistrictData());
   }),
 
-  // 지역구 잠금 해제
-  http.post(`${API}/api/regions/unlock`, async ({ request }) => {
+  // 지역구 잠금 해제 (초기 해제)
+  http.post(`${API}/api/regions/unlock/init`, async ({ request }) => {
     await delay(500);
     const body = await request.json().catch(() => ({}));
-    console.log('District unlock request:', body);
+    console.log('District unlock init request:', body);
+    
+    const regions = (body as any).regions || [];
+    const updatedData = mockStore.unlockDistrictsInit(regions);
+    
+    // 지역락 완료 후 완료 단계로 이동
+    mockStore.updateAuthStatus("COMPLETED");
     
     return HttpResponse.json({
       timestamp: new Date().toISOString(),
       code: "COMMON200",
       result: {
         message: "지역구 잠금이 해제되었습니다.",
-        unlockedRegions: (body as any).regions || []
+        unlockedRegions: regions,
+        data: updatedData
+      }
+    });
+  }),
+
+  // 지역구 잠금 해제 (티켓 사용)
+  http.post(`${API}/api/regions/unlock/reward`, async ({ request }) => {
+    await delay(500);
+    const body = await request.json().catch(() => ({}));
+    console.log('District unlock reward request:', body);
+    
+    const regions = (body as any).regions || [];
+    const updatedData = mockStore.unlockDistrictsReward(regions);
+    
+    return HttpResponse.json({
+      timestamp: new Date().toISOString(),
+      code: "COMMON200",
+      result: {
+        message: "지역구 잠금이 해제되었습니다.",
+        unlockedRegions: regions,
+        data: updatedData
       }
     });
   }),
@@ -114,34 +276,19 @@ export const handlers = [
     const page = parseInt(url.searchParams.get('page') || '0');
     const size = parseInt(url.searchParams.get('size') || '6');
     
-    // 원본 데이터를 깊은 복사하여 사용
-    const allDiaries = JSON.parse(JSON.stringify(diary.result.content));
-    const startIndex = page * size;
-    const endIndex = startIndex + size;
-    const paginatedDiaries = allDiaries.slice(startIndex, endIndex);
-    
-    const totalElements = allDiaries.length;
-    const totalPages = Math.ceil(totalElements / size);
+    const result = mockStore.getDiaries(page, size);
     
     return HttpResponse.json({
       timestamp: "2025-10-16T13:48:30.178+09:00",
       code: "COMMON200",
-      result: {
-        content: paginatedDiaries,
-        page: {
-          page,
-          size,
-          totalElements,
-          totalPages
-        }
-      }
+      result
     });
   }),
 
   // 코스 목록
   http.get(`${API}/api/courses`, async () => {
     await delay(800);
-    return HttpResponse.json(course);
+    return HttpResponse.json(mockStore.getCourses());
   }),
 
   // 코스 저장
@@ -150,10 +297,13 @@ export const handlers = [
     const body = await request.json().catch(() => ({}));
     console.log('Course save request:', body);
     
+    // Mock Store에 코스 추가
+    const newCourse = mockStore.addCourse(body);
+    
     return HttpResponse.json({
-      course_id: Date.now(), // 임시 ID 생성
+      course_id: newCourse.courseId,
       message: '코스가 성공적으로 저장되었습니다.',
-      data: body
+      data: newCourse
     });
   }),
 
@@ -163,25 +313,14 @@ export const handlers = [
     const body = await request.json().catch(() => ({}));
     console.log('Diary create request:', body);
     
+    // Mock Store에 다이어리 추가
+    const newDiary = mockStore.addDiary(body);
+    
     return HttpResponse.json({
       timestamp: new Date().toISOString(),
       code: "COMMON200",
       result: {
-        contentId: Date.now().toString(),
-        title: (body as any).title || "새 다이어리",
-        content: (body as any).content || "",
-        courseId: (body as any).courseId || "",
-        courseName: (body as any).courseName || "",
-        rating: (body as any).rating || "0",
-        userId: "7610272898923",
-        author: "양지훈",
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        comments: [],
-        imageId: "string",
-        imageUrl: null,
-        imageStatus: "PENDING",
-        imageExpiresIn: 0,
+        ...newDiary,
         imageUpload: {
           imageId: Date.now().toString(),
           presignedUrl: "string",
@@ -241,12 +380,16 @@ export const handlers = [
   // 커플 방 코드 검증
   http.post(`${API}/api/couples/match`, async () => {
     await delay(500);
+    // 커플 매칭 완료 후 지역락 단계로 이동
+    mockStore.updateAuthStatus("ROCK_REQUIRED");
     return HttpResponse.json(coupleRoomCode);
   }),
 
   // 온보딩 저장
   http.post(`${API}/api/onboarding/me`, async () => {
     await delay(500);
+    // 온보딩 완료 후 커플 매칭 단계로 이동
+    mockStore.updateAuthStatus("COUPLE_MATCHING_REQUIRED");
     return HttpResponse.json({ status: 'success', message: 'Onboarding endpoint' });
   }),
 
