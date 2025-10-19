@@ -19,7 +19,20 @@ import {
 } from "../../features/course/types/recommendCoursePayload";
 
 const formatCategory = (category?: string) => (category ? category.toUpperCase() : "UNKNOWN");
-const formatPrice = (price_level?: number) => (typeof price_level === "number" ? `가격대: ${price_level}` : "");
+const PRICE_LEVEL_LABELS: Record<number, string> = {
+  0: "1만원 이하",
+  1: "1 ~ 3만원",
+  2: "3 ~ 5만원",
+  3: "5 ~ 8만원",
+  4: "8만원 이상",
+};
+const formatPrice = (price_level?: number) => {
+  if (typeof price_level !== "number") {
+    return "";
+  }
+  const label = PRICE_LEVEL_LABELS[price_level];
+  return label ? `가격대: ${label}` : "";
+};
 const formatAlcohol = (alcohol?: boolean | 0 | 1) => (alcohol ? "음주 가능" : "음주 불가");
 const formatIndoor = (indoor?: boolean) => (indoor ? "실내" : "실외");
 
