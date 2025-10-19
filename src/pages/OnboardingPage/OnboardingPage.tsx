@@ -99,9 +99,9 @@ export const OnboardingPage = () => {
         <LoginMapbox />
       </div>
       {isMapReady && (
-      <div className="relative w-full max-w-5xl overflow-hidden rounded-none md:rounded-xl bg-white shadow-[0_30px_90px_rgba(0,0,0,0.25)] sm:rounded-4xl sm:max-h-[calc(100vh-80px)]">
+      <div className="relative w-full max-w-5xl h-full rounded-none md:rounded-xl bg-white shadow-[0_30px_90px_rgba(0,0,0,0.25)] sm:rounded-4xl sm:max-h-[calc(100vh-80px)]">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_#fde2e4_0%,_transparent_45%),radial-gradient(circle_at_bottom,_#ffe0f0_0%,_transparent_40%)] opacity-70 pointer-events-none" />
-        <div className="relative flex h-full flex-col gap-6 px-5 py-7 sm:px-8 sm:py-10 overflow-hidden">
+        <div className="relative flex h-full flex-col gap-6 px-5 py-7 sm:px-8 sm:py-10">
           {/* 헤더 */}
           <header className="flex flex-col gap-6 text-center">
             <div className="mx-auto flex w-full max-w-2xl flex-col gap-3">

@@ -10,6 +10,7 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "react-toastify";
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import logo from "/logo.png";
 
 export const DiaryDetailPage = () => {
   const navigate = useNavigate();
@@ -82,7 +83,7 @@ export const DiaryDetailPage = () => {
         </div>
 
         {/* 본문 이미지 */}
-        <div className="w-full h-full rounded-md">
+        <div className="w-full h-full rounded-md max-w-[500px] max-h-[500px]">
           {(() => {
             const imageUrl = diaryData?.result.imageUrl;
             const uploadUrl = diaryData?.result.imageUpload?.presignedUrl;
@@ -109,9 +110,9 @@ export const DiaryDetailPage = () => {
         {/* 코스 정보 */}
         <div className="flex flex-col gap-4 p-4 h-full border-y border-gray-300">
           <h2 className="text-lg text-gray-800">연관된 코스</h2>
-          <div className="flex items-center justify-start gap-2 bg-white p-4 rounded-md">
-            <div className="w-[80px] h-[80px] bg-gray-300 rounded-md">
-
+          <div className="flex items-center justify-start gap-4 bg-white p-4 rounded-md">
+            <div className="w-[60px] h-[60px] gray-300/40 rounded-md flex items-center justify-center">
+              <img src={logo} alt="logo" className="w-auto h-auto object-cover" />
             </div>
             <div className="flex flex-col w-full h-full gap-2 items-start justify-start">
               <p className="text-sm text-gray-500">코스 코드: {diaryData?.result.contentId}</p>

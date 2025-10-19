@@ -122,12 +122,11 @@ export const ConnectCourse = () => {
           ) : (
             searchResults.map((item: Course) => (
             <div 
-              key={item.courseId} 
-              onClick={() => handleCourseSelect(item.courseId)}
+              key={item.title} 
+              onClick={() => handleCourseSelect(item.title)}
               className="p-3 hover:bg-third/5 text-[#93000A] cursor-pointer border-b border-gray-100 last:border-b-0"
             >
               <div className="flex items-center justify-between">
-                <span className="text-sm font-medium">{item.courseId}</span>
                 <span className="text-sm">{item.title}</span>
               </div>
             </div>
