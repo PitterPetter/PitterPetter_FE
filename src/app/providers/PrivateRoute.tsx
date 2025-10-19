@@ -1,5 +1,5 @@
 import { useAuthStore } from "../../shared/store/auth.store";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { tokenStore } from "../../shared/lib/tokenStore";
 import { authApi } from "../../features/auth/api";
 import { useQuery } from "@tanstack/react-query";
@@ -10,6 +10,8 @@ const PrivateRoute = ({ permissionLevel }: { permissionLevel: "ONBOARDING_REQUIR
   const storedPermissionLevel = useAuthStore((state) => state.permissionLevel);
   const setPermissionLevel = useAuthStore((state) => state.setPermissionLevel);
   const token = tokenStore.getAccessToken();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const isDevBypassActive =
     import.meta.env.DEV && !token && storedPermissionLevel === permissionLevel;
@@ -39,9 +41,26 @@ const PrivateRoute = ({ permissionLevel }: { permissionLevel: "ONBOARDING_REQUIR
       if (["ONBOARDING_REQUIRED", "COUPLE_MATCHING_REQUIRED", "LOCK_REQUIRED", "COMPLETED"].includes(userStatus) && 
           storedPermissionLevel !== userStatus) {
         setPermissionLevel(userStatus as "ONBOARDING_REQUIRED" | "COUPLE_MATCHING_REQUIRED" | "LOCK_REQUIRED" | "COMPLETED");
+        
+        // 상태가 바뀌었을 때 적절한 페이지로 리다이렉트
+        let targetPath = "";
+        if (userStatus === "ONBOARDING_REQUIRED") {
+          targetPath = "/onboarding";
+        } else if (userStatus === "COUPLE_MATCHING_REQUIRED") {
+          targetPath = "/coupleroom";
+        } else if (userStatus === "LOCK_REQUIRED") {
+          targetPath = "/district/choose";
+        } else if (userStatus === "COMPLETED") {
+          targetPath = "/home";
+        }
+        
+        if (targetPath && location.pathname !== targetPath) {
+          console.log("[PrivateRoute] Status changed, redirecting to:", targetPath);
+          navigate(targetPath, { replace: true });
+        }
       }
     }
-  }, [data]); // 의존성 배열에서 storedPermissionLevel, setPermissionLevel 제거
+  }, [data, storedPermissionLevel, setPermissionLevel, navigate, location.pathname]);
 
   if (isDevBypassActive) {
     console.log("[PrivateRoute] Dev bypass active, skipping token requirement");
