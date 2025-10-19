@@ -59,7 +59,7 @@ function App() {
                 <Route path="check" element={<DistrictCheck />} />
               </Route>
             </Route>
-          <Route element={<PrivateRoute permissionLevel="COMPLETED" />}>
+          {/* <Route element={<PrivateRoute permissionLevel="COMPLETED" />}> */}
             <Route path="/home" element={<MainPage />} />
               <Route path="/options" element={<OptionsPage />} />
               {/* 코스 추천 페이지 */}
@@ -86,7 +86,7 @@ function App() {
             <Route path="/diary/update/:id" element={<UpdateDiaryPage />} />
             <Route path="/diary/:id" element={<DiaryDetailPage />} />
           </Route>
-        </Route>
+        {/* </Route> */}
       </Routes>
       <ToastContainer 
         position="top-right"

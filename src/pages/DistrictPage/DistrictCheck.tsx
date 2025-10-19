@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { useDistrictStore } from '../../shared/store/district.store';
@@ -14,6 +14,7 @@ import { redirectBasedOnStatus } from '../../shared/utils/authRedirect';
 
 export const DistrictCheck = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { selectedDistricts, clearSelectedDistricts } = useDistrictStore();
   const { setPermissionLevel } = useAuthStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -28,6 +29,13 @@ export const DistrictCheck = () => {
     onSuccess: async () => {
       toast.success('지역구 선택이 완료되었습니다!');
       clearSelectedDistricts();
+      
+      // 홈 지도의 지역 잠금 상태 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ['districtLockup'] });
+      queryClient.invalidateQueries({ queryKey: ['districtLock'] });
+      
+      // 인증 상태 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ['authStatus'] });
       
       // 지역락 완료 후 상태를 GET으로 확인
       try {

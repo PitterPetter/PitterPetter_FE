@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { PersonalOnboarding } from "../../features/onboarding/PersonalOnboarding";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { onboardingApi } from "../../features/onboarding/api";
 import { authApi } from "../../features/auth/api";
 import { useOnboardingStore } from "../../shared/store/onboarding.store";
@@ -14,6 +14,7 @@ import { redirectBasedOnStatus } from "../../shared/utils/authRedirect";
 
 export const OnboardingPage = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { alcoholPreference, activeBound, dateCostPreference, favoriteFoodCategories, atmosphere, answeredCount, setAnsweredCount } = useOnboardingStore();
   const { setPermissionLevel } = useAuthStore();
   const isComplete = answeredCount === 5;
@@ -35,6 +36,9 @@ export const OnboardingPage = () => {
     onSuccess: async (data) => {
       console.log(data);
       toast.success('온보딩 정보가 성공적으로 저장되었습니다.');
+      
+      // 인증 상태 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ['authStatus'] });
       
       // 온보딩 완료 후 상태를 GET으로 확인
       try {

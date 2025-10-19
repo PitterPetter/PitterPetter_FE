@@ -6,11 +6,12 @@ import { coupleRoomApi } from "../../features/coupleroom/api";
 import { authApi } from "../../features/auth/api";
 import { useAuthStore } from "../../shared/store/auth.store";
 import { toast } from 'react-toastify';
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { redirectBasedOnStatus } from "../../shared/utils/authRedirect";
 
 export const EnterCoupleRoom = () => {
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
   const { setPermissionLevel } = useAuthStore();
   const [codes, setCodes] = useState(['', '', '', '', '', '']);
   const [isError, setIsError] = useState(false);
@@ -74,6 +75,9 @@ export const EnterCoupleRoom = () => {
 
       if (result.status === 'success') {
         toast.success('커플 인증이 완료되었습니다');
+        
+        // 인증 상태 캐시 무효화
+        queryClient.invalidateQueries({ queryKey: ['authStatus'] });
         
         // 커플 매칭 완료 후 상태를 GET으로 확인
         try {

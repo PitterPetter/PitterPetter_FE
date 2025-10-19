@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faLock, faUnlock, faKey, faMapMarkerAlt } from '@fortawesome/free-solid-svg-icons';
 import { mypageApi } from '../../mypage/api';
@@ -16,6 +16,7 @@ export const DistrictLock = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [unlockingDistricts, setUnlockingDistricts] = useState<Set<string>>(new Set());
   const { ticket } = useMypageStore();
+  const queryClient = useQueryClient();
   // 지역구 잠금 상태 조회
   const { data: districtData, isLoading, isError, refetch } = useQuery<DistrictLockData | null>({
     queryKey: ['districtLock'],
@@ -39,6 +40,11 @@ export const DistrictLock = () => {
         regions.forEach(region => newSet.delete(region));
         return newSet;
       });
+      
+      // 홈 지도의 지역 잠금 상태 캐시 무효화
+      queryClient.invalidateQueries({ queryKey: ['districtLockup'] });
+      queryClient.invalidateQueries({ queryKey: ['districtLock'] });
+      
       refetch();
     },
     onError: (_, regions) => {
