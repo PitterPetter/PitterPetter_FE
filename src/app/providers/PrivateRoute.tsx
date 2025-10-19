@@ -5,6 +5,7 @@ import { authApi } from "../../features/auth/api";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { Spinner } from "../../shared/ui/spinner";
+import { getRedirectPathByStatus } from "../../shared/utils/authRedirect";
 
 const PrivateRoute = ({ permissionLevel }: { permissionLevel: "ONBOARDING_REQUIRED" | "COUPLE_MATCHING_REQUIRED" | "ROCK_REQUIRED" | "COMPLETED" }) => {
   const storedPermissionLevel = useAuthStore((state) => state.permissionLevel);
@@ -43,16 +44,7 @@ const PrivateRoute = ({ permissionLevel }: { permissionLevel: "ONBOARDING_REQUIR
         setPermissionLevel(userStatus as "ONBOARDING_REQUIRED" | "COUPLE_MATCHING_REQUIRED" | "ROCK_REQUIRED" | "COMPLETED");
         
         // 상태가 바뀌었을 때 적절한 페이지로 리다이렉트
-        let targetPath = "";
-        if (userStatus === "ONBOARDING_REQUIRED") {
-          targetPath = "/onboarding";
-        } else if (userStatus === "COUPLE_MATCHING_REQUIRED") {
-          targetPath = "/coupleroom";
-        } else if (userStatus === "ROCK_REQUIRED") {
-          targetPath = "/district/choose";
-        } else if (userStatus === "COMPLETED") {
-          targetPath = "/home";
-        }
+        const targetPath = getRedirectPathByStatus(userStatus);
         
         if (targetPath && location.pathname !== targetPath) {
           console.log("[PrivateRoute] Status changed, redirecting to:", targetPath);
@@ -95,8 +87,11 @@ const PrivateRoute = ({ permissionLevel }: { permissionLevel: "ONBOARDING_REQUIR
     const isAuthenticated = data.status === permissionLevel;
     
     if (!isAuthenticated) {
-      console.log("[PrivateRoute] Permission denied, redirecting to login");
-      return <Navigate to="/login" replace />;
+      // 권한이 다를 때는 적절한 페이지로 리다이렉트
+      const targetPath = getRedirectPathByStatus(data.status);
+      
+      console.log("[PrivateRoute] Permission mismatch, redirecting to:", targetPath);
+      return <Navigate to={targetPath} replace />;
     }
   }
 

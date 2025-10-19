@@ -3,11 +3,15 @@ import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 import { coupleRoomApi } from "../../features/coupleroom/api";
+import { authApi } from "../../features/auth/api";
+import { useAuthStore } from "../../shared/store/auth.store";
 import { toast } from 'react-toastify';
 import { useMutation } from "@tanstack/react-query";
+import { redirectBasedOnStatus } from "../../shared/utils/authRedirect";
 
 export const EnterCoupleRoom = () => {
   const navigate = useNavigate();
+  const { setPermissionLevel } = useAuthStore();
   const [codes, setCodes] = useState(['', '', '', '', '', '']);
   const [isError, setIsError] = useState(false);
 
@@ -70,7 +74,23 @@ export const EnterCoupleRoom = () => {
 
       if (result.status === 'success') {
         toast.success('커플 인증이 완료되었습니다');
-        navigate('/district/choose');
+        
+        // 커플 매칭 완료 후 상태를 GET으로 확인
+        try {
+          const statusResponse = await authApi.getStatus();
+          const userStatus = statusResponse.data.status;
+          console.log("[EnterCoupleRoom] User status after couple matching:", userStatus);
+          
+          // auth store 업데이트
+          setPermissionLevel(userStatus as "ONBOARDING_REQUIRED" | "COUPLE_MATCHING_REQUIRED" | "ROCK_REQUIRED" | "COMPLETED");
+          
+          // 상태에 따라 적절한 페이지로 리다이렉트
+          redirectBasedOnStatus(userStatus, navigate);
+        } catch (error) {
+          console.error("[EnterCoupleRoom] Failed to get user status:", error);
+          // 상태 확인 실패 시 기본값으로 리다이렉트
+          navigate('/district/choose');
+        }
       } else {
         setIsError(true);
         throw new Error('커플 인증에 실패했습니다');
