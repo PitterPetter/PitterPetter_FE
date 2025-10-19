@@ -95,8 +95,21 @@ const PrivateRoute = ({ permissionLevel }: { permissionLevel: "ONBOARDING_REQUIR
     const isAuthenticated = data.status === permissionLevel;
     
     if (!isAuthenticated) {
-      console.log("[PrivateRoute] Permission denied, redirecting to login");
-      return <Navigate to="/login" replace />;
+      let targetPath = "";
+      if (data.status === "ONBOARDING_REQUIRED") {
+        targetPath = "/onboarding";
+      } else if (data.status === "COUPLE_MATCHING_REQUIRED") {
+        targetPath = "/coupleroom";
+      } else if (data.status === "LOCK_REQUIRED") {
+        targetPath = "/district/choose";
+      } else if (data.status === "COMPLETED") {
+        targetPath = "/home";
+      } else {
+        targetPath = "/login";
+      }
+      
+      console.log("[PrivateRoute] Permission mismatch, redirecting to:", targetPath);
+      return <Navigate to={targetPath} replace />;
     }
   }
 
