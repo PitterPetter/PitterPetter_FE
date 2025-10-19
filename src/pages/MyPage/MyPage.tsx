@@ -177,6 +177,12 @@ export const MyPage = () => {
   const partnerLabel = partnerName ? `${partnerName}님과 함께` : '데이터를 채워보세요';
 
   return (
+    <>
+    {putMypage.isPending || isProfileLoading ? (
+          <div className="flex h-48 items-center justify-center">
+            <Spinner />
+          </div>
+        ) :
     <div
       className="
         flex flex-col gap-8 items-center justify-start py-6 md:py-10 bg-primary/5
@@ -192,7 +198,7 @@ export const MyPage = () => {
                 {email || '프로필'}
               </span>
               <h1 className="mt-4 text-3xl font-semibold text-gray-900">
-                {greetingName} 마이페이지
+                {greetingName} 님의 마이페이지
               </h1>
               <p className="mt-2 text-sm text-gray-600">
                 {partnerLabel}
@@ -266,10 +272,10 @@ export const MyPage = () => {
           </div>
 
           {/* 오른쪽 섹션 - 프로필 정보 & 커플 홈 */}
-          <div className="flex-1 min-w-0 xl:max-w-[600px]">
-            <div className="flex flex-col gap-6">
+          <div className="flex-1 min-w-0 xl:max-w-[600px] h-full">
+            <div className="flex flex-col gap-6 h-full">
               {/* 커플 홈 섹션 */}
-              <div className="border border-primary/10 shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md p-6">
+              <div className="h-full border border-primary/10 shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md p-6">
                 <CoupleHome />
               </div>
             </div>
@@ -278,11 +284,13 @@ export const MyPage = () => {
       </div>
 
       {/* 하단 - 지역구 잠금 시스템 */}
-      <div className="w-full max-w-[1400px] mx-auto px-4 lg:px-8 xl:px-12 2xl:px-20">
+      <div className="w-full max-w-[1400px] mx-auto px-4 lg:px-8 xl:px-12 2xl:px-0">
         <div id="district-lock" className="border border-primary/10 shadow-sm bg-white/80 backdrop-blur-sm transition-all hover:shadow-md p-6 lg:p-8">
           <DistrictLock />
         </div>
       </div>
     </div>
+    }
+  </>
   );
 };

@@ -18,8 +18,10 @@ export const OptionsPage = () => {
   const [drink_intent, setDrinking] = useState<Option['user_choice']['drink_intent']>(false);
   const [food, setFood] = useState<Option['user_choice']['food']>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [startTime, setStartTime] = useState<Date>(new Date());
-  const [endTime, setEndTime] = useState<Date>(new Date());
+  const initialStart = new Date();
+  const initialEnd = new Date(initialStart.getTime() + 10 * 60 * 1000);
+  const [startTime, setStartTime] = useState<Date>(initialStart);
+  const [endTime, setEndTime] = useState<Date>(initialEnd);
   const [timeError, setTimeError] = useState<string>("");
   const start = useStartStore.getState();
   const { setRecommend, setLawData } = useRecommendStore();

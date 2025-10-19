@@ -163,7 +163,7 @@ export const PersonalPreferences = () => {
           />
           <PreferenceCard
             icon={<FontAwesomeIcon icon={faDollarSign} className="h-5 w-5" />}
-            title="데이트 비용"
+            title="선호 데이트 비용"
             value={getCostText(dateCostPreference)}
           />
           <PreferenceCard
