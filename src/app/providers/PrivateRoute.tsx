@@ -19,7 +19,7 @@ const PrivateRoute = ({ permissionLevel }: { permissionLevel: "ONBOARDING_REQUIR
 
   // 1. 먼저 저장된 permissionLevel 확인
   const hasStoredPermission = storedPermissionLevel === permissionLevel;
-  const needsApiCall = !storedPermissionLevel || !hasStoredPermission;
+  const needsApiCall = storedPermissionLevel === null || !hasStoredPermission;
 
   const { data, isLoading, error } = useQuery({
     queryKey: ["authStatus", token],
@@ -38,9 +38,9 @@ const PrivateRoute = ({ permissionLevel }: { permissionLevel: "ONBOARDING_REQUIR
       const userStatus = data.status;
       console.log("[PrivateRoute] User status:", userStatus);
       
-      // permissionLevel 설정 (현재 저장된 값과 다를 때만)
+      // permissionLevel 설정 (저장된 값이 null이거나 다를 때)
       if (["ONBOARDING_REQUIRED", "COUPLE_MATCHING_REQUIRED", "ROCK_REQUIRED", "COMPLETED"].includes(userStatus) && 
-          storedPermissionLevel !== userStatus) {
+          (storedPermissionLevel === null || storedPermissionLevel !== userStatus)) {
         setPermissionLevel(userStatus as "ONBOARDING_REQUIRED" | "COUPLE_MATCHING_REQUIRED" | "ROCK_REQUIRED" | "COMPLETED");
         
         // 상태가 바뀌었을 때 적절한 페이지로 리다이렉트
