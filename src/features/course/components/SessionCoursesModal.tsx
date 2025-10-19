@@ -110,7 +110,7 @@ export const SessionCoursesModal: React.FC<SessionCoursesModalProps> = ({ isOpen
                     onClick={() => handlePlaceClick(place.seq)}
                   >
                     <div className="flex items-start gap-3">
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold flex-shrink-0 ${
+                      <div className={`min-w-8 min-h-8 rounded-full flex items-center justify-center text-sm font-semibold flex-shrink-0 ${
                         isSelected ? "bg-white text-[#662B2B]" : "bg-[#662B2B] text-white"
                       }`}>
                         {place.seq}
