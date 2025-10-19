@@ -1,7 +1,6 @@
 // src/pages/recommend/RecommendCoursePage.tsx
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { RecommendMapbox } from "../../features/mapbox";
-import { Button } from "@mui/material";
 import { useRecommendStore } from "../../shared/store/recommend.store";
 import { useCallback, useMemo, useState, useEffect } from "react";
 import { PlaceDetailModal, SessionCoursesModal } from "../../features/course";
@@ -428,17 +427,13 @@ export const RecommendCoursePage = () => {
               {/* 하단 버튼 */}
               <div className="flex flex-col gap-2 p-4 z-20">
                 <div className="flex gap-2 w-full h-[50px] justify-between">
-                  <Button variant="outlined" className="w-full" onClick={handleRerecommend}>
+                  <div className="w-full bg-gray-200 rounded-md flex items-center justify-center text-sm font-medium hover:bg-gray-300 transition-colors cursor-pointer h-full min-h-[44px]" onClick={handleRerecommend}>
                     Rerecommend
-                  </Button>
+                  </div>
                 </div>
-                <Button
-                  variant="contained"
-                  className="w-full h-[50px]"
-                  onClick={() => saveCourse()}
-                >
+                <div className="w-full bg-[#662B2B] text-white rounded-md flex items-center justify-center text-sm font-medium hover:bg-[#662B2B]/80 transition-colors cursor-pointer h-full min-h-[44px]" onClick={() => saveCourse()}>
                   Save this course
-                </Button>
+                </div>
               </div>
           </div>
         ) : (
@@ -505,15 +500,6 @@ export const RecommendCoursePage = () => {
             </div>
           </div>
         </div>
-      )}
-
-      {/* 장소 상세 모달 */}
-      {selectedPlace && (
-        <PlaceDetailModal 
-          isOpen={isPlaceModalOpen} 
-          onClose={handleCloseModal}
-          placeData={selectedPlace}
-        />
       )}
 
       {/* 세션 코스 모달 */}
