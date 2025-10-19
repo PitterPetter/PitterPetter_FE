@@ -100,7 +100,7 @@ export const DistrictCheck = () => {
         <p className="text-gray-700 text-center">다음 2개의 자치구에서 데이트 코스를 추천받으시겠습니까?</p>
         {/* 배경 이미지 */}
         <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30"
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30 rounded-2xl"
           style={{ backgroundImage: `url(${namsantower})` }}
         />
         {/* 선택된 자치구 목록 */}
