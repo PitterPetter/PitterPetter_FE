@@ -385,6 +385,22 @@ export const handlers = [
     return HttpResponse.json(coupleRoomCode);
   }),
 
+  // 티켓 추가
+  http.post(`${API}/api/couples/ticket/add`, async ({ request }) => {
+    await delay(300);
+    const body = await request.json().catch(() => ({}));
+    console.log('Ticket add request:', body);
+    
+    return HttpResponse.json({
+      timestamp: new Date().toISOString(),
+      code: "COMMON200",
+      result: {
+        message: "티켓이 추가되었습니다.",
+        ticketCount: 1 // 추가된 티켓 수
+      }
+    });
+  }),
+
   // 온보딩 저장
   http.post(`${API}/api/onboarding/me`, async () => {
     await delay(500);

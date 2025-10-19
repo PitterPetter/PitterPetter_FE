@@ -9,7 +9,7 @@ import { useQueries, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchRoute, routeQueryKey } from '../../shared/api/routes.api';
 import { useUIStore } from '../../shared/store/ui.store';
 import { useHeaderStore } from '../../shared/store/header.store';
-import { saveCourseApi } from "../../features/course/api";
+import { saveCourseApi, postTicketApi } from "../../features/course/api";
 import { toast } from 'react-toastify';
 import { saveRecommendToSession } from "../../features/recommend/utils/sessionStorage";
 import { COURSE_STORAGE_KEY } from "../../features/course/utils/normalizeCourse";
@@ -211,7 +211,7 @@ export const RecommendCoursePage = () => {
 
   const saveCourseMutation = useMutation({
     mutationFn: saveCourseApi,
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       console.log(data);
       try {
         if (typeof window !== "undefined") {
@@ -223,6 +223,15 @@ export const RecommendCoursePage = () => {
       
       // React Query 캐시 무효화 - 코스 목록을 새로고침
       queryClient.invalidateQueries({ queryKey: ['courses'] });
+      
+      // 코스 저장 성공 후 티켓 추가 API 호출
+      try {
+        await postTicketApi({});
+        console.log("티켓이 추가되었습니다.");
+      } catch (error) {
+        console.error("티켓 추가에 실패했습니다:", error);
+        // 티켓 추가 실패해도 코스 저장은 성공했으므로 계속 진행
+      }
       
       navigate(`/course`);
       toast.success("코스가 저장되었습니다.");
