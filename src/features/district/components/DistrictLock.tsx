@@ -59,11 +59,8 @@ export const DistrictLock = () => {
 
   // 지역구 잠금 해제 핸들러
   const handleUnlockDistrict = (district: DistrictInfo) => {
-    const answer = window.confirm(`${district.name}의 잠금을 해제하시겠습니까?`);
-    if (answer) {
-      setUnlockingDistricts(prev => new Set(prev).add(district.id.toString()));
-      unlockDistrictMutation.mutate([district.id.toString()]);
-    }
+    setUnlockingDistricts(prev => new Set(prev).add(district.id.toString()));
+    unlockDistrictMutation.mutate([district.id.toString()]);
   };
 
   // 현재 선택된 도시 데이터
@@ -170,9 +167,9 @@ export const DistrictLock = () => {
               {/* 잠금 해제 버튼 */}
               {district.locked ? (
                 <button
-                  onClick={() => handleUnlockDistrict(district)}
+                  onClick={() => {ticket > 0 ? handleUnlockDistrict(district) : toast.error('보유 키가 없습니다.');}}
                   disabled={unlockingDistricts.has(district.id.toString())}
-                  className="w-full px-3 py-2 rounded-md text-sm font-medium bg-primary text-white hover:bg-primary/80 disabled:opacity-50 transition-all duration-200"
+                  className={`w-full px-3 py-2 rounded-md text-sm font-medium bg-primary text-white ${ticket > 0 && "hover:bg-primary/80"} disabled:opacity-50 transition-all duration-200`}
                 >
                   {unlockingDistricts.has(district.id.toString()) ? '해제 중...' : '잠금 해제'}
                 </button>
