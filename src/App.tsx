@@ -49,13 +49,13 @@ function App() {
                 <Route path="create/:id" element={<CoupleCodeRoom />} />
                 <Route path="enter" element={<EnterCoupleRoom />} />
               </Route>
-              <Route element={<PrivateRoute permissionLevel="LOCK_REQUIRED" />}>
+            </Route>
+            <Route element={<PrivateRoute permissionLevel="LOCK_REQUIRED" />}>
               <Route path="district" element={<DistrictModal />}>
                 <Route path="choose" element={<DistrictChoose />} />
                 <Route path="check" element={<DistrictCheck />} />
               </Route>
             </Route>
-          </Route>
           <Route element={<PrivateRoute permissionLevel="COMPLETED" />}>
             <Route path="/home" element={<MainPage />} />
               <Route path="/options" element={<OptionsPage />} />
