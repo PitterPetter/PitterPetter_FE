@@ -6,6 +6,7 @@ import { mypageApi } from '../../mypage/api';
 import { DistrictInfo, DistrictLockData } from '../../mypage/types';
 import { useMypageStore } from '../../../shared/store/mypage.store';
 import { Spinner } from '../../../shared/ui/spinner';
+import { Input } from '../../../shared/ui/input';
 import { toast } from 'react-toastify';
 import { districtApi } from '../api';
 import mockDistrictLock from '../mocks/districtLockMock.json';
@@ -125,12 +126,10 @@ export const DistrictLock = () => {
 
       {/* 검색바 */}
       <div className="mb-6">
-        <input
-          type="text"
+        <Input
           placeholder="지역구 검색..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="w-full h-12 px-4 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-pink-200 focus:border-transparent transition-all duration-200"
         />
       </div>
 

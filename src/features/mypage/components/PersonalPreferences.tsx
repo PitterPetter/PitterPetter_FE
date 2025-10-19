@@ -3,6 +3,7 @@ import { faWineGlass, faRunning, faUtensils, faDollarSign, faHeart } from '@fort
 import { useOnboardingStore } from "../../../shared/store/onboarding.store";
 import { useState } from "react";
 import { DrinkingList, ActiveList, FoodList, CostList } from "../../onboarding/types";
+import { Input } from "../../../shared/ui/input";
 
 export const PersonalPreferences = () => {
   const { 
@@ -247,12 +248,11 @@ export const PersonalPreferences = () => {
             <label className="block text-sm font-medium text-gray-700 mb-2">
               선호하는 데이트 분위기는 무엇인가요?
             </label>
-            <input
-              type="text"
+            <Input
               value={atmosphere || ''}
               onChange={(e) => setAtmosphere(e.target.value)}
               placeholder="예: 조용하고 로맨틱한, 활기찬, 자연스러운"
-              className="w-full p-3 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              className="bg-white"
             />
           </div>
         </div>

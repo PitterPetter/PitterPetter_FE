@@ -26,14 +26,14 @@ export const CoupleCodeRoom = () => {
     toast.success('복사되었습니다');
   };
   return (
-    <div className="flex items-center justify-center w-full h-full">{/* 배경 이미지 */}
+    <div className="flex items-center justify-center w-full h-full">
       <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(circle_at_top,_#fde2e4_0%,_transparent_35%),radial-gradient(circle_at_bottom,_#ffe0f0_0%,_transparent_35%)] opacity-80" />
       <div className="relative w-full max-w-5xl overflow-hidden rounded-none bg-white shadow-[0_30px_90px_rgba(0,0,0,0.25)] sm:rounded-4xl sm:max-h-[calc(100vh-80px)] md:rounded-xl">
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-br from-white/80 via-rose-50/80 to-primary/20 opacity-80" />
         <button
           type="button"
           className="absolute left-6 top-6 z-20 flex h-9 w-9 items-center justify-center rounded-full bg-white/80 text-gray-600 hover:shadow-md transition duration-300 hover:bg-white focus:outline-none focus:ring-2 focus:ring-primary/40 focus:ring-offset-2 focus:ring-offset-white"
-          onClick={() => navigate('/home/coupleroom')}
+          onClick={() => navigate('/coupleroom')}
           aria-label="뒤로 가기"
         >
           <FontAwesomeIcon icon={faChevronLeft} className="h-4 w-4" />

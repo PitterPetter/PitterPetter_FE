@@ -45,7 +45,7 @@ export const DistrictCheck = () => {
   };
 
   const handleBack = () => {
-    navigate('/home/district/choose');
+    navigate('/district/choose');
   };
 
   if (selectedDistricts.length === 0) {

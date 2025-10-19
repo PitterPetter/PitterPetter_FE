@@ -59,73 +59,124 @@ const MapboxRemoteController: React.FC<MapboxRemoteControllerProps> = ({
     applyEase({ center: [...defaultCenter] as [number, number], zoom: defaultZoom, pitch: defaultPitch, bearing: defaultBearing, duration: 500 });
   };
 
-  const iconButtonClass = "flex items-center justify-center w-8 h-8 rounded-full bg-white/90 text-gray-700 shadow hover:bg-white focus:outline-none focus:ring-1 focus:ring-[#662B2B]/40 disabled:opacity-50 disabled:cursor-not-allowed";
+  const iconButtonClass = "flex items-center justify-center w-10 h-10 rounded-xl bg-white/95 text-primary shadow-lg hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 border border-primary/10";
+  const controlButtonClass = "flex items-center justify-center gap-2 bg-white/95 text-primary text-sm px-3 py-2 rounded-xl shadow-lg hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 border border-primary/10 font-medium";
 
   return (
-    <div className="absolute bottom-4 left-4 z-20 flex items-center justify-center flex-col gap-2 bg-white/80 p-3 py-4 rounded-lg shadow">
-      <div className="grid grid-cols-2 gap-1 items-center justify-center w-full">
-        <div
-          className="flex items-center justify-center bg-white/90 text-gray-700 text-sm px-2 py-1 rounded-md shadow hover:bg-white focus:outline-none focus:ring-1 focus:ring-[#662B2B]/40 disabled:opacity-50 disabled:cursor-not-allowed"
+    <div className="absolute bottom-6 left-6 z-20 flex flex-col gap-3 bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-white/20">
+      {/* 상단 컨트롤 버튼들 */}
+      <div className="grid grid-cols-2 gap-2">
+        <button
+          type="button"
+          className={controlButtonClass}
           onClick={() => handleZoomChange(ZOOM_STEP)}
+          disabled={!isMapReady}
         >
-          + Zoom
-        </div>
-        <div
-          className="flex items-center justify-center bg-white/90 text-gray-700 text-sm px-2 py-1 rounded-md shadow hover:bg-white focus:outline-none focus:ring-1 focus:ring-[#662B2B]/40 disabled:opacity-50 disabled:cursor-not-allowed"
+          <FontAwesomeIcon icon={faArrowUp} className="text-xs" />
+          확대
+        </button>
+        <button
+          type="button"
+          className={controlButtonClass}
           onClick={() => handleZoomChange(-ZOOM_STEP)}
+          disabled={!isMapReady}
         >
-          Zoom -
-        </div>
-        <div
-          className="flex items-center justify-center bg-white/90 text-gray-700 text-sm px-2 py-1 rounded-md shadow hover:bg-white focus:outline-none focus:ring-1 focus:ring-[#662B2B]/40 disabled:opacity-50 disabled:cursor-not-allowed"
+          <FontAwesomeIcon icon={faArrowDown} className="text-xs" />
+          축소
+        </button>
+        <button
+          type="button"
+          className={controlButtonClass}
           onClick={() => handlePitchChange(-PITCH_STEP)}
+          disabled={!isMapReady}
         >
-          <FontAwesomeIcon icon={faArrowUp} className="text-[12px] px-[2px]" />
-          Slope
-        </div>
-        <div
-          className="flex items-center justify-center bg-white/90 text-gray-700 text-sm px-2 py-1 rounded-md shadow hover:bg-white focus:outline-none focus:ring-1 focus:ring-[#662B2B]/40 disabled:opacity-50 disabled:cursor-not-allowed"
+          <FontAwesomeIcon icon={faArrowUp} className="text-xs" />
+          기울기
+        </button>
+        <button
+          type="button"
+          className={controlButtonClass}
           onClick={() => handlePitchChange(PITCH_STEP)}
+          disabled={!isMapReady}
         >
-          Slope
-          <FontAwesomeIcon icon={faArrowDown} className="text-[12px] px-[2px]" />
-        </div>
-
-        <div
-          className="flex items-center justify-center bg-white/90 text-gray-700 text-sm px-2 py-1 rounded-md shadow hover:bg-white focus:outline-none focus:ring-1 focus:ring-[#662B2B]/40 disabled:opacity-50 disabled:cursor-not-allowed"
-          onClick={() => handleRotate(ROTATE_STEP)}
-        >
-          <FontAwesomeIcon icon={faArrowLeft} className="text-[12px] px-[2px]" />
-          Rotate
-        </div>
-        <div
-          className="flex items-center justify-center bg-white/90 text-gray-700 text-sm px-2 py-1 rounded-md shadow hover:bg-white focus:outline-none focus:ring-1 focus:ring-[#662B2B]/40 disabled:opacity-50 disabled:cursor-not-allowed"
-          onClick={() => handleRotate(-ROTATE_STEP)}
-        >
-          Rotate
-          <FontAwesomeIcon icon={faArrowRight} className="text-[12px] px-[2px]" />
-        </div>
+          <FontAwesomeIcon icon={faArrowDown} className="text-xs" />
+          기울기
+        </button>
       </div>
-      <div className="grid grid-cols-3 gap-1 items-center justify-center">
+
+      {/* 방향 컨트롤 */}
+      <div className="grid grid-cols-3 gap-2 items-center justify-center">
         <span />
-        <button type="button" className={iconButtonClass} onClick={() => handlePan(0.25, 0)} aria-label="Move forward" disabled={!isMapReady}>
-          <FontAwesomeIcon icon={faAngleUp} className="text-xl" />
-        </button>
-        <span />
-        <button type="button" className={iconButtonClass} onClick={() => handlePan(0, -0.25)} aria-label="Pan left" disabled={!isMapReady}>
-          <FontAwesomeIcon icon={faAngleLeft} className="text-xl" />
-        </button>
-        <button type="button" className={iconButtonClass} onClick={handleResetView} aria-label="Reset view" disabled={!isMapReady}>
-          <FontAwesomeIcon icon={faCircle} className="text-md" />
-        </button>
-        <button type="button" className={iconButtonClass} onClick={() => handlePan(0, 0.25)} aria-label="Pan right" disabled={!isMapReady}>
-          <FontAwesomeIcon icon={faAngleRight} className="text-xl" />
+        <button 
+          type="button" 
+          className={iconButtonClass} 
+          onClick={() => handlePan(0.25, 0)} 
+          aria-label="앞으로 이동" 
+          disabled={!isMapReady}
+        >
+          <FontAwesomeIcon icon={faAngleUp} className="text-lg" />
         </button>
         <span />
-        <button type="button" className={iconButtonClass} onClick={() => handlePan(-0.25, 0)} aria-label="Pan backward" disabled={!isMapReady}>
-          <FontAwesomeIcon icon={faAngleDown} className="text-xl" />
+        <button 
+          type="button" 
+          className={iconButtonClass} 
+          onClick={() => handlePan(0, -0.25)} 
+          aria-label="왼쪽으로 이동" 
+          disabled={!isMapReady}
+        >
+          <FontAwesomeIcon icon={faAngleLeft} className="text-lg" />
+        </button>
+        <button 
+          type="button" 
+          className={`${iconButtonClass} bg-primary/10 text-primary hover:bg-primary/20`} 
+          onClick={handleResetView} 
+          aria-label="초기화" 
+          disabled={!isMapReady}
+        >
+          <FontAwesomeIcon icon={faCircle} className="text-sm" />
+        </button>
+        <button 
+          type="button" 
+          className={iconButtonClass} 
+          onClick={() => handlePan(0, 0.25)} 
+          aria-label="오른쪽으로 이동" 
+          disabled={!isMapReady}
+        >
+          <FontAwesomeIcon icon={faAngleRight} className="text-lg" />
         </button>
         <span />
+        <button 
+          type="button" 
+          className={iconButtonClass} 
+          onClick={() => handlePan(-0.25, 0)} 
+          aria-label="뒤로 이동" 
+          disabled={!isMapReady}
+        >
+          <FontAwesomeIcon icon={faAngleDown} className="text-lg" />
+        </button>
+        <span />
+      </div>
+
+      {/* 회전 컨트롤 */}
+      <div className="flex gap-2">
+        <button
+          type="button"
+          className={controlButtonClass}
+          onClick={() => handleRotate(ROTATE_STEP)}
+          disabled={!isMapReady}
+        >
+          <FontAwesomeIcon icon={faArrowLeft} className="text-xs" />
+          회전
+        </button>
+        <button
+          type="button"
+          className={controlButtonClass}
+          onClick={() => handleRotate(-ROTATE_STEP)}
+          disabled={!isMapReady}
+        >
+          회전
+          <FontAwesomeIcon icon={faArrowRight} className="text-xs" />
+        </button>
       </div>
     </div>
   );

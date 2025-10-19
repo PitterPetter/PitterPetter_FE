@@ -1,6 +1,6 @@
 import './App.css';
 import { LoginPage } from './pages/LoginPage';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 // import { AuthInitializer } from './app/providers/AuthInitializer';
 import { MainPage } from './pages/MainPage';
 import { HeaderLayout } from './app/layouts';
@@ -34,46 +34,51 @@ function App() {
       <AuthBootstrap />
       <DataBootstrap />
       <Routes>
+        {/* 기본 경로를 로그인 페이지로 리다이렉트 */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        
         {/* 로그인 페이지 */}
         <Route path="/login" element={<LoginPage />} />
 
-        <Route path="/onboarding" element={<OnboardingPage />} />
         {/* 헤더 레이아웃 */}
-        {/* <Route element={<PrivateRoute permissionLevel="COMPLETED" />}> */}
           <Route element={<HeaderLayout />}>
-            <Route path="/home" element={<MainPage />}>
+          <Route element={<PrivateRoute permissionLevel="ONBOARDING_REQUIRED" />}>
+            <Route path="/onboarding" element={<OnboardingPage />} />
+          </Route>
+            <Route element={<PrivateRoute permissionLevel="COUPLE_MATCHING_REQUIRED" />}>
               <Route path="coupleroom" element={<CoupleRoomModal />}>
                 <Route index element={<CoupleRoomPage />} />
                 <Route path="create" element={<CreateCoupleRoom />} />
                 <Route path="create/:id" element={<CoupleCodeRoom />} />
                 <Route path="enter" element={<EnterCoupleRoom />} />
               </Route>
+            </Route>
+            <Route element={<PrivateRoute permissionLevel="LOCK_REQUIRED" />}>
               <Route path="district" element={<DistrictModal />}>
                 <Route path="choose" element={<DistrictChoose />} />
                 <Route path="check" element={<DistrictCheck />} />
               </Route>
             </Route>
-            <Route path="/options" element={<OptionsPage />} />
+          <Route element={<PrivateRoute permissionLevel="COMPLETED" />}>
+            <Route path="/home" element={<MainPage />} />
+              <Route path="/options" element={<OptionsPage />} />
+              {/* 코스 추천 페이지 */}
+              <Route path="/recommend" element={<RecommendCoursePage />}>
+                <Route index element={<CourseDetailSidebar />} />
+                <Route path=":id" element={<PlaceDetailSidebar />} />
+              </Route>
 
-            {/* 커플 룸 페이지 */}
+              {/* 코스 상세 페이지 */}
+              <Route path="/course/:id" element={<CourseDetailPage />}>
+                <Route index element={<CourseDetailSidebar />} />
+                <Route path="place/:placeId" element={null} />
+              </Route>
 
-            {/* 코스 추천 페이지 */}
-            <Route path="/recommend" element={<RecommendCoursePage />}>
-              <Route index element={<CourseDetailSidebar />} />
-              <Route path=":id" element={<PlaceDetailSidebar />} />
-            </Route>
+              {/* 코스 목록 페이지 */}
+              <Route path="/course" element={<CourseListPage />} />
 
-            {/* 코스 상세 페이지 */}
-            <Route path="/course/:id" element={<CourseDetailPage />}>
-              <Route index element={<CourseDetailSidebar />} />
-              <Route path="place/:placeId" element={null} />
-            </Route>
-
-            {/* 코스 목록 페이지 */}
-            <Route path="/course" element={<CourseListPage />} />
-
-            {/* 마이페이지 */}
-            <Route path="/mypage" element={<MyPage />} />
+              {/* 마이페이지 */}
+              <Route path="/mypage" element={<MyPage />} />
 
             {/* 다이어리 페이지 */}
             <Route path="/diary" element={<DiaryListPage />} />
@@ -81,7 +86,7 @@ function App() {
             <Route path="/diary/update/:id" element={<UpdateDiaryPage />} />
             <Route path="/diary/:id" element={<DiaryDetailPage />} />
           </Route>
-        {/* </Route> */}
+        </Route>
       </Routes>
       <ToastContainer 
         position="top-right"
