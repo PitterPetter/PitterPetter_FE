@@ -115,6 +115,13 @@ export const UpdateDiaryPage = () => {
     }
   };
 
+  // 기존 이미지 제거 처리
+  const handleExistingImageRemove = () => {
+    setExistingImageUrl(null);
+    setIsImageChanged(true);
+    setIsImageRemoved(true);
+  };
+
   const handleSave = async () => {
     if (!id) {
       toast.error('다이어리 ID가 없습니다.');
@@ -208,7 +215,7 @@ export const UpdateDiaryPage = () => {
 
         {/* 게시물 작성 */}
         <div className="h-full rounded-2xl p-4 pb-6 w-[800px] bg-white">
-          <WriteDiary onImageSelect={handleImageSelect} />
+          <WriteDiary onImageSelect={handleImageSelect} onExistingImageRemove={handleExistingImageRemove} />
         <div className="flex justify-end gap-4 p-4">
           <div
             onClick={handleCancel}
