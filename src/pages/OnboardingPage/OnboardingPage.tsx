@@ -1,17 +1,21 @@
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { PersonalOnboarding } from "../../features/onboarding/PersonalOnboarding";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { onboardingApi } from "../../features/onboarding/api";
+import { authApi } from "../../features/auth/api";
 import { useOnboardingStore } from "../../shared/store/onboarding.store";
+import { useAuthStore } from "../../shared/store/auth.store";
 import { toast } from 'react-toastify';
 import { LoginMapbox } from "../../features/mapbox";
 import { useUIStore } from "../../shared/store/ui.store";
 import { Spinner } from "../../shared/ui/spinner";
+import { redirectBasedOnStatus } from "../../shared/utils/authRedirect";
 
 export const OnboardingPage = () => {
   const navigate = useNavigate();
   const { alcoholPreference, activeBound, dateCostPreference, favoriteFoodCategories, atmosphere, answeredCount, setAnsweredCount } = useOnboardingStore();
+  const { setPermissionLevel } = useAuthStore();
   const isComplete = answeredCount === 5;
   const progress = Math.min(answeredCount, 5) / 5 * 100;
   const scrollBoxRef = useRef<HTMLDivElement | null>(null);
@@ -28,10 +32,26 @@ export const OnboardingPage = () => {
 
   const mutation = useMutation({
     mutationFn: onboardingApi.saveOnboarding,
-    onSuccess: (data) => {
+    onSuccess: async (data) => {
       console.log(data);
       toast.success('온보딩 정보가 성공적으로 저장되었습니다.');
-      navigate("/coupleroom");
+      
+      // 온보딩 완료 후 상태를 GET으로 확인
+      try {
+        const statusResponse = await authApi.getStatus();
+        const userStatus = statusResponse.data.status;
+        console.log("[OnboardingPage] User status after onboarding:", userStatus);
+        
+        // auth store 업데이트
+        setPermissionLevel(userStatus as "ONBOARDING_REQUIRED" | "COUPLE_MATCHING_REQUIRED" | "ROCK_REQUIRED" | "COMPLETED");
+        
+        // 상태에 따라 적절한 페이지로 리다이렉트
+        redirectBasedOnStatus(userStatus, navigate);
+      } catch (error) {
+        console.error("[OnboardingPage] Failed to get user status:", error);
+        // 상태 확인 실패 시 기본값으로 리다이렉트
+        navigate("/coupleroom");
+      }
     },
     onError: (error: any) => {
       console.log('error:', error);

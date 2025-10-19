@@ -4,14 +4,18 @@ import { useMutation } from '@tanstack/react-query';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { useDistrictStore } from '../../shared/store/district.store';
+import { useAuthStore } from '../../shared/store/auth.store';
+import { authApi } from '../../features/auth/api';
 import { toast } from 'react-toastify';
 import { Spinner } from '../../shared/ui/spinner';
 import namsantower from '/namsantower.jpg';
 import { districtApi } from '../../features/district/api';
+import { redirectBasedOnStatus } from '../../shared/utils/authRedirect';
 
 export const DistrictCheck = () => {
   const navigate = useNavigate();
   const { selectedDistricts, clearSelectedDistricts } = useDistrictStore();
+  const { setPermissionLevel } = useAuthStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // 지역구 선택 확인 API 호출 (초기 해금)
@@ -21,10 +25,26 @@ export const DistrictCheck = () => {
       const response = await districtApi.initUnlockDistrict(districtNames);
       return response;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
       toast.success('지역구 선택이 완료되었습니다!');
       clearSelectedDistricts();
-      navigate('/home');
+      
+      // 지역락 완료 후 상태를 GET으로 확인
+      try {
+        const statusResponse = await authApi.getStatus();
+        const userStatus = statusResponse.data.status;
+        console.log("[DistrictCheck] User status after district lock:", userStatus);
+        
+        // auth store 업데이트
+        setPermissionLevel(userStatus as "ONBOARDING_REQUIRED" | "COUPLE_MATCHING_REQUIRED" | "ROCK_REQUIRED" | "COMPLETED");
+        
+        // 상태에 따라 적절한 페이지로 리다이렉트
+        redirectBasedOnStatus(userStatus, navigate);
+      } catch (error) {
+        console.error("[DistrictCheck] Failed to get user status:", error);
+        // 상태 확인 실패 시 기본값으로 리다이렉트
+        navigate('/home');
+      }
     },
     onError: (error: any) => {
       console.error('지역구 선택 확인 실패:', error);
