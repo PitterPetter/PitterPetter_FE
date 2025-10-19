@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Slider, Button } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
@@ -25,6 +25,9 @@ export const OptionsPage = () => {
   const { setRecommend, setLawData } = useRecommendStore();
   const mutation = useMutation({
     mutationFn: postOption,
+    onMutate: () => {
+      setIsLoading(true);
+    },
     onSuccess: (data) => {
       console.log('Options API response:', data);
       if (data?.explain && data?.data) {
@@ -59,43 +62,50 @@ export const OptionsPage = () => {
         
         console.log('Set recommend data:', { explain: "옵션에서 추천받은 코스", data: mapData });
       }
+      setIsLoading(false);
       navigation("/recommend");
     },
     onError: (error) => {
-      setIsLoading(false);
       console.error(error);
       alert("옵션 전송 실패");
-    }
+    },
+    onSettled: () => {
+      setIsLoading(false);
+    },
   });
+  const computeIsTimeValid = (start: Date, end: Date) => {
+    const baseDate = new Date();
+    const startTimeOnly = new Date(baseDate);
+    startTimeOnly.setHours(start.getHours(), start.getMinutes(), 0, 0);
+
+    const endTimeOnly = new Date(baseDate);
+    endTimeOnly.setHours(end.getHours(), end.getMinutes(), 0, 0);
+
+    return startTimeOnly < endTimeOnly;
+  };
+
+  useEffect(() => {
+    const isValid = computeIsTimeValid(startTime, endTime);
+    setTimeError(isValid ? "" : "시작 시간은 종료 시간보다 빨라야 합니다.");
+  }, [startTime, endTime]);
+
   const validateTime = () => {
-    const startTimeOnly = new Date();
-    startTimeOnly.setHours(startTime.getHours(), startTime.getMinutes(), 0, 0);
-    
-    const endTimeOnly = new Date();
-    endTimeOnly.setHours(endTime.getHours(), endTime.getMinutes(), 0, 0);
-    
-    if (startTimeOnly >= endTimeOnly) {
+    const isValid = computeIsTimeValid(startTime, endTime);
+    if (!isValid) {
       setTimeError("시작 시간은 종료 시간보다 빨라야 합니다.");
-      return false;
     }
-    
-    setTimeError("");
-    return true;
+    return isValid;
   };
 
   const handleStartTimeChange = (newStartTime: Date | null) => {
     if (newStartTime) {
       setStartTime(newStartTime);
-      // 시작 시간 변경 시 검증
-      setTimeout(() => validateTime(), 0);
     }
   };
 
   const handleEndTimeChange = (newEndTime: Date | null) => {
     if (newEndTime) {
       setEndTime(newEndTime);
-      // 종료 시간 변경 시 검증
-      setTimeout(() => validateTime(), 0);
     }
   };
 
@@ -104,14 +114,17 @@ export const OptionsPage = () => {
       return;
     }
     
-    setIsLoading(true);
     console.log({ user_choice: { start: [start.lat, start.lng], condition, drink_intent, food, startTime, endTime } });
     mutation.mutate({ user_choice: { start: [start.lat, start.lng], condition, drink_intent, food, startTime, endTime } });
   };
 
   return (
     <LocalizationProvider dateAdapter={AdapterDateFns}>
-      {isLoading && <Spinner />}
+      {isLoading && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm">
+          <Spinner />
+        </div>
+      )}
       <div className="flex flex-col gap-8 items-center justify-start py-6 md:py-10 bg-primary/5 w-full h-full min-h-screen px-4 lg:px-8 xl:px-12 2xl:px-20">
         <div className="w-full max-w-[1200px] mx-auto flex flex-col gap-6">
           {/* 헤더 섹션 */}
@@ -263,14 +276,14 @@ export const OptionsPage = () => {
               <button
                 type="button"
                 className={`bg-primary text-white w-[160px] h-[48px] text-center py-2 border border-primary/10 hover:bg-primary/90 transition-all duration-300 disabled:opacity-50 rounded-lg font-medium ${
-                  timeError ? "opacity-50 cursor-not-allowed" : ""
+                  timeError || isLoading ? "opacity-50 cursor-not-allowed" : ""
                 }`}
                 onClick={() => {
-                  if (!timeError) {
+                  if (!timeError && !isLoading) {
                     handleSubmit();
                   }
                 }}
-                disabled={!!timeError}
+                disabled={!!timeError || isLoading}
               >
                 {mutation.isPending ? "추천 받는 중..." : "추천 받기"}
               </button>
