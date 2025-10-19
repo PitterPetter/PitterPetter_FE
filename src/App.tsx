@@ -53,7 +53,7 @@ function App() {
                 <Route path="enter" element={<EnterCoupleRoom />} />
               </Route>
             </Route>
-            <Route element={<PrivateRoute permissionLevel="LOCK_REQUIRED" />}>
+            <Route element={<PrivateRoute permissionLevel="ROCK_REQUIRED" />}>
               <Route path="district" element={<DistrictModal />}>
                 <Route path="choose" element={<DistrictChoose />} />
                 <Route path="check" element={<DistrictCheck />} />
