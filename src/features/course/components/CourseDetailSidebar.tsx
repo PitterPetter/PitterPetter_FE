@@ -123,8 +123,7 @@ export const CourseDetailSidebar = () => {
               </div>
               <div className="flex flex-col gap-2 pl-[44px] w-full">
                 <p className="text-sm text-[#1F2937] font-semibold uppercase tracking-wide">{stop.poi.category}</p>
-                <p className="text-sm text-gray-500">이유 또는 설명을 넣는 곳인데, 추천 이유가 들어갈 자리입니다.</p>
-                <p className="text-sm text-gray-400">예상 시간 60분 · 이동 거리 정보가 들어갑니다.</p>
+                <p className="text-sm text-gray-500">{stop.poi.mood_tag}</p>
               </div>
               {index !== sortedStops.length - 1 && <div className="w-full h-px bg-gray-200" />}
             </div>

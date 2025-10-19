@@ -8,6 +8,7 @@ import { useMutation } from '@tanstack/react-query';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { useRecommendStore } from '../../../shared/store/recommend.store';
+import { Spinner } from '../../../shared/ui/spinner';
 
 export const SessionCoursesModal: React.FC<SessionCoursesModalProps> = ({ isOpen, onClose, onSuccess }) => {
   const navigate = useNavigate();
@@ -46,6 +47,9 @@ export const SessionCoursesModal: React.FC<SessionCoursesModalProps> = ({ isOpen
   };
 
   const handleRerecommend = () => {
+    if (rerecommendCourseMutation.isPending) {
+      return;
+    }
     // 옵션 데이터 로드
     const optionData = loadOptionFromSession();
     
@@ -65,11 +69,32 @@ export const SessionCoursesModal: React.FC<SessionCoursesModalProps> = ({ isOpen
 
   if (!isOpen) return null;
 
+  const handleBackdropClick = () => {
+    if (rerecommendCourseMutation.isPending) {
+      return;
+    }
+    onClose();
+  };
+  const handleCloseClick = () => {
+    if (rerecommendCourseMutation.isPending) {
+      return;
+    }
+    onClose();
+  };
+
   return (
     <div 
       className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      onClick={onClose}
+      onClick={handleBackdropClick}
     >
+      {rerecommendCourseMutation.isPending && (
+        <div
+          className="fixed inset-0 z-[60] flex items-center justify-center bg-white/70 backdrop-blur-sm"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <Spinner />
+        </div>
+      )}
       <div 
         className="bg-white rounded-lg shadow-xl max-w-2xl w-full mx-4 max-h-[80vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
@@ -80,7 +105,7 @@ export const SessionCoursesModal: React.FC<SessionCoursesModalProps> = ({ isOpen
             <h2 className="text-xl font-semibold text-gray-800">Rerecommend</h2>
           </div>
           <button
-            onClick={onClose}
+            onClick={handleCloseClick}
             className="text-gray-400 hover:text-gray-600 text-2xl font-bold"
           >
             ×
@@ -138,8 +163,12 @@ export const SessionCoursesModal: React.FC<SessionCoursesModalProps> = ({ isOpen
             <p className="text-sm text-gray-600">
               재추천 받을 장소를 선택해주세요
             </p>
-            <button className="bg-[#662B2B] text-white w-full py-3 rounded-md" onClick={handleRerecommend}>
-              재추천 받기
+            <button
+              className="bg-[#662B2B] text-white w-full py-3 rounded-md disabled:opacity-60 disabled:cursor-not-allowed"
+              onClick={handleRerecommend}
+              disabled={rerecommendCourseMutation.isPending}
+            >
+              {rerecommendCourseMutation.isPending ? "재추천 중..." : "재추천 받기"}
             </button>
           </div>
         </div>
