@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
 import { Spinner } from "../../shared/ui/spinner";
 
-const PrivateRoute = ({ permissionLevel }: { permissionLevel: "ONBOARDING_REQUIRED" | "COUPLE_MATCHING_REQUIRED" | "LOCK_REQUIRED" | "COMPLETED" }) => {
+const PrivateRoute = ({ permissionLevel }: { permissionLevel: "ONBOARDING_REQUIRED" | "COUPLE_MATCHING_REQUIRED" | "ROCK_REQUIRED" | "COMPLETED" }) => {
   const storedPermissionLevel = useAuthStore((state) => state.permissionLevel);
   const setPermissionLevel = useAuthStore((state) => state.setPermissionLevel);
   const token = tokenStore.getAccessToken();
@@ -38,9 +38,9 @@ const PrivateRoute = ({ permissionLevel }: { permissionLevel: "ONBOARDING_REQUIR
       console.log("[PrivateRoute] User status:", userStatus);
       
       // permissionLevel 설정 (현재 저장된 값과 다를 때만)
-      if (["ONBOARDING_REQUIRED", "COUPLE_MATCHING_REQUIRED", "LOCK_REQUIRED", "COMPLETED"].includes(userStatus) && 
+      if (["ONBOARDING_REQUIRED", "COUPLE_MATCHING_REQUIRED", "ROCK_REQUIRED", "COMPLETED"].includes(userStatus) && 
           storedPermissionLevel !== userStatus) {
-        setPermissionLevel(userStatus as "ONBOARDING_REQUIRED" | "COUPLE_MATCHING_REQUIRED" | "LOCK_REQUIRED" | "COMPLETED");
+        setPermissionLevel(userStatus as "ONBOARDING_REQUIRED" | "COUPLE_MATCHING_REQUIRED" | "ROCK_REQUIRED" | "COMPLETED");
         
         // 상태가 바뀌었을 때 적절한 페이지로 리다이렉트
         let targetPath = "";
@@ -48,7 +48,7 @@ const PrivateRoute = ({ permissionLevel }: { permissionLevel: "ONBOARDING_REQUIR
           targetPath = "/onboarding";
         } else if (userStatus === "COUPLE_MATCHING_REQUIRED") {
           targetPath = "/coupleroom";
-        } else if (userStatus === "LOCK_REQUIRED") {
+        } else if (userStatus === "ROCK_REQUIRED") {
           targetPath = "/district/choose";
         } else if (userStatus === "COMPLETED") {
           targetPath = "/home";
@@ -95,21 +95,8 @@ const PrivateRoute = ({ permissionLevel }: { permissionLevel: "ONBOARDING_REQUIR
     const isAuthenticated = data.status === permissionLevel;
     
     if (!isAuthenticated) {
-      let targetPath = "";
-      if (data.status === "ONBOARDING_REQUIRED") {
-        targetPath = "/onboarding";
-      } else if (data.status === "COUPLE_MATCHING_REQUIRED") {
-        targetPath = "/coupleroom";
-      } else if (data.status === "LOCK_REQUIRED") {
-        targetPath = "/district/choose";
-      } else if (data.status === "COMPLETED") {
-        targetPath = "/home";
-      } else {
-        targetPath = "/login";
-      }
-      
-      console.log("[PrivateRoute] Permission mismatch, redirecting to:", targetPath);
-      return <Navigate to={targetPath} replace />;
+      console.log("[PrivateRoute] Permission denied, redirecting to login");
+      return <Navigate to="/login" replace />;
     }
   }
 

@@ -63,7 +63,7 @@ export default function AuthBootstrap() {
       targetPath = "/coupleroom";
     } else if (status === "COMPLETED") {
       targetPath = "/home";
-    } else if (status === "LOCK_REQUIRED") {
+    } else if (status === "ROCK_REQUIRED") {
       targetPath = "/district/choose";
     }
      else {
