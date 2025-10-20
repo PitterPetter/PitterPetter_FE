@@ -1,7 +1,6 @@
 import './App.css';
 import { LoginPage } from './pages/LoginPage';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
-// import { AuthInitializer } from './app/providers/AuthInitializer';
 import { MainPage } from './pages/MainPage';
 import { HeaderLayout } from './app/layouts';
 import { OptionsPage } from './pages/OptionsPage';
@@ -24,7 +23,6 @@ import { UpdateDiaryPage } from './pages/DiaryPage/UpdateDiaryPage';
 import { DistrictCheck } from './pages/DistrictPage/DistrictCheck';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import DataBootstrap from './app/providers/DataBootstrap';
 import PrivateRoute from './app/providers/PrivateRoute';
 
 function App() {
@@ -32,7 +30,6 @@ function App() {
   return (
     <BrowserRouter>
       <AuthBootstrap />
-      <DataBootstrap />
       <Routes>
         {/* 기본 경로를 로그인 페이지로 리다이렉트 */}
         <Route path="/" element={<Navigate to="/login" replace />} />
@@ -59,7 +56,7 @@ function App() {
                 <Route path="check" element={<DistrictCheck />} />
               </Route>
             </Route>
-          {/* <Route element={<PrivateRoute permissionLevel="COMPLETED" />}> */}
+          <Route element={<PrivateRoute permissionLevel="COMPLETED" />}>
             <Route path="/home" element={<MainPage />} />
               <Route path="/options" element={<OptionsPage />} />
               {/* 코스 추천 페이지 */}
@@ -86,7 +83,7 @@ function App() {
             <Route path="/diary/update/:id" element={<UpdateDiaryPage />} />
             <Route path="/diary/:id" element={<DiaryDetailPage />} />
           </Route>
-        {/* </Route> */}
+        </Route>
       </Routes>
       <ToastContainer 
         position="top-right"

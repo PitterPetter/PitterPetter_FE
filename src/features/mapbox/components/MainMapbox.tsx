@@ -70,8 +70,8 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
       locked: Boolean(
         district.locked ??
           district.isLocked ??
-          district?.status === 'LOCKED' ??
-          district?.lockedAt
+          district?.lockedAt ??
+          (district?.status === 'LOCKED')
       ),
       description: district.description,
       lat: typeof district.lat === 'number' ? district.lat : undefined,
