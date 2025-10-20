@@ -66,12 +66,15 @@ export const CourseListPage = () => {
     <div className="w-full h-full flex flex-col items-center justify-start py-10 bg-primary/5">
       <div className="flex flex-col gap-4 p-4 pt-0 w-[900px]">
         <div className="h-full border-gray-300 border rounded-2xl p-4 pb-6">
-          <div className="flex gap-2 justify-between py-4">
-            <div className="w-full text-2xl pb-3">
-              코스
+          <div className="flex flex-col gap-0 justify-between pt-4 pb-6 border-b border-gray-300 mb-6">
+            <div className="w-full text-2xl font-semibold pb-3">
+              추억의 코스
             </div>
+            <p className="text-sm text-gray-500">
+              그동안 받은 추천 코스를 모아봤어요.
+            </p>
           </div>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-4 gap-4">
             {isLoading ? (
               <div className="col-span-3 text-center py-8">
                 <Spinner />
