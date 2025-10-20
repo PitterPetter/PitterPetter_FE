@@ -13,9 +13,9 @@ import { districtApi } from '../../district/api';
 import { useQuery } from '@tanstack/react-query';
 
 const MapboxMainPage: React.FC<MapboxProps> = ({
-  center = [126.9807454596028, 37.553551790177854],
-  zoom = 15.6,
-  pitch = 72
+  center = [126.9839454596028, 37.552351790177854],
+  zoom = 16,
+  pitch = 62
 }) => {
   const mapContainerRef = useRef<MapRefs['container']>(null);
   const mapRef = useRef<MapRefs['map']>(null);
@@ -308,7 +308,7 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
       center,
       zoom,
       pitch,
-      bearing: 30,
+      bearing: 340,
       minZoom: 13,
       maxZoom: 18
     });
@@ -465,6 +465,8 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
         map.easeTo({
           pitch: 0,
           center: [e.lngLat.lng, e.lngLat.lat],
+          zoom: 17,
+          bearing: 0,
           duration: 1000
         });
       });
@@ -488,7 +490,6 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
 
   return (
     <div style={{ 
-      position: 'relative', 
       height: '100vh', 
       width: '100vw', 
       maxWidth: isOpen ? 'w-100vw md:calc(100vw - 256px)' : 'calc(100vw - 64px)',
