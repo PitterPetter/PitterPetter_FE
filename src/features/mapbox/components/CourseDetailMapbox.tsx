@@ -251,11 +251,7 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
     .map((r, i) => (r.isSuccess ? { seg: segments[i], ...r.data } : null))
     .filter(Boolean) as Array<{ seg: (typeof segments)[number]; distance: number; duration: number }>;
 
-  const totalDistance = ok.reduce((s, x) => s + x.distance, 0);
-  const totalDuration = ok.reduce((s, x) => s + x.duration, 0);
-
   const isAnyPending = results.some(r => r.isPending);
-  const isAnyFetching = results.some(r => r.isFetching);
 
   return (
     <div style={{ 
@@ -279,7 +275,7 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
       {(!isMapReady || isAnyPending) && (
         <div className="pointer-events-none absolute inset-0 bg-white z-20 flex items-center justify-center">
           <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-300 border-t-transparent" />
-          <span className="ml-3 text-gray-700 font-medium">경로 계산 중…</span>
+          <span className="ml-3 text-gray-700 font-medium">경로 불러오는 중…</span>
         </div>
       )}
     </div>
@@ -299,7 +295,7 @@ function lineString(a: [number, number], b: [number, number]): GeoJSON.LineStrin
 function addSeqMarker(map: mapboxgl.Map, stop: InputData) {
   const el = document.createElement('div');
   el.style.cssText = `
-    background-color: #ff4444;
+    background-color: #93000A;
     color: white;
     width: 30px; height: 30px;
     border-radius: 50%; border: 3px solid white;
@@ -333,7 +329,7 @@ function upsertLine(
   } else {
     src.setData(data);
     if (solid) {
-      map.setPaintProperty(id, 'line-color', '#3b82f6');
+      map.setPaintProperty(id, 'line-color', '#662B2B');
       map.setPaintProperty(id, 'line-width', 4);
       map.setPaintProperty(id, 'line-dasharray', undefined as any);
       map.setPaintProperty(id, 'line-opacity', 0.9);
@@ -344,10 +340,4 @@ function upsertLine(
       map.setPaintProperty(id, 'line-opacity', 0.8);
     }
   }
-}
-function formatDistance(m: number) {
-  return m >= 1000 ? `${(m / 1000).toFixed(1)}km` : `${Math.round(m)}m`;
-}
-function formatDuration(sec: number) {
-  return `${Math.round(sec / 60)}분`;
 }

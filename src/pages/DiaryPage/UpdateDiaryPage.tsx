@@ -209,29 +209,29 @@ export const UpdateDiaryPage = () => {
   }
 
   return (
-    <div className="w-full h-full flex flex-col gap-6 items-center justify-start py-10 bg-primary/5">
+    <div className="w-full h-full flex flex-col gap-6 items-center justify-start py-4 md:py-10 bg-primary/5 px-4">
       {/* 코스 연결 */}
       <ConnectCourse />
 
         {/* 게시물 작성 */}
-        <div className="h-full rounded-2xl p-4 pb-6 w-[800px] bg-white">
+        <div className="h-full rounded-2xl p-2 md:p-4 pb-6 w-full max-w-[800px] bg-white">
           <WriteDiary onImageSelect={handleImageSelect} onExistingImageRemove={handleExistingImageRemove} />
-        <div className="flex justify-end gap-4 p-4">
+        <div className="flex justify-end gap-2 md:gap-4 p-2 md:p-4">
           <div
             onClick={handleCancel}
-            className="flex items-center justify-center w-[120px] h-[45px] bg-third/20 text-white rounded-md cursor-pointer border border-primary/10 hover:bg-third/40 transition-all duration-300"
+            className="flex items-center justify-center w-[100px] md:w-[120px] h-[40px] md:h-[45px] bg-third/20 text-white text-sm md:text-base rounded-md cursor-pointer border border-primary/10 hover:bg-third/40 transition-all duration-300"
           >
             취소
           </div>
           {/* <div
             onClick={handleSaveAsDraft}
-            className="flex items-center justify-center w-[120px] h-[45px] bg-third/40 text-white rounded-md cursor-pointer border border-primary/10 hover:bg-third/60 transition-all duration-300"
+            className="flex items-center justify-center w-[100px] md:w-[120px] h-[40px] md:h-[45px] bg-third/40 text-white text-sm md:text-base rounded-md cursor-pointer border border-primary/10 hover:bg-third/60 transition-all duration-300"
           >
             임시저장
           </div> */}
           <div
             onClick={handleSave}
-            className="flex items-center justify-center w-[120px] h-[45px] bg-third/60 text-white rounded-md cursor-pointer border border-primary/10 hover:bg-third/80 transition-all duration-300"
+            className="flex items-center justify-center w-[100px] md:w-[120px] h-[40px] md:h-[45px] bg-third/60 text-white text-sm md:text-base rounded-md cursor-pointer border border-primary/10 hover:bg-third/80 transition-all duration-300"
           >
             저장하기
           </div>

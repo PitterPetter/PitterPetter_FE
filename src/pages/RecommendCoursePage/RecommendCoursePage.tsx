@@ -13,6 +13,7 @@ import { toast } from 'react-toastify';
 import { saveRecommendToSession } from "../../features/recommend/utils/sessionStorage";
 import { COURSE_STORAGE_KEY } from "../../features/course/utils/normalizeCourse";
 import { RecommendStop } from "./type";
+import { Link } from "react-router-dom";
 import {
   RecommendCategory,
   RecommendCoursePayload,
@@ -135,17 +136,12 @@ export const RecommendCoursePage = () => {
     const handlePlaceClick = useCallback((place: RecommendStop) => {
       setSelectedPlace(place);
       setIsPlaceModalOpen(true);
-      let lat = place.lat || 0;
-      let lng = place.lng || 0;
-      if (typeof lat === "number" || typeof lng === "number") {
-        lng = lng + 0.001;
-      }
       setStoreSelectedPlace({
         seq: place.seq,
         name: place.name,
         category: place.category,
-        lat: lat,
-        lng: lng,
+        lat: place.lat || 0,
+        lng: place.lng || 0,
         indoor: place.indoor || false,
         price_level: place.price_level,
         alcohol: typeof place.alcohol === 'number' ? place.alcohol : (place.alcohol ? 1 : 0),
@@ -315,64 +311,6 @@ export const RecommendCoursePage = () => {
     <div className="flex absolute left-0 top-0 w-full h-full">
       <RecommendMapbox />
 
-      {/* 루트 정보 패널 */}
-      {(ok.length > 0 || isAnyPending || isAnyFetching) && (
-        <div className={`absolute top-4 ${isOpen ? "left-[270px]" : "left-[80px]"} bg-white/95 rounded-lg shadow-lg p-4 max-w-sm z-30 min-w-[280px]`}>
-          <h3 className="font-bold text-lg mb-3 text-gray-800 flex items-center">
-            코스 정보
-            {isAnyFetching && (
-              <span className="ml-2 text-xs px-2 py-0.5 rounded bg-blue-50 text-blue-600">갱신 중</span>
-            )}
-          </h3>
-
-          {/* 스켈레톤 */}
-          {ok.length === 0 && (isAnyPending || isAnyFetching) && (
-            <div className="space-y-2 mb-4">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="flex justify-between items-center text-sm">
-                  <div className="flex-1">
-                    <div className="h-4 w-40 bg-gray-200 rounded animate-pulse" />
-                  </div>
-                  <div className="text-right ml-2">
-                    <div className="h-4 w-16 bg-gray-200 rounded mb-1 animate-pulse" />
-                    <div className="h-3 w-12 bg-gray-200 rounded animate-pulse" />
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* 세그먼트 리스트 */}
-          {ok.length > 0 && (
-            <div className="space-y-2 mb-4">
-              {ok.map((s, idx) => (
-                <div key={idx} className="flex justify-between items-center text-sm">
-                  <div className="flex-1 text-gray-600">
-                    {s.seg.fromName} → {s.seg.toName}
-                  </div>
-                  <div className="text-right ml-2">
-                    <div className="font-medium text-blue-600">{formatDistance(s.distance)}</div>
-                    <div className="text-xs text-gray-500">{formatDuration(s.duration)}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {/* 총합 */}
-          <div className="border-t pt-3">
-            <div className="flex justify-between items-center">
-              <span className="font-semibold text-gray-800">총 거리:</span>
-              <span className="font-bold text-lg text-blue-600">{formatDistance(totalDistance)}</span>
-            </div>
-            <div className="flex justify-between items-center mt-1">
-              <span className="font-semibold text-gray-800">총 시간:</span>
-              <span className="font-bold text-lg text-green-600">{formatDuration(totalDuration)}</span>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* 사이드바 */}
       <div className="absolute h-full top-0 right-0 w-[460px] z-10">
         {stops.length > 0 ? (
@@ -396,7 +334,7 @@ export const RecommendCoursePage = () => {
                     onClick={() => handlePlaceClick(stop)}
                   >
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-[#662B2B] text-white rounded-full flex items-center justify-center text-sm font-semibold">
+                      <div className="min-w-8 min-h-8 bg-[#662B2B] text-white rounded-full flex items-center justify-center text-sm font-semibold">
                         {stop.seq}
                       </div>
                       <span className="text-[#662B2B] text-lg font-medium truncate">
@@ -441,24 +379,25 @@ export const RecommendCoursePage = () => {
               <div className="flex flex-col gap-2 p-4 z-20">
                 <div className="flex gap-2 w-full h-[50px] justify-between">
                   <div className="w-full bg-gray-200 rounded-md flex items-center justify-center text-sm font-medium hover:bg-gray-300 transition-colors cursor-pointer h-full min-h-[44px]" onClick={handleRerecommend}>
-                    Rerecommend
+                    재추천 받기
                   </div>
                 </div>
                 <div className="w-full bg-[#662B2B] text-white rounded-md flex items-center justify-center text-sm font-medium hover:bg-[#662B2B]/80 transition-colors cursor-pointer h-full min-h-[44px]" onClick={() => saveCourse()}>
-                  Save this course
+                  코스 저장하기
                 </div>
               </div>
           </div>
         ) : (
-          <div className="flex h-full items-center justify-center bg-white p-6 text-sm text-gray-500">
+          <div className="flex h-full items-center justify-center bg-white p-6 text-sm text-gray-500 flex-col">
             추천 코스 데이터가 없습니다. 홈에서 추천을 받아보세요!
+            <Link to="/home" className="text-[#93000A] hover:text-[#93000A]/80 transition-all duration-300 underline">추천 코스 받으러 가기</Link>
           </div>
         )}
       </div>
 
 
       {/* 루트 정보 패널 */}
-      {(ok.length > 0 || isAnyPending || isAnyFetching) && (
+      {(ok.length > 0 && isMapReady) && (
         <div className={`absolute top-4 ${isOpen ? "left-[270px]" : "left-[80px]"} bg-white/95 rounded-lg shadow-lg p-4 max-w-sm z-30 min-w-[280px]`}>
           <h3 className="font-bold text-lg mb-3 text-gray-800 flex items-center">
             코스 정보
@@ -493,7 +432,7 @@ export const RecommendCoursePage = () => {
                     {s.seg.fromName} → {s.seg.toName}
                   </div>
                   <div className="text-right ml-2">
-                    <div className="font-medium text-blue-600">{formatDistance(s.distance)}</div>
+                    <div className="font-medium text-[#93000A]">{formatDistance(s.distance)}</div>
                     <div className="text-xs text-gray-500">{formatDuration(s.duration)}</div>
                   </div>
                 </div>
@@ -505,11 +444,11 @@ export const RecommendCoursePage = () => {
           <div className="border-t pt-3">
             <div className="flex justify-between items-center">
               <span className="font-semibold text-gray-800">총 거리:</span>
-              <span className="font-bold text-lg text-blue-600">{formatDistance(totalDistance)}</span>
+              <span className="font-bold text-lg text-[#93000A]">{formatDistance(totalDistance)}</span>
             </div>
             <div className="flex justify-between items-center mt-1">
               <span className="font-semibold text-gray-800">총 시간:</span>
-              <span className="font-bold text-lg text-green-600">{formatDuration(totalDuration)}</span>
+              <span className="font-bold text-lg text-[#93000A]">{formatDuration(totalDuration)}</span>
             </div>
           </div>
         </div>

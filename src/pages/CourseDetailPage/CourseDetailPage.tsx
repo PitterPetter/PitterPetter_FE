@@ -133,7 +133,7 @@ export const CourseDetailPage = () => {
 
 
       {/* 루트 정보 패널 */}
-      {(ok.length > 0 || isAnyPending || isAnyFetching) && (
+      {(ok.length > 0 && isMapReady) && (
         <div className={`absolute top-4 ${isOpen ? "left-[270px]" : "left-[80px]"} bg-white/95 rounded-lg shadow-lg p-4 max-w-sm z-30 min-w-[280px]`}>
           <h3 className="font-bold text-lg mb-3 text-gray-800 flex items-center">
             코스 정보
@@ -168,7 +168,7 @@ export const CourseDetailPage = () => {
                     {s.seg.fromName} → {s.seg.toName}
                   </div>
                   <div className="text-right ml-2">
-                    <div className="font-medium text-blue-600">{formatDistance(s.distance)}</div>
+                    <div className="font-medium text-[#93000A]">{formatDistance(s.distance)}</div>
                     <div className="text-xs text-gray-500">{formatDuration(s.duration)}</div>
                   </div>
                 </div>
@@ -180,11 +180,11 @@ export const CourseDetailPage = () => {
           <div className="border-t pt-3">
             <div className="flex justify-between items-center">
               <span className="font-semibold text-gray-800">총 거리:</span>
-              <span className="font-bold text-lg text-blue-600">{formatDistance(totalDistance)}</span>
+              <span className="font-bold text-lg text-[#93000A]">{formatDistance(totalDistance)}</span>
             </div>
             <div className="flex justify-between items-center mt-1">
               <span className="font-semibold text-gray-800">총 시간:</span>
-              <span className="font-bold text-lg text-green-600">{formatDuration(totalDuration)}</span>
+              <span className="font-bold text-lg text-[#93000A]">{formatDuration(totalDuration)}</span>
             </div>
           </div>
         </div>

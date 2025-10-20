@@ -256,7 +256,7 @@ const MapboxRecommendPage: React.FC<MapboxProps> = ({
         !isNaN(selectedPlace.lng) && !isNaN(selectedPlace.lat)) {
       map.flyTo({
         center: [selectedPlace.lng, selectedPlace.lat],
-        zoom: 17,
+        zoom: 18,
         duration: 1000,
         essential: true
       });
@@ -361,7 +361,7 @@ function lineString(a: [number, number], b: [number, number]): GeoJSON.LineStrin
 function addSeqMarker(map: mapboxgl.Map, stop: InputData) {
   const el = document.createElement('div');
   el.style.cssText = `
-    background-color: #ff4444;
+    background-color: #93000A;
     color: white;
     width: 30px; height: 30px;
     border-radius: 50%; border: 3px solid white;
@@ -396,18 +396,18 @@ function upsertLine(
       source: id,
       layout: { 'line-join': 'round', 'line-cap': 'round' },
       paint: solid
-        ? { 'line-color': '#3b82f6', 'line-width': 4, 'line-opacity': 0.9 }
-        : { 'line-color': '#94a3b8', 'line-width': 3, 'line-dasharray': [2, 2], 'line-opacity': 0.8 }
+        ? { 'line-color': '#662B2B', 'line-width': 4, 'line-opacity': 0.9 }
+        : { 'line-color': '#662B2B', 'line-width': 3, 'line-dasharray': [2, 2], 'line-opacity': 0.8 }
     });
   } else {
     src.setData(data);
     if (solid) {
-      map.setPaintProperty(id, 'line-color', '#3b82f6');
+      map.setPaintProperty(id, 'line-color', '#662B2B');
       map.setPaintProperty(id, 'line-width', 4);
       map.setPaintProperty(id, 'line-dasharray', undefined as any);
       map.setPaintProperty(id, 'line-opacity', 0.9);
     } else {
-      map.setPaintProperty(id, 'line-color', '#94a3b8');
+      map.setPaintProperty(id, 'line-color', '#662B2B');
       map.setPaintProperty(id, 'line-width', 3);
       map.setPaintProperty(id, 'line-dasharray', [2, 2]);
       map.setPaintProperty(id, 'line-opacity', 0.8);
