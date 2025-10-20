@@ -60,7 +60,7 @@ export const MainPage = () => {
   }, [isMarkers]);
 
   return (
-    <div className="relative">
+    <div className="">
       <MainMapbox />
 
       <div className="absolute bottom-16 right-1/2 translate-x-1/2">

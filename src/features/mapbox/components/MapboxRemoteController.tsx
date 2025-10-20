@@ -63,7 +63,7 @@ const MapboxRemoteController: React.FC<MapboxRemoteControllerProps> = ({
   const controlButtonClass = "flex items-center justify-center gap-2 bg-white/95 text-primary text-sm px-3 py-2 rounded-xl shadow-lg hover:bg-white hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-primary/30 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 border border-primary/10 font-medium";
 
   return (
-    <div className="absolute bottom-6 left-6 z-20 flex flex-col gap-3 bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-white/20">
+    <div className="hidden xl:flex absolute bottom-6 left-6 z-20 flex flex-col gap-3 bg-white/90 backdrop-blur-md p-4 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.12)] border border-white/20">
       {/* 상단 컨트롤 버튼들 */}
       <div className="grid grid-cols-2 gap-2">
         <button

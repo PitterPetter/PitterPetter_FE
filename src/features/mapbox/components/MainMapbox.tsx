@@ -491,13 +491,13 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
       position: 'relative', 
       height: '100vh', 
       width: '100vw', 
-      maxWidth: isOpen ? 'calc(100vw - 256px)' : 'calc(100vw - 64px)',
+      maxWidth: isOpen ? 'w-100vw md:calc(100vw - 256px)' : 'calc(100vw - 64px)',
       overflow: 'hidden'
     }}>
       <div
         ref={mapContainerRef}
         id="map"
-        style={{ height: '110vh', width: isOpen ? 'calc(100vw - 256px)' : 'calc(100vw - 64px)' }}
+        style={{ height: '110vh', width: isOpen ? 'w-100vw md:calc(100vw - 256px)' : 'calc(100vw - 64px)' }}
       />
 
       <MapboxRemoteController 
