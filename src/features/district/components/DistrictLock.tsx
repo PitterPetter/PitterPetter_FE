@@ -15,8 +15,14 @@ export const DistrictLock = () => {
   const [selectedCity, setSelectedCity] = useState<string>('서울시');
   const [searchTerm, setSearchTerm] = useState('');
   const [unlockingDistricts, setUnlockingDistricts] = useState<Set<string>>(new Set());
-  const { ticket } = useMypageStore();
+  const [unlockedDistricts, setUnlockedDistricts] = useState<Set<string>>(() => {
+    // 초기 로드 시 sessionStorage에서 이미 해제된 지역들 가져오기
+    const stored = sessionStorage.getItem('unlockedDistricts');
+    return stored ? new Set(JSON.parse(stored)) : new Set();
+  });
+  const { ticket, setTicket } = useMypageStore();
   const queryClient = useQueryClient();
+
   // 지역구 잠금 상태 조회
   const { data: districtData, isLoading, isError, refetch } = useQuery<DistrictLockData | null>({
     queryKey: ['districtLock'],
@@ -31,36 +37,48 @@ export const DistrictLock = () => {
   });
 
   // 지역구 잠금 해제 mutation
-  const unlockDistrictMutation = useMutation({
-    mutationFn: (regions: string[]) => districtApi.rewardUnlockDistrict(regions),
-    onSuccess: (_, regions) => {
-      toast.success('지역구 잠금이 해제되었습니다!');
-      setUnlockingDistricts(prev => {
+  const unlockDistrict = (district: DistrictInfo) => {
+    // 이미 해제 중이거나 해제된 경우 무시
+    if (unlockingDistricts.has(district.name) || unlockedDistricts.has(district.name)) {
+      return;
+    }
+    
+    // 먼저 "해제 중..." 상태로 설정
+    setUnlockingDistricts(prev => new Set(prev).add(district.name));
+    
+    // 1초 후에 실제 해제 처리
+    setTimeout(() => {
+      // unlockedDistricts 상태 업데이트
+      setUnlockedDistricts(prev => {
         const newSet = new Set(prev);
-        regions.forEach(region => newSet.delete(region));
-        return newSet;
-      });
-      
-      // 홈 지도의 지역 잠금 상태 캐시 무효화
-      queryClient.invalidateQueries({ queryKey: ['districtLockup'] });
-      queryClient.invalidateQueries({ queryKey: ['districtLock'] });
-      
-      refetch();
-    },
-    onError: (_, regions) => {
-      toast.error('잠금 해제에 실패했습니다.');
-      setUnlockingDistricts(prev => {
-        const newSet = new Set(prev);
-        regions.forEach(region => newSet.delete(region));
-        return newSet;
-      });
-    },
-  });
+        newSet.add(district.name);
+        
+        // sessionStorage에 배열로 저장
+        sessionStorage.setItem('unlockedDistricts', JSON.stringify([...newSet]));
 
-  // 지역구 잠금 해제 핸들러
-  const handleUnlockDistrict = (district: DistrictInfo) => {
-    setUnlockingDistricts(prev => new Set(prev).add(district.id.toString()));
-    unlockDistrictMutation.mutate([district.id.toString()]);
+        setTicket(ticket - 1);
+        
+        return newSet;
+      });
+      
+      toast.success(`${district.name} 잠금이 해제되었습니다!`);
+      
+      // 커스텀 이벤트 발생시켜서 다른 컴포넌트에 알리기
+      window.dispatchEvent(new Event('sessionStorageChange'));
+      
+      // "해제 중..." 상태 제거
+      setUnlockingDistricts(prev => {
+        const newSet = new Set(prev);
+        newSet.delete(district.name);
+        return newSet;
+      });
+    }, 1000);
+  }
+
+  // 지역구가 잠금 해제되었는지 확인하는 헬퍼 함수
+  const isDistrictUnlocked = (district: DistrictInfo): boolean => {
+    // API에서 이미 해제된 것이거나, 로컬에서 해제한 것
+    return !district.locked || unlockedDistricts.has(district.name);
   };
 
   // 현재 선택된 도시 데이터
@@ -72,9 +90,11 @@ export const DistrictLock = () => {
       district.name.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .sort((a, b) => {
-      // 잠금 해제된 것(locked: false)이 먼저 오도록 정렬
-      if (a.locked === b.locked) return 0;
-      return a.locked ? 1 : -1;
+      // 잠금 해제된 것이 먼저 오도록 정렬
+      const aUnlocked = isDistrictUnlocked(a);
+      const bUnlocked = isDistrictUnlocked(b);
+      if (aUnlocked === bUnlocked) return 0;
+      return aUnlocked ? -1 : 1;
     }) || [];
 
   if (isLoading) return <Spinner />;
@@ -138,49 +158,52 @@ export const DistrictLock = () => {
 
       {/* 지역구 그리드 */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 max-h-96 overflow-y-auto">
-        {filteredDistricts.map((district) => (
-          <div
-            key={district.id}
-            className={`p-4 rounded-lg border transition-all duration-200 hover:shadow-md ${
-              district.locked
-                ? 'bg-orange-50 border-orange-200 hover:bg-orange-100'
-                : 'bg-green-50 border-green-200 hover:bg-green-100'
-            }`}
-          >
-            <div className="flex flex-col items-center text-center">
-              {/* 잠금 아이콘 */}
-              <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-3 ${
-                district.locked ? 'bg-orange-100' : 'bg-green-100'
-              }`}>
-                <FontAwesomeIcon
-                  icon={district.locked ? faLock : faUnlock}
-                  className={`w-6 h-6 ${
-                    district.locked ? 'text-orange-600' : 'text-green-600'
-                  }`}
-                />
-              </div>
-              
-              {/* 지역구 정보 */}
-              <h3 className="font-medium text-gray-800 mb-1">{district.name}</h3>
-              <p className="text-xs text-gray-600 mb-3 line-clamp-2">{district.description}</p>
-              
-              {/* 잠금 해제 버튼 */}
-              {district.locked ? (
-                <button
-                  onClick={() => {ticket > 0 ? handleUnlockDistrict(district) : toast.error('보유 키가 없습니다.');}}
-                  disabled={unlockingDistricts.has(district.id.toString())}
-                  className={`w-full px-3 py-2 rounded-md text-sm font-medium bg-primary text-white ${ticket > 0 && "hover:bg-primary/80"} disabled:opacity-50 transition-all duration-200`}
-                >
-                  {unlockingDistricts.has(district.id.toString()) ? '해제 중...' : '잠금 해제'}
-                </button>
-              ) : (
-                <div className="w-full px-3 py-2 rounded-md text-sm font-medium bg-green-100 text-green-700 text-center">
-                  잠금 해제됨
+        {filteredDistricts.map((district) => {
+          const isUnlocked = isDistrictUnlocked(district);
+          return (
+            <div
+              key={district.id}
+              className={`p-4 rounded-lg border transition-all duration-200 hover:shadow-md ${
+                isUnlocked
+                  ? 'bg-green-50 border-green-200 hover:bg-green-100'
+                  : 'bg-orange-50 border-orange-200 hover:bg-orange-100'
+              }`}
+            >
+              <div className="flex flex-col items-center text-center">
+                {/* 잠금 아이콘 */}
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-3 ${
+                  isUnlocked ? 'bg-green-100' : 'bg-orange-100'
+                }`}>
+                  <FontAwesomeIcon
+                    icon={isUnlocked ? faUnlock : faLock}
+                    className={`w-6 h-6 ${
+                      isUnlocked ? 'text-green-600' : 'text-orange-600'
+                    }`}
+                  />
                 </div>
-              )}
+                
+                {/* 지역구 정보 */}
+                <h3 className="font-medium text-gray-800 mb-1">{district.name}</h3>
+                <p className="text-xs text-gray-600 mb-3 line-clamp-2">{district.description}</p>
+                
+                {/* 잠금 해제 버튼 */}
+                {isUnlocked ? (
+                  <div className="w-full px-3 py-2 rounded-md text-sm font-medium bg-green-100 text-green-700 text-center">
+                    잠금 해제됨
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => {ticket > 0 ? unlockDistrict(district) : toast.error('보유 키가 없습니다.');}}
+                    disabled={unlockingDistricts.has(district.name)}
+                    className={`w-full px-3 py-2 rounded-md text-sm font-medium bg-primary text-white ${ticket > 0 && "hover:bg-primary/80"} disabled:opacity-50 transition-all duration-200`}
+                  >
+                    {unlockingDistricts.has(district.name) ? '해제 중...' : '잠금 해제'}
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {/* 빈 상태 */}

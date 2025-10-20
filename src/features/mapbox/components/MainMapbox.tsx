@@ -64,23 +64,51 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
 
     if (!seoul || !Array.isArray(seoul.districts)) return [];
 
-    return seoul.districts.map((district: any) => ({
-      id: district.id,
-      name: district.name,
-      locked: Boolean(
+    // sessionStorage에서 해제된 지역들 가져오기 (배열로 저장됨)
+    const storedUnlockedDistricts = sessionStorage.getItem('unlockedDistricts');
+    const unlockedDistrictNames = storedUnlockedDistricts ? new Set(JSON.parse(storedUnlockedDistricts)) : new Set();
+
+    return seoul.districts.map((district: any) => {
+      const isLocked = Boolean(
         district.locked ??
           district.isLocked ??
-          district?.status === 'LOCKED' ??
+          (district?.status === 'locked' || district?.status === 'LOCKED') ??
           district?.lockedAt
-      ),
-      description: district.description,
-      lat: typeof district.lat === 'number' ? district.lat : undefined,
-      lng: typeof district.lng === 'number' ? district.lng : undefined,
-    }));
+      );
+
+      // unlockedDistrictNames에 포함되어 있으면 잠금 해제
+      const isUnlocking = unlockedDistrictNames.has(district.name);
+
+      return {
+        id: district.id,
+        name: district.name,
+        locked: isUnlocking ? false : isLocked,
+        description: district.description,
+        lat: typeof district.lat === 'number' ? district.lat : undefined,
+        lng: typeof district.lng === 'number' ? district.lng : undefined,
+      };
+    });
   };
 
   useEffect(() => {
     districtDataRef.current = extractSeoulDistricts(districtLockData);
+  }, [districtLockData]);
+
+  // sessionStorage 변경 감지
+  useEffect(() => {
+    const handleStorageChange = () => {
+      districtDataRef.current = extractSeoulDistricts(districtLockData);
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    
+    // 같은 탭에서의 sessionStorage 변경을 감지하기 위한 커스텀 이벤트
+    window.addEventListener('sessionStorageChange', handleStorageChange);
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('sessionStorageChange', handleStorageChange);
+    };
   }, [districtLockData]);
 
   // districtLockMock 데이터 로드
