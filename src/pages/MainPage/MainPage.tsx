@@ -63,8 +63,7 @@ export const MainPage = () => {
     <div className="">
       <MainMapbox />
 
-      <div className="absolute bottom-16 right-1/2 translate-x-1/2">
-
+      <div className="absolute bottom-16 right-[50vw] translate-x-[50%] flex flex-col items-center">
       {selectedDistrict && (
             <div className="flex flex-col items-center gap-1 mb-2">
               <span className="text-sm font-semibold text-gray-800">
@@ -84,7 +83,7 @@ export const MainPage = () => {
           type="button"
           onClick={handleRecommend}
           disabled={isRecommendDisabled}
-          className={`flex flex-col items-center justify-center active:scale-95 transition-all duration-150 rounded-lg w-48 h-12 text-white text-lg text-center shadow-md ${isRecommendDisabled ? "cursor-not-allowed bg-primary/20" : "bg-primary hover:bg-primary"}`}
+          className={`flex flex-col items-center justify-center active:scale-95 transition-all duration-150 rounded-lg w-48 h-12 text-white text-lg text-center shadow-md ${isRecommendDisabled ? "cursor-not-allowed bg-primary/20" : "bg-third hover:bg-third/90"}`}
           title={(() => {
             if (!isMarkers) return "지도를 클릭해 시작점을 먼저 선택하세요";
             if (isOutsideSeoul) return "서울 내부의 지점을 선택해주세요";

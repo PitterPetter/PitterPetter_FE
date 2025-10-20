@@ -137,22 +137,25 @@ export const CreateDiaryPage = () => {
   };
 
   return (
-    <div className="w-full h-full flex flex-col gap-6 items-center justify-start py-10 bg-primary/5">
-      {/* 코스 연결 */}
-      <ConnectCourse />
-
-      {/* 리뷰 */}
-      <div className="h-full rounded-2xl p-4 pb-6 w-[800px] bg-white">
-        <Review />
+    <div className="w-full h-full flex flex-col justfiy-center items-center 2xl:flex-row gap-4 md:gap-6 items-center justify-center py-4 md:py-10 bg-primary/5 px-4">
+      <div className="w-full h-full 2xl:max-w-[400px] flex flex-col gap-4 md:gap-6 items-center justify-start">
+        {/* 코스 연결 */}
+        <div className="h-full max-h-[400px] rounded-2xl p-2 md:p-4 pb-6 w-full max-w-[800px] bg-white">
+          <ConnectCourse />
+        </div>
+        {/* 리뷰 */}
+        <div className="h-full max-h-[240px] rounded-2xl p-2 md:p-4 pb-6 w-full max-w-[800px] bg-white">
+          <Review />
+        </div>
       </div>
 
       {/* 게시물 작성 */}
-      <div className="h-full rounded-2xl p-4 pb-6 w-[800px] bg-white">
+      <div className="h-full rounded-2xl p-2 md:p-4 pb-6 w-full max-w-[800px] bg-white">
         <WriteDiary />
-        <div className="flex justify-end gap-4 p-4">
+        <div className="flex justify-end gap-2 md:gap-4 p-2 md:p-4">
           <button
             onClick={handleCancel}
-            className="flex items-center justify-center w-[120px] h-[45px] bg-third/20 text-white rounded-md cursor-pointer border border-primary/10 hover:bg-third/40 transition-all duration-300"
+            className="flex items-center justify-center w-[100px] md:w-[120px] h-[40px] md:h-[45px] bg-third/20 text-white text-sm md:text-base rounded-md cursor-pointer border border-primary/10 hover:bg-third/40 transition-all duration-300"
             type="button"
           >
             취소
@@ -160,7 +163,7 @@ export const CreateDiaryPage = () => {
           <button
             onClick={handleSave}
             disabled={isPending}
-            className="flex items-center justify-center w-[120px] h-[45px] bg-third/60 text-white rounded-md cursor-pointer border border-primary/10 hover:bg-third/80 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
+            className="flex items-center justify-center w-[100px] md:w-[120px] h-[40px] md:h-[45px] bg-third/60 text-white text-sm md:text-base rounded-md cursor-pointer border border-primary/10 hover:bg-third/80 transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
             type="button"
           >
             {isPending ? "저장 중…" : "저장하기"}
