@@ -40,14 +40,6 @@ export const MainPage = () => {
     }
   }, [location.pathname]);
   
-  // 토큰 없으면 /login 으로 리다이렉트
-  // useEffect(() => {
-  //   const token = sessionStorage.getItem("accessToken");
-  //   if (!token) {
-  //     navigate("/login", { replace: true });
-  //   }
-  // }, [navigate]);
-
   useEffect(() => {
     if (!clicked) return;
     const id = requestAnimationFrame(() => navigate("/options"));
