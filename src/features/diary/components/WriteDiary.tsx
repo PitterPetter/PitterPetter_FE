@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { ImageUpload, MarkdownEditor } from '../../../shared/ui';
 import { useDiaryStore } from '../../../shared/store/diary.store';
 
@@ -8,10 +7,9 @@ interface WriteDiaryProps {
 }
 
 export const WriteDiary = ({ onImageSelect, onExistingImageRemove }: WriteDiaryProps) => {
-  const { diaryTitle, setDiaryTitle, diaryContent, setDiaryContent, diaryImage, setDiaryImage, existingImageUrl } = useDiaryStore();
+  const { diaryTitle, setDiaryTitle, diaryContent, setDiaryContent, setDiaryImage, existingImageUrl } = useDiaryStore();
 
   const handleImageSelect = (file: File | null) => {
-    console.log('Selected file:', file);
     setDiaryImage(file);
     // 외부에서 전달된 onImageSelect 콜백 호출
     if (onImageSelect) {

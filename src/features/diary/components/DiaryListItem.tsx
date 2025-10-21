@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { Diary } from "../types";
 
 export const DiaryListItem = (item: Diary) => {
-  console.log(item);
   const navigate = useNavigate();
   return (
     <div className="relative flex flex-col gap-2 h-[320px] border-gray-300 border rounded-[20px] pb-6 cursor-pointer group"
