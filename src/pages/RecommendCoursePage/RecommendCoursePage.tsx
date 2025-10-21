@@ -3,7 +3,7 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { RecommendMapbox } from "../../features/mapbox";
 import { useRecommendStore } from "../../shared/store/recommend.store";
 import { useCallback, useMemo, useState, useEffect } from "react";
-import { PlaceDetailModal, SessionCoursesModal } from "../../features/course";
+import { SessionCoursesModal } from "../../features/course";
 import { useQueries, useMutation, useQueryClient } from '@tanstack/react-query';
 import { fetchRoute, routeQueryKey } from '../../shared/api/routes.api';
 import { useUIStore } from '../../shared/store/ui.store';
@@ -127,7 +127,6 @@ export const RecommendCoursePage = () => {
   }, []);
 
   const handleRerecommendSuccess = useCallback((data: any) => {
-    console.log('재추천 성공 데이터:', data);
     saveRecommendToSession(data.explain, data.data);
     setRecommend?.(data);
   }, [setRecommend]);
@@ -153,14 +152,7 @@ export const RecommendCoursePage = () => {
       });
       navigate(`/recommend/${place.id || place.seq}`);
     }, [navigate, setStoreSelectedPlace]);
-
-  const handleCloseModal = useCallback(() => {
-    setIsPlaceModalOpen(false);
-    setSelectedPlace(null);
-    setStoreSelectedPlace(null);
-    navigate("/recommend");
-  }, [navigate, setStoreSelectedPlace]);
-
+    
   // 세그먼트 목록 생성
   const segments = useMemo(() => {
     const arr: {
@@ -224,7 +216,6 @@ export const RecommendCoursePage = () => {
   const saveCourseMutation = useMutation({
     mutationFn: saveCourseApi,
     onSuccess: async (data) => {
-      console.log(data);
       try {
         if (typeof window !== "undefined") {
           sessionStorage.removeItem(COURSE_STORAGE_KEY);
@@ -239,7 +230,6 @@ export const RecommendCoursePage = () => {
       // 코스 저장 성공 후 티켓 추가 API 호출
       try {
         await postTicketApi({});
-        console.log("티켓이 추가되었습니다.");
       } catch (error) {
         console.error("티켓 추가에 실패했습니다:", error);
         // 티켓 추가 실패해도 코스 저장은 성공했으므로 계속 진행
@@ -289,7 +279,6 @@ export const RecommendCoursePage = () => {
           };
         }),
     };
-    console.log("payload:", payload);
     saveCourseMutation.mutate(payload);
   };
 
