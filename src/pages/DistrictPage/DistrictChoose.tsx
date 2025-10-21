@@ -21,9 +21,7 @@ export const DistrictChoose = () => {
   const { data: districtData, isLoading, isError } = useQuery<DistrictLockData | null>({
     queryKey: ['districtLock'],
     queryFn: async () => {
-      console.log('DistrictChoose - Loading districts');
       const response = await districtApi.getDistrictLock();
-      console.log('DistrictChoose - Loaded districts:', response.data.data);
       return response.data.data;
     },
   });

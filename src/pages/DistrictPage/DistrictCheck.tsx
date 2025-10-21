@@ -7,7 +7,6 @@ import { useDistrictStore } from '../../shared/store/district.store';
 import { useAuthStore } from '../../shared/store/auth.store';
 import { authApi } from '../../features/auth/api';
 import { toast } from 'react-toastify';
-import { Spinner } from '../../shared/ui/spinner';
 import namsantower from '/namsantower.jpg';
 import { districtApi } from '../../features/district/api';
 import { redirectBasedOnStatus } from '../../shared/utils/authRedirect';
@@ -22,7 +21,6 @@ export const DistrictCheck = () => {
   // 지역구 선택 확인 API 호출 (초기 해금)
   const confirmDistrictMutation = useMutation({
     mutationFn: async (districtNames: string[]) => {
-      console.log(districtNames);
       const response = await districtApi.initUnlockDistrict(districtNames);
       return response;
     },
@@ -41,7 +39,6 @@ export const DistrictCheck = () => {
       try {
         const statusResponse = await authApi.getStatus();
         const userStatus = statusResponse.data.status;
-        console.log("[DistrictCheck] User status after district lock:", userStatus);
         
         // auth store 업데이트
         setPermissionLevel(userStatus as "ONBOARDING_REQUIRED" | "COUPLE_MATCHING_REQUIRED" | "ROCK_REQUIRED" | "COMPLETED");
