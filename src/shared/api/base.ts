@@ -12,19 +12,14 @@ let pendingQueue: { resolve: (token: string) => void; reject: (error: unknown) =
 
 const processQueue = (error: unknown, token: string | null) => {
   if (pendingQueue.length === 0) return;
-  
-  console.log("[auth] Processing", pendingQueue.length, "queued requests");
   pendingQueue.forEach(({ resolve, reject }) => {
     if (token) {
-      console.log("[auth] Resolving queued request with new token");
       resolve(token);
     } else {
-      console.log("[auth] Rejecting queued request");
       reject(error);
     }
   });
   pendingQueue = [];
-  console.log("[auth] Queue cleared");
 };
 
 const getPathname = (url?: string) => {
@@ -55,11 +50,6 @@ api.interceptors.request.use((config) => {
 
   if (!isPublic && access) {
     config.headers = { ...(config.headers as any), Authorization: `Bearer ${access}` };
-    console.log("[req]", config.method?.toUpperCase(), path, "| with auth");
-  } else if (isPublic) {
-    console.log("[req]", config.method?.toUpperCase(), path, "| public endpoint");
-  } else {
-    console.log("[req]", config.method?.toUpperCase(), path, "| no token available");
   }
   return config;
 });
@@ -67,7 +57,6 @@ api.interceptors.request.use((config) => {
 // Response: 401/419/440 → refresh 진행
 api.interceptors.response.use(
   (res) => {
-    console.log("[res]", res.config?.method?.toUpperCase(), getPathname(res.config?.url), "| status:", res.status);
     return res;
   },
   async (error: AxiosError) => {
@@ -89,19 +78,15 @@ api.interceptors.response.use(
         console.error("[auth] Refresh endpoint failed - cannot retry");
       } else if (original._retry) {
         console.error("[auth] Already retried - giving up");
-      } else {
-        console.log("[auth] Not an auth error - passing through");
       }
       return Promise.reject(error);
     }
 
     if (isRefreshing) {
-      console.log("[auth] Refresh in progress, queueing request:", path);
       try {
         const newToken = await new Promise<string>((resolve, reject) => {
           pendingQueue.push({ resolve, reject });
         });
-        console.log("[auth] Got new token from queue, retrying:", path);
         original.headers = { ...(original.headers as any), Authorization: `Bearer ${newToken}` };
         original._retry = true;
         return api(original);
@@ -113,14 +98,11 @@ api.interceptors.response.use(
       }
     }
 
-    console.log("[auth] Starting refresh flow from:", path);
     isRefreshing = true;
     original._retry = true;
 
     try {
       // refresh 토큰은 httpOnly 쿠키로 자동 전송됨
-      console.log("[auth] Requesting token refresh with httpOnly cookie");
-
       const { data } = await raw.post(
         REFRESH_PATH,
         undefined,
@@ -137,12 +119,9 @@ api.interceptors.response.use(
       }
 
       tokenStore.setAccessToken(newAccess);
-      console.log("[auth] Token refresh successful");
-      console.log("[auth] Broadcasting new token to", pendingQueue.length, "pending requests");
       processQueue(null, newAccess);
 
       original.headers = { ...(original.headers as any), Authorization: `Bearer ${newAccess}` };
-      console.log("[auth] Retrying original request:", path);
       return api(original);
     } catch (e) {
       const axiosError = e as AxiosError;
@@ -175,7 +154,6 @@ api.interceptors.response.use(
       return Promise.reject(e);
     } finally {
       isRefreshing = false;
-      console.log("[auth] Refresh process finished");
     }
   }
 );
