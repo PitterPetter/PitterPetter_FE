@@ -11,7 +11,6 @@ import { coupleRoomApi } from "../../features/coupleroom/api";
 import { PostCoupleRoom } from "../../features/coupleroom/types";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from 'react-toastify';
-import { LoginMapbox } from "../../features/mapbox";
 
 export const CreateCoupleRoom = () => {
   const navigate = useNavigate();
@@ -64,12 +63,10 @@ export const CreateCoupleRoom = () => {
 
     try {
       const formattedDate = formatDate(coupleDate);
-      console.log("body data: ", { coupleHomeName: coupleName, datingStartDate: formattedDate });
       const res = await createCoupleRoom({
         coupleHomeName: coupleName,
         datingStartDate: formattedDate,
       });
-      console.log("res:", res);
 
       if (res.status === "success") {
         useCoupleRoomStore.setState({

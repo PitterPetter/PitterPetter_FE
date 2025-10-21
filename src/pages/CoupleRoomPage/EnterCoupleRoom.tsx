@@ -19,7 +19,6 @@ export const EnterCoupleRoom = () => {
   const { mutateAsync: validateCoupleCode, isPending } = useMutation({
     mutationFn: async (inviteCode: string) => {
       try {
-        console.log("inviteCode: ", inviteCode);
         const res = await coupleRoomApi.validateCoupleCode(inviteCode);
         if (res.data.status === 'error') {
           throw new Error('커플 인증에 실패했습니다');
@@ -66,12 +65,10 @@ export const EnterCoupleRoom = () => {
 
   const handleEnter = async () => {
     const enteredCode = codes.join('');
-    console.log('입력된 코드:', enteredCode);
     
     try {
       setIsError(false);
       const result = await validateCoupleCode(enteredCode);
-      console.log('result', result);
 
       if (result.status === 'success') {
         toast.success('커플 인증이 완료되었습니다');
@@ -83,7 +80,6 @@ export const EnterCoupleRoom = () => {
         try {
           const statusResponse = await authApi.getStatus();
           const userStatus = statusResponse.data.status;
-          console.log("[EnterCoupleRoom] User status after couple matching:", userStatus);
           
           // auth store 업데이트
           setPermissionLevel(userStatus as "ONBOARDING_REQUIRED" | "COUPLE_MATCHING_REQUIRED" | "ROCK_REQUIRED" | "COMPLETED");
