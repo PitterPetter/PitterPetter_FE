@@ -16,17 +16,12 @@ export const CourseListPage = () => {
         setTimeout(() => {
           getCourseList()
             .then((response) => {
-              console.log("response", response);
-              console.log("response.data", response.data);
-              
               // API 응답 데이터를 정규화
               const normalizedData = normalizeCourses(response.data);
-              console.log("normalizedData", normalizedData);
               
               try {
                 if (typeof window !== "undefined") {
                   sessionStorage.setItem(COURSE_STORAGE_KEY, JSON.stringify(normalizedData));
-                  console.log("sessionStorage", sessionStorage.getItem(COURSE_STORAGE_KEY));
                 }
               } catch (error) {
                 console.error("[course] 코스 데이터를 세션 스토리지에 저장하지 못했습니다.", error);
@@ -41,12 +36,9 @@ export const CourseListPage = () => {
       
       // 세션에 없으면 API 호출
       const response = await getCourseList();
-      console.log("response", response);
-      console.log("response.data", response.data);
       
       // API 응답 데이터를 정규화
       const normalizedData = normalizeCourses(response.data);
-      console.log("normalizedData", normalizedData);
       
       try {
         if (typeof window !== "undefined") {
