@@ -4,6 +4,7 @@ import { COURSE_STORAGE_KEY, normalizeCourses, readCoursesFromSession } from "..
 import type { Course } from "../../features/course/types";
 import { Spinner } from "../../shared/ui/spinner";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 
 export const CourseListPage = () => {
   const { data: courseList, isLoading, error } = useQuery({
@@ -56,14 +57,18 @@ export const CourseListPage = () => {
 
   return (
     <div className="w-full h-full flex flex-col items-center justify-start py-10 bg-primary/5">
-      <div className="flex flex-col gap-4 p-4 pt-0 w-[900px]">
-        <div className="h-full border-gray-300 border rounded-2xl p-4 pb-6">
-          <div className="flex gap-2 justify-between py-4">
-            <div className="w-full text-2xl pb-3">
-              코스
+      <div className="flex flex-col gap-4 p-4 pt-0 lg:max-w-[900px]">
+        <div className="h-full xl:border-gray-300 xl:border rounded-2xl p-4 pb-6">
+          <div className="flex flex-col gap-0 justify-between pt-4 pb-6 border-b border-gray-300 mb-6">
+            <div className="w-full text-2xl font-semibold pb-3">
+              추억의 코스
             </div>
+            <p className="text-sm text-gray-500">
+              그동안 받은 추천 코스를 모아봤어요.
+            </p>
           </div>
-          <div className="grid grid-cols-3 gap-4">
+          {courseList && courseList.length > 0 ? (
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
             {isLoading ? (
               <div className="col-span-3 text-center py-8">
                 <Spinner />
@@ -78,6 +83,12 @@ export const CourseListPage = () => {
               ))
             )}
           </div>
+        ) : (
+          <div className="col-span-3 text-center py-8 text-sm text-gray-500 flex flex-col gap-2 items-center">
+            작성된 코스가 없습니다.
+            <Link to="/home" className="text-[#93000A] hover:text-[#93000A]/80 transition-all duration-300 underline">추천 코스 받으러 가기</Link>
+          </div>
+        )}
         </div>
       </div>
     </div>

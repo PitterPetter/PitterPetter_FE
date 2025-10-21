@@ -13,9 +13,9 @@ import { districtApi } from '../../district/api';
 import { useQuery } from '@tanstack/react-query';
 
 const MapboxMainPage: React.FC<MapboxProps> = ({
-  center = [126.9807454596028, 37.553551790177854],
-  zoom = 15.6,
-  pitch = 72
+  center = [126.9839454596028, 37.552351790177854],
+  zoom = 16,
+  pitch = 62
 }) => {
   const mapContainerRef = useRef<MapRefs['container']>(null);
   const mapRef = useRef<MapRefs['map']>(null);
@@ -308,7 +308,7 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
       center,
       zoom,
       pitch,
-      bearing: 30,
+      bearing: 340,
       minZoom: 13,
       maxZoom: 18
     });
@@ -445,7 +445,7 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
 
         // 새로운 마커 생성
         currentMarker = new mapboxgl.Marker({ 
-          color: '#ff4444',
+          color: '#93000A',
           scale: 1.2
         })
           .setLngLat(e.lngLat)
@@ -465,6 +465,8 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
         map.easeTo({
           pitch: 0,
           center: [e.lngLat.lng, e.lngLat.lat],
+          zoom: 16,
+          bearing: 0,
           duration: 1000
         });
       });
@@ -488,16 +490,15 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
 
   return (
     <div style={{ 
-      position: 'relative', 
       height: '100vh', 
       width: '100vw', 
-      maxWidth: isOpen ? 'calc(100vw - 256px)' : 'calc(100vw - 64px)',
+      maxWidth: isOpen ? 'w-100vw md:calc(100vw - 256px)' : 'calc(100vw - 64px)',
       overflow: 'hidden'
     }}>
       <div
         ref={mapContainerRef}
         id="map"
-        style={{ height: '110vh', width: isOpen ? 'calc(100vw - 256px)' : 'calc(100vw - 64px)' }}
+        style={{ height: '110vh', width: 'w-100vw md:calc(100vw - 256px)'}}
       />
 
       <MapboxRemoteController 
@@ -508,9 +509,9 @@ const MapboxMainPage: React.FC<MapboxProps> = ({
 
       {/* 로딩 오버레이 */}
       {!isMapReady && (
-        <div className="pointer-events-none absolute inset-0 bg-white z-20 flex items-center justify-center">
+        <div className="pointer-events-none absolute inset-0 bg-white z-20 flex items-center justify-center w-full h-full">
           <div className="animate-spin rounded-full h-10 w-10 border-4 border-gray-300 border-t-transparent" />
-          <span className="ml-3 text-gray-700 font-medium">지도 로딩 중…</span>
+          <span className="ml-3 text-gray-700 font-medium">지도 불러오는 중…</span>
         </div>
       )}
     </div>

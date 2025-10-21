@@ -78,7 +78,6 @@ export const CommentSection = ({ diaryId, comments }: CommentSectionProps) => {
     mutationFn: (commentId: string) => commentApi.deleteComment(diaryId, commentId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['diaryDetail', diaryId] });
-      toast.success('댓글이 삭제되었습니다.');
     },
     onError: () => {
       toast.error('댓글 삭제에 실패했습니다.');
@@ -114,14 +113,13 @@ export const CommentSection = ({ diaryId, comments }: CommentSectionProps) => {
   };
 
   const handleDeleteComment = (commentId: string) => {
-    if (confirm('정말로 이 댓글을 삭제하시겠습니까?')) {
-      deleteCommentMutation.mutate(commentId);
-    }
+    toast.success('댓글이 삭제되었습니다.');
+    deleteCommentMutation.mutate(commentId);
   };
 
   return (
-    <div className="flex flex-col gap-4 p-4 h-full rounded-md border-t border-gray-300">
-      <h2 className="text-lg text-gray-800">댓글</h2>
+    <div className="flex flex-col gap-3 md:gap-4 p-2 md:p-4 h-full rounded-md border-t border-gray-300">
+      <h2 className="text-base md:text-lg text-gray-800">댓글</h2>
       
       {/* 댓글 작성 */}
       <div className="flex flex-col gap-2">
@@ -129,13 +127,13 @@ export const CommentSection = ({ diaryId, comments }: CommentSectionProps) => {
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
           placeholder="댓글을 작성해주세요..."
-          className="w-full h-20 p-3 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-[#662B2B]/20 focus:border-[#662B2B]"
+          className="w-full h-16 md:h-20 p-2 md:p-3 text-sm md:text-base border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-[#662B2B]/20 focus:border-[#662B2B]"
         />
         <div className="flex justify-end">
           <button
             onClick={handleSubmitComment}
             disabled={createCommentMutation.isPending}
-            className="px-4 py-2 bg-[#662B2B] text-white rounded-md hover:bg-[#662B2B]/80 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-3 md:px-4 py-1.5 md:py-2 text-sm md:text-base bg-third text-white rounded-md hover:bg-third/80 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {createCommentMutation.isPending ? '작성 중...' : '댓글 작성'}
           </button>
@@ -143,32 +141,32 @@ export const CommentSection = ({ diaryId, comments }: CommentSectionProps) => {
       </div>
 
       {/* 댓글 목록 */}
-      <div className="flex flex-col gap-3">
+      <div className="flex flex-col gap-2 md:gap-3">
         {comments && comments.length > 0 ? (
           comments.map((comment) => (
             <div key={comment.commentId} className="flex items-start justify-start gap-2 w-full">
-              <div className="min-w-[40px] min-h-[40px] bg-gray-300 rounded-full flex-shrink-0">
+              <div className="min-w-[32px] min-h-[32px] md:min-w-[40px] md:min-h-[40px] bg-gray-300 rounded-full flex-shrink-0">
               </div>
-              <div className="flex-1 bg-gray-100 rounded-md p-3">
+              <div className="flex-1 bg-gray-100 rounded-md p-2 md:p-3">
                 {editingCommentId === comment.commentId ? (
                   // 수정 모드
                   <div className="flex flex-col gap-2">
                     <textarea
                       value={editingContent}
                       onChange={(e) => setEditingContent(e.target.value)}
-                      className="w-full h-16 p-2 border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-[#662B2B]/20"
+                      className="w-full h-14 md:h-16 p-2 text-sm md:text-base border border-gray-300 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-[#662B2B]/20"
                     />
                     <div className="flex justify-end gap-2">
                       <button
                         onClick={handleSaveEdit}
                         disabled={updateCommentMutation.isPending}
-                        className="px-3 py-1 bg-green-600 text-white text-sm rounded hover:bg-green-700 disabled:opacity-50"
+                        className="px-2.5 md:px-3 py-1 bg-third/90 text-white text-xs md:text-sm rounded hover:bg-third disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                       >
                         {updateCommentMutation.isPending ? '저장 중...' : '저장'}
                       </button>
                       <button
                         onClick={handleCancelEdit}
-                        className="px-3 py-1 bg-gray-500 text-white text-sm rounded hover:bg-gray-600"
+                        className="px-2.5 md:px-3 py-1 bg-gray-500 text-white text-xs md:text-sm rounded hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                       >
                         취소
                       </button>
@@ -177,36 +175,36 @@ export const CommentSection = ({ diaryId, comments }: CommentSectionProps) => {
                 ) : (
                   // 일반 모드
                   <div className="flex flex-col gap-1">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <p className="text-sm font-medium text-gray-700">{comment.authorName}</p>
-                        <p className="text-sm text-gray-600 mt-1">{comment.content}</p>
+                    <div className="flex justify-between items-start gap-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-xs md:text-sm font-medium text-gray-700">{comment.authorName}</p>
+                        <p className="text-xs md:text-sm text-gray-600 mt-1 break-words">{comment.content}</p>
                       </div>
                       {canEditComment(comment) && (
-                        <div className="flex gap-2">
+                        <div className="flex gap-1.5 md:gap-2 flex-shrink-0">
                           <button
                             onClick={() => handleEditComment(comment)}
-                            className="text-xs text-blue-600 hover:text-blue-800"
+                            className="text-[10px] md:text-xs text-blue-600 hover:text-blue-800"
                           >
                             수정
                           </button>
                           <button
                             onClick={() => handleDeleteComment(comment.commentId)}
-                            className="text-xs text-red-600 hover:text-red-800"
+                            className="text-[10px] md:text-xs text-red-600 hover:text-red-800"
                           >
                             삭제
                           </button>
                         </div>
                       )}
                     </div>
-                    <p className="text-xs text-gray-500">{comment.createdAt.split("T")[0]}</p>
+                    <p className="text-[10px] md:text-xs text-gray-500">{comment.createdAt.split("T")[0]}</p>
                   </div>
                 )}
               </div>
             </div>
           ))
         ) : (
-          <div className="text-center py-4 text-gray-500">
+          <div className="text-center py-3 md:py-4 text-sm md:text-base text-gray-500">
             아직 댓글이 없습니다.
           </div>
         )}

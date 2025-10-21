@@ -6,7 +6,7 @@ import { useQuery } from "@tanstack/react-query";
 import { diaryApi } from "../../features/diary/api";
 import { Diary, DiaryListResponse } from "../../features/diary/types";
 import { Spinner } from "../../shared/ui/spinner";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 export const DiaryListPage = () => {
   const navigate = useNavigate();
@@ -30,21 +30,24 @@ export const DiaryListPage = () => {
   
   return (
     <div className="w-full h-full flex flex-col items-center justify-start py-10 bg-primary/5">
-      <div className="flex flex-col gap-4 p-4 pt-0 w-[900px]">
-        <div className="h-full border-gray-300 border rounded-2xl p-4 pb-6">
-          <div className="flex gap-2 justify-between py-4">
+      <div className="flex flex-col gap-4 p-4 pt-0 min-w-[500px] lg:w-[800px] xl:w-[900px]">
+        <div className="h-full xl:border-gray-300 xl:border rounded-2xl p-4 pb-6">
+          <div className="flex flex-col xl:flex-row gap-4 justify-between py-4">
+            <div className="flex flex-col gap-2">
             <div className="w-full text-2xl">
               다이어리
             </div>
+            <p className="text-sm text-gray-500">그동안 써온 추억을 담은 다이어리를 모아봤어요.</p>
+            </div>
             <div
-              className="flex items-center justify-center gap-2 w-[210px] h-[42px] bg-third/60 text-white rounded-xl cursor-pointer border border-primary/10 hover:bg-third/80 transition-all duration-300"
+              className="flex items-center justify-center gap-2 w-[180px] h-[42px] bg-third/90 text-white rounded-xl cursor-pointer border border-third/10 hover:bg-third/80 transition-all duration-300"
               onClick={() => {navigate("/diary/create")}}
             >
               <FontAwesomeIcon icon={faPlus} className="w-[14px] h-[14px]" />
               새 다이어리 만들기
             </div>
           </div>
-          <div className="grid grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-4">
             {isLoading ? (
               <div className="col-span-3 text-center py-8">
                 <Spinner />

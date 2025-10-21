@@ -145,6 +145,93 @@ export const OptionsPage = () => {
                         minutes: renderTimeViewClock,
                         seconds: renderTimeViewClock,
                       }}
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          '&:hover fieldset': {
+                            borderColor: '#93000A',
+                          },
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#93000A',
+                          },
+                        },
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          '&:focus': {
+                            borderColor: '#93000A',
+                          },
+                        },
+                        '& .MuiInputLabel-root.Mui-focused': {
+                          color: '#93000A',
+                        },
+                        '& .MuiIconButton-root': {
+                          color: '#93000A',
+                          '&:hover': {
+                            backgroundColor: 'rgba(147, 0, 10, 0.08)',
+                          },
+                        },
+                        '& .MuiClock-pin': {
+                          backgroundColor: '#93000A',
+                        },
+                        '& .MuiClockPointer-root': {
+                          backgroundColor: '#93000A',
+                        },
+                        '& .MuiClockPointer-thumb': {
+                          backgroundColor: '#93000A',
+                          borderColor: '#93000A',
+                        },
+                        '& .MuiClockNumber-root': {
+                          '&.Mui-selected': {
+                            backgroundColor: '#93000A',
+                            color: '#fff',
+                          },
+                          '&:hover': {
+                            backgroundColor: 'rgba(147, 0, 10, 0.12)',
+                          },
+                          '&:focus': {
+                            backgroundColor: 'rgba(147, 0, 10, 0.2)',
+                          },
+                        },
+                        '& .MuiPickersDay-root.Mui-selected': {
+                          backgroundColor: '#93000A',
+                        },
+                        '& .MuiPickersCalendarHeader-switchViewButton': {
+                          color: '#93000A',
+                        },
+                        '& .MuiPickersArrowSwitcher-button': {
+                          color: '#93000A',
+                        },
+                      }}
+                      slotProps={{
+                        actionBar: {
+                          sx: {
+                            '& .MuiButton-root': {
+                              color: '#93000A',
+                              '&:hover': {
+                                backgroundColor: 'rgba(147, 0, 10, 0.08)',
+                              },
+                            },
+                          },
+                        },
+                        digitalClockItem: {
+                          sx: {
+                            '&.Mui-selected': {
+                              backgroundColor: '#93000A',
+                              color: '#fff',
+                              '&:hover': {
+                                backgroundColor: '#7a0008',
+                              },
+                              '&:focus': {
+                                backgroundColor: '#7a0008',
+                              },
+                            },
+                            '&:hover': {
+                              backgroundColor: 'rgba(147, 0, 10, 0.12)',
+                            },
+                            '&:focus': {
+                              backgroundColor: 'rgba(147, 0, 10, 0.2)',
+                            },
+                          },
+                        },
+                      }}
                     />
                   </div>
                   <div className="flex flex-col gap-2">
@@ -157,6 +244,93 @@ export const OptionsPage = () => {
                         hours: renderTimeViewClock,
                         minutes: renderTimeViewClock,
                         seconds: renderTimeViewClock,
+                      }}
+                      sx={{
+                        '& .MuiOutlinedInput-root': {
+                          '&:hover fieldset': {
+                            borderColor: '#93000A',
+                          },
+                          '&.Mui-focused fieldset': {
+                            borderColor: '#93000A',
+                          },
+                        },
+                        '& .MuiOutlinedInput-notchedOutline': {
+                          '&:focus': {
+                            borderColor: '#93000A',
+                          },
+                        },
+                        '& .MuiInputLabel-root.Mui-focused': {
+                          color: '#93000A',
+                        },
+                        '& .MuiIconButton-root': {
+                          color: '#93000A',
+                          '&:hover': {
+                            backgroundColor: 'rgba(147, 0, 10, 0.08)',
+                          },
+                        },
+                        '& .MuiClock-pin': {
+                          backgroundColor: '#93000A',
+                        },
+                        '& .MuiClockPointer-root': {
+                          backgroundColor: '#93000A',
+                        },
+                        '& .MuiClockPointer-thumb': {
+                          backgroundColor: '#93000A',
+                          borderColor: '#93000A',
+                        },
+                        '& .MuiClockNumber-root': {
+                          '&.Mui-selected': {
+                            backgroundColor: '#93000A',
+                            color: '#fff',
+                          },
+                          '&:hover': {
+                            backgroundColor: 'rgba(147, 0, 10, 0.12)',
+                          },
+                          '&:focus': {
+                            backgroundColor: 'rgba(147, 0, 10, 0.2)',
+                          },
+                        },
+                        '& .MuiPickersDay-root.Mui-selected': {
+                          backgroundColor: '#93000A',
+                        },
+                        '& .MuiPickersCalendarHeader-switchViewButton': {
+                          color: '#93000A',
+                        },
+                        '& .MuiPickersArrowSwitcher-button': {
+                          color: '#93000A',
+                        },
+                      }}
+                      slotProps={{
+                        actionBar: {
+                          sx: {
+                            '& .MuiButton-root': {
+                              color: '#93000A',
+                              '&:hover': {
+                                backgroundColor: 'rgba(147, 0, 10, 0.08)',
+                              },
+                            },
+                          },
+                        },
+                        digitalClockItem: {
+                          sx: {
+                            '&.Mui-selected': {
+                              backgroundColor: '#93000A',
+                              color: '#fff',
+                              '&:hover': {
+                                backgroundColor: '#7a0008',
+                              },
+                              '&:focus': {
+                                backgroundColor: '#7a0008',
+                              },
+                            },
+                            '&:hover': {
+                              backgroundColor: 'rgba(147, 0, 10, 0.12)',
+                            },
+                            '&:focus': {
+                              backgroundColor: 'rgba(147, 0, 10, 0.2)',
+                            },
+                          },
+                        },
                       }}
                     />
                   </div>
@@ -172,7 +346,7 @@ export const OptionsPage = () => {
               </div>
 
               {/* 컨디션 설정 카드 */}
-              <div className="border border-primary/10 bg-white/90 p-6 rounded-xl shadow-sm">
+              <div className="border border-third/10 bg-white/90 p-6 rounded-xl shadow-sm">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">오늘의 컨디션</h3>
                 <div className="flex flex-col gap-4">
                   <div className="flex items-center justify-between text-sm text-gray-600">
@@ -211,14 +385,14 @@ export const OptionsPage = () => {
               </div>
 
               {/* 음주 여부 카드 */}
-              <div className="border border-primary/10 bg-white/90 p-6 rounded-xl shadow-sm">
+              <div className="border border-third/10 bg-white/90 p-6 rounded-xl shadow-sm">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">음주 여부</h3>
                 <div className="flex gap-4">
                   <button
                     className={`flex-1 py-3 px-4 rounded-lg border-2 transition-all duration-200 ${
                       drink_intent
-                        ? 'border-primary bg-primary text-white shadow-md'
-                        : 'border-gray-200 bg-white text-gray-700 hover:border-primary/50'
+                        ? 'border-third bg-third text-white shadow-md'
+                        : 'border-gray-200 bg-white text-gray-700 hover:border-third/50'
                     }`}
                     onClick={() => setDrinking(true)}
                   >
@@ -229,8 +403,8 @@ export const OptionsPage = () => {
                   <button
                     className={`flex-1 py-3 px-4 rounded-lg border-2 transition-all duration-200 ${
                       !drink_intent
-                        ? 'border-primary bg-primary text-white shadow-md'
-                        : 'border-gray-200 bg-white text-gray-700 hover:border-primary/50'
+                        ? 'border-third bg-third text-white shadow-md'
+                        : 'border-gray-200 bg-white text-gray-700 hover:border-third/50'
                     }`}
                     onClick={() => setDrinking(false)}
                   >
@@ -242,7 +416,7 @@ export const OptionsPage = () => {
               </div>
 
               {/* 불호음식 카드 */}
-              <div className="border border-primary/10 bg-white/90 p-6 rounded-xl shadow-sm">
+              <div className="border border-third/10 bg-white/90 p-6 rounded-xl shadow-sm">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">불호음식 (선택사항)</h3>
                 <Input 
                   id="outlined-basic" 
@@ -257,7 +431,7 @@ export const OptionsPage = () => {
             <div className="flex justify-end mt-8 lg:mt-12">
               <button
                 type="button"
-                className={`bg-primary text-white w-[160px] h-[48px] text-center py-2 border border-primary/10 hover:bg-primary/90 transition-all duration-300 disabled:opacity-50 rounded-lg font-medium ${
+                className={`bg-third text-white w-[160px] h-[48px] text-center py-2 border border-third/10 hover:bg-third/90 transition-all duration-300 disabled:opacity-50 rounded-lg font-medium ${
                   timeError || isLoading ? "opacity-50 cursor-not-allowed" : ""
                 }`}
                 onClick={() => {
