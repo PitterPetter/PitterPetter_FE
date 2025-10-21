@@ -17,7 +17,6 @@ export const DiaryListPage = () => {
     queryKey: ['diaries', currentPage],
       queryFn: async () => {
         const response = await diaryApi.getDiaryList(currentPage, pageSize);
-        console.log("diary list response:", response.data);
         return response.data.result;
       },
     staleTime: 0,
