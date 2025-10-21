@@ -54,7 +54,7 @@ const normalizeCourse = (candidate: unknown): Course | null => {
   }
 
   return {
-    course_id: courseId,
+    course_id: courseId as number | string,
     title,
     description,
     reviewScore: asNumber(raw.reviewScore ?? raw.score) ?? undefined,
@@ -82,7 +82,7 @@ const normalizeCoursePoiSet = (candidate: unknown): CoursePoiSet | null => {
   }
 
   return {
-    poi_set_id: poiSetId,
+    poi_set_id: poiSetId as number | string,
     order,
     poi,
   };
@@ -109,7 +109,7 @@ const normalizePoi = (candidate: unknown): CoursePoiSet["poi"] | null => {
   const poiId = raw.poi_id ?? raw.poiId ?? raw.id;
 
   return {
-    poi_id: poiId ?? 0,
+    poi_id: poiId as number | string,
     name: asString(raw.name) ?? "",
     category: asString(raw.category) ?? "",
     lat,
