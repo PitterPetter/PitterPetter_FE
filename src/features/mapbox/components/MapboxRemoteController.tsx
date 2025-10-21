@@ -1,5 +1,4 @@
 import React from 'react';
-import mapboxgl from 'mapbox-gl';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowUp, faArrowDown, faArrowLeft, faArrowRight, faCircle, faAngleUp, faAngleDown, faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { MapboxRemoteControllerProps } from '../types';

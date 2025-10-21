@@ -6,7 +6,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { useQueries } from '@tanstack/react-query';
 import { useUIStore } from '../../../shared/store/ui.store';
 import { fetchRoute, routeQueryKey } from '../../../shared/api/routes.api';
-import { MapboxProps, MapRefs, InputData, TimeOfDay } from '../types';
+import { MapboxProps, MapRefs, InputData } from '../types';
 import { useRecommendStore } from '../../../shared/store/recommend.store';
 import { Spinner } from '../../../shared/ui/spinner';
 
