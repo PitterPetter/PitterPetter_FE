@@ -1,6 +1,5 @@
 // 코스 조회 가능한 사이드바
 
-// import { usePlaceStore } from "../../shared/store/mapbox.store";
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import type { Course, CoursePoiSet } from "../types";
@@ -32,7 +31,6 @@ const sortStops = (course: Course | null): CoursePoiSet[] => {
 };
 
 export const CourseDetailSidebar = () => {
-  // const { setIsPlace } = usePlaceStore();
   const navigate = useNavigate();
   const { id } = useParams();
   const { pathname } = useLocation();
