@@ -19,9 +19,7 @@ export const SessionCoursesModal: React.FC<SessionCoursesModalProps> = ({ isOpen
   const rerecommendCourseMutation = useMutation({
     mutationFn: rerecommendCourseApi,
     onSuccess: (response) => {
-      console.log('API 응답:', response);
       const data = response.data;
-      console.log('추출된 데이터:', data);
       toast.success("재추천 받기 성공");
       onSuccess?.(data);
       navigate('/recommend');
@@ -60,7 +58,6 @@ export const SessionCoursesModal: React.FC<SessionCoursesModalProps> = ({ isOpen
       user_choice: optionData?.user_choice || {}
     };
 
-    console.log('재추천 요청 데이터:', requestData);
     rerecommendCourseMutation.mutate({
       ...requestData,
       law_data: lawData

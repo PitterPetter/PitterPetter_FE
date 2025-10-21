@@ -7,7 +7,7 @@ import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { Spinner } from "../../../shared/ui/spinner";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faPencil, faHeart, faCalendarCheck, faEnvelopeOpenText } from "@fortawesome/free-solid-svg-icons";
+import { faPencil, faHeart, faCalendarCheck } from "@fortawesome/free-solid-svg-icons";
 import logo from '/logo.png';
 import { toast } from 'react-toastify';
 import clsx from "clsx";

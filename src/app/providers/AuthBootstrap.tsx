@@ -18,18 +18,12 @@ export default function AuthBootstrap() {
     const onboardingComplete = qs.get("onboarding_complete");
     const isCoupled = qs.get("is_coupled");
 
-    console.log("[AuthBootstrap] === 로그인 흐름 시작 ===");
-    console.log("[AuthBootstrap] access_token:", !!access);
-    console.log("[AuthBootstrap] user_status:", status);
-
     if (!access) {
-      console.log("[AuthBootstrap] no access_token, skipping");
       return;
     }
 
     // 이미 처리한 토큰이면 중복 실행 방지
     if (lastProcessedToken.current === access) {
-      console.log("[AuthBootstrap] same token already processed, skipping");
       return;
     }
 
@@ -37,7 +31,6 @@ export default function AuthBootstrap() {
     lastProcessedToken.current = access;
 
     // 2. Access Token 저장 (새 토큰으로 업데이트)
-    console.log("[AuthBootstrap] saving new access_token to sessionStorage");
     tokenStore.setAccessToken(access);
 
     // 3. 쿼리 파라미터 저장
@@ -48,12 +41,10 @@ export default function AuthBootstrap() {
       isCoupled,
     };
     sessionStorage.setItem("queryParams", JSON.stringify(queryParams));
-    console.log("[AuthBootstrap] queryParams saved:", queryParams);
 
     // 4. URL에서 쿼리 제거
     const clean = `${window.location.origin}${location.pathname}`;
     window.history.replaceState(null, "", clean);
-    console.log("[AuthBootstrap] URL cleaned");
 
     // 5. 사용자 상태에 따라 리디렉션
     let targetPath = "";
@@ -70,7 +61,6 @@ export default function AuthBootstrap() {
       targetPath = "/home";
     }
     
-    console.log("[AuthBootstrap] navigating to:", targetPath);
     navigate(targetPath);
 
   }, [location.search, navigate]);

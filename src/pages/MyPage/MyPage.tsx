@@ -1,8 +1,6 @@
-import { Profile } from "../../features/mypage/components/Profile";
 import { CoupleHome } from "../../features/mypage/components/CoupleHome";
 import { DistrictLock } from "../../features/district/components/DistrictLock";
 import { PersonalPreferences } from "../../features/mypage/components/PersonalPreferences";
-import { useHeaderStore } from "../../shared/store/header.store";
 import { useMypageStore } from "../../shared/store/mypage.store";
 import { useOnboardingStore } from "../../shared/store/onboarding.store";
 import { useEffect, useMemo } from "react";
@@ -72,7 +70,6 @@ export const MyPage = () => {
         setIsProfileError(false);
         setIsProfileLoading(true);
         const response = await mypageApi.getMypage();
-        console.log(response.data.data);
         setName(response.data?.data.name);
         setNickname(response.data?.data.nickname);
         setEmail(response.data?.data.email);
@@ -135,7 +132,6 @@ export const MyPage = () => {
       partnerName,
       partnerEmail
     });
-    console.log('body data: ',{nickname, birthdate, alcoholPreference, activeBound, dateCostPreference: convertCostPreference(dateCostPreference), favoriteFoodCategories, atmosphere});
   };
 
   useEffect(() => {

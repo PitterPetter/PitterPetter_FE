@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Slider, Button } from "@mui/material";
+import { Slider } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import { postOption } from "../../features/option/api";
 import { Option } from "./type";
@@ -31,28 +31,12 @@ export const OptionsPage = () => {
       setIsLoading(true);
     },
     onSuccess: (data) => {
-      console.log('Options API response:', data);
-      if (data?.explain && data?.data) {
-        const mapData = data.data.map((item: any) => ({
-          seq: item.seq,
-          name: item.name,
-          category: item.category,
-          lat: item.lat,
-          lng: item.lng,
-          indoor: item.indoor,
-          price_level: item.price_level,
-          alcohol: item.alcohol,
-          mood_tag: typeof item.mood_tag === 'string' ? parseInt(item.mood_tag) || 0 : item.mood_tag || 0,
-        }));
-        
+      if (data?.explain && data?.data) {        
         setRecommend({ 
           explain: data.explain,
           data: data.data,
         });
-        
-        console.log('Set recommend data:', { explain: data.explain, data: data.data });
         setLawData(data.lawData);
-        console.log('Set law data:', data.lawData);
       } else {
         // 기존 방식 (배열 직접 반환)
         const mapData = Array.isArray(data) ? data : data?.courses || [];
@@ -61,8 +45,6 @@ export const OptionsPage = () => {
           explain: "옵션에서 추천받은 코스",
           data: mapData 
         });
-        
-        console.log('Set recommend data:', { explain: "옵션에서 추천받은 코스", data: mapData });
       }
       setIsLoading(false);
       navigation("/recommend");
@@ -115,8 +97,6 @@ export const OptionsPage = () => {
     if (!validateTime()) {
       return;
     }
-    
-    console.log({ user_choice: { start: [start.lat, start.lng], condition, drink_intent, food, startTime, endTime } });
     mutation.mutate({ user_choice: { start: [start.lat, start.lng], condition, drink_intent, food, startTime, endTime } });
   };
 

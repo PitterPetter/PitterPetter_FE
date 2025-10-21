@@ -18,7 +18,6 @@ export const ConnectCourse = () => {
     queryKey: ['courses'],
     queryFn: async () => {
       const response = await courseApi.getCourseList();
-      console.log(response);
       // API 응답 데이터를 정규화 (course 타입에 맞게)
       const normalizedData = response.data?.map((item: any) => ({
         courseId: item.courseId || item.course_id || item.id,

@@ -47,7 +47,6 @@ export const CreateDiaryPage = () => {
   const { mutateAsync: createDiary, isPending } = useMutation({
     mutationKey: ["diaryCreate"],
     mutationFn: async ({ payload, imageFile }: { payload: DiaryCreatePayload; imageFile: File | null }) => {
-      console.log("payload", payload);
       const response = await diaryCreateApi.createDiary(payload);
       const result = response.data?.result;
 
@@ -99,13 +98,6 @@ export const CreateDiaryPage = () => {
     );
     if (isReal) navigate("/diary");
   };
-
-  const handleSaveAsDraft = () => {
-    // TODO: 임시저장 API 연동
-    console.log("임시저장");
-    toast.info("임시저장은 곧 지원될 예정입니다.");
-  };
-
   const handleSave = async () => {
     // 간단 유효성 검사
     if (!diaryTitle?.trim()) {

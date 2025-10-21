@@ -54,15 +54,6 @@ const buildPlaceStats = (course: Course, poi: CoursePoiSet["poi"]): StatRow[] =>
   return stats;
 };
 
-const formatPriceLevel = (level: number) => {
-  if (!Number.isFinite(level) || level <= 0) {
-    return "정보 없음";
-  }
-
-  const normalized = Math.max(1, Math.min(4, Math.round(level)));
-  return "₩".repeat(normalized);
-};
-
 const buildInfoRows = (poi: CoursePoiSet["poi"]): DetailRow[] => {
   const rows: DetailRow[] = [];
 

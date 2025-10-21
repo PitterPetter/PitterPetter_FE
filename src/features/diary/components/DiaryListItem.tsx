@@ -5,7 +5,6 @@ import { Diary } from "../types";
 import logo from "/logo.png";
 
 export const DiaryListItem = (item: Diary) => {
-  console.log(item);
   const navigate = useNavigate();
   return (
     <div className="relative flex flex-col gap-2 h-[240px] sm:h-[256px] md:h-[320px] w-full xl:w[267px] border-gray-300 border rounded-[20px] pb-4 sm:pb-6 cursor-pointer group transition-all"
