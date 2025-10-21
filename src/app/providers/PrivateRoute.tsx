@@ -24,7 +24,6 @@ const PrivateRoute = ({ permissionLevel }: { permissionLevel: "ONBOARDING_REQUIR
   const { data, isLoading, error } = useQuery({
     queryKey: ["authStatus", token],
     queryFn: async () => {
-      console.log("[PrivateRoute] Checking auth status...");
       const response = await authApi.getStatus();
       return response.data;
     },
@@ -36,7 +35,6 @@ const PrivateRoute = ({ permissionLevel }: { permissionLevel: "ONBOARDING_REQUIR
   useEffect(() => {
     if (data?.status) {
       const userStatus = data.status;
-      console.log("[PrivateRoute] User status:", userStatus);
       
       // permissionLevel 설정 (저장된 값이 null이거나 다를 때)
       if (["ONBOARDING_REQUIRED", "COUPLE_MATCHING_REQUIRED", "ROCK_REQUIRED", "COMPLETED"].includes(userStatus) && 
@@ -47,7 +45,6 @@ const PrivateRoute = ({ permissionLevel }: { permissionLevel: "ONBOARDING_REQUIR
         const targetPath = getRedirectPathByStatus(userStatus);
         
         if (targetPath && location.pathname !== targetPath) {
-          console.log("[PrivateRoute] Status changed, redirecting to:", targetPath);
           navigate(targetPath, { replace: true });
         }
       }
@@ -55,19 +52,16 @@ const PrivateRoute = ({ permissionLevel }: { permissionLevel: "ONBOARDING_REQUIR
   }, [data, storedPermissionLevel, setPermissionLevel, navigate, location.pathname]);
 
   if (isDevBypassActive) {
-    console.log("[PrivateRoute] Dev bypass active, skipping token requirement");
     return <Outlet />;
   }
 
   // 토큰이 없으면 로그인 페이지로
   if (!token) {
-    console.log("[PrivateRoute] No token found, redirecting to login");
     return <Navigate to="/login" replace />;
   }
 
-  // 저장된 권한이 있고 일치하면 바로 통과
+  // 저장된 권한이 있고 일치하면 통과
   if (hasStoredPermission) {
-    console.log("[PrivateRoute] Using stored permission, access granted");
     return <Outlet />;
   }
 
@@ -90,7 +84,6 @@ const PrivateRoute = ({ permissionLevel }: { permissionLevel: "ONBOARDING_REQUIR
       // 권한이 다를 때는 적절한 페이지로 리다이렉트
       const targetPath = getRedirectPathByStatus(data.status);
       
-      console.log("[PrivateRoute] Permission mismatch, redirecting to:", targetPath);
       return <Navigate to={targetPath} replace />;
     }
   }
