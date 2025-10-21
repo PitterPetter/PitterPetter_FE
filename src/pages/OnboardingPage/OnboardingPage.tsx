@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { PersonalOnboarding } from "../../features/onboarding/PersonalOnboarding";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { onboardingApi } from "../../features/onboarding/api";
 import { authApi } from "../../features/auth/api";
 import { useOnboardingStore } from "../../shared/store/onboarding.store";
@@ -9,7 +9,6 @@ import { useAuthStore } from "../../shared/store/auth.store";
 import { toast } from 'react-toastify';
 import { LoginMapbox } from "../../features/mapbox";
 import { useUIStore } from "../../shared/store/ui.store";
-import { Spinner } from "../../shared/ui/spinner";
 import { redirectBasedOnStatus } from "../../shared/utils/authRedirect";
 
 export const OnboardingPage = () => {
@@ -34,7 +33,6 @@ export const OnboardingPage = () => {
   const mutation = useMutation({
     mutationFn: onboardingApi.saveOnboarding,
     onSuccess: async (data) => {
-      console.log(data);
       toast.success('온보딩 정보가 성공적으로 저장되었습니다.');
       
       // 인증 상태 캐시 무효화
@@ -44,7 +42,6 @@ export const OnboardingPage = () => {
       try {
         const statusResponse = await authApi.getStatus();
         const userStatus = statusResponse.data.status;
-        console.log("[OnboardingPage] User status after onboarding:", userStatus);
         
         // auth store 업데이트
         setPermissionLevel(userStatus as "ONBOARDING_REQUIRED" | "COUPLE_MATCHING_REQUIRED" | "ROCK_REQUIRED" | "COMPLETED");
@@ -58,7 +55,6 @@ export const OnboardingPage = () => {
       }
     },
     onError: (error: any) => {
-      console.log('error:', error);
       toast.error('온보딩 정보 저장 실패');
     }
   });
@@ -82,14 +78,6 @@ export const OnboardingPage = () => {
       dateCostPreference: convertCostPreference(dateCostPreference),
       favoriteFoodCategories,
       preferredAtmosphere: atmosphere
-    });
-
-    console.log('body data: ', {
-      alcoholPreference,
-      activeBound,
-      dateCostPreference: convertCostPreference(dateCostPreference),
-      favoriteFoodCategories,
-      atmosphere
     });
   };
 
