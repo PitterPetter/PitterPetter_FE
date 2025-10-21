@@ -16,14 +16,11 @@ export const getRedirectPathByStatus = (userStatus: string): string => {
   }
 };
 
-/**
- * 사용자 상태를 확인하고 적절한 페이지로 리다이렉트하는 함수
- */
+// 사용자 상태를 확인하고 적절한 페이지로 리다이렉트하는 함수
 export const redirectBasedOnStatus = (
   userStatus: string,
   navigate: (path: string, options?: { replace?: boolean }) => void
 ): void => {
   const targetPath = getRedirectPathByStatus(userStatus);
-  console.log("[AuthRedirect] Redirecting to:", targetPath, "based on status:", userStatus);
   navigate(targetPath, { replace: true });
 };
