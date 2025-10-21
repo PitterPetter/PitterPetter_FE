@@ -6,7 +6,6 @@ import { saveOptionToSession } from "./utils/sessionStorage";
 
 export const postOption = async (data: { user_choice: Option }) => {
   try {
-    console.log('body data: ', data);
     // 세션에 옵션 데이터 저장
     saveOptionToSession(data.user_choice);
     
