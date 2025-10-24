@@ -123,8 +123,10 @@
 ### UI/UX
 - **[Tailwind CSS 3.4.17](https://tailwindcss.com/)** - 유틸리티 기반 스타일링
 - **[Material-UI 7.3.2](https://mui.com/)** - UI 컴포넌트 라이브러리
-- **[Emotion](https://emotion.sh/)** - CSS-in-JS
-- **[FontAwesome](https://fontawesome.com/)** - 아이콘
+- **[Emotion 11.14.0](https://emotion.sh/)** - CSS-in-JS
+- **[FontAwesome 7.0.1](https://fontawesome.com/)** - 아이콘
+- **[classnames 2.5.1](https://github.com/JedWatson/classnames)** - CSS 클래스 조건부 렌더링
+- **[clsx 2.1.1](https://github.com/lukeed/clsx)** - 빠른 CSS 클래스 결합
 
 ### Maps & Location
 - **[Mapbox GL JS 3.15.0](https://docs.mapbox.com/mapbox-gl-js/)** - 인터랙티브 지도
@@ -134,9 +136,13 @@
 - **[Date-fns 4.1.0](https://date-fns.org/)** - 날짜 처리
 
 ### Developer Experience
+- **[ESLint 9.33.0](https://eslint.org/)** - 코드 품질 및 스타일 검사
+- **[TypeScript ESLint](https://typescript-eslint.io/)** - TypeScript용 ESLint 플러그인
 - **[MSW 2.11.3](https://mswjs.io/)** - API 모킹
-- **[React Query Devtools](https://tanstack.com/query/latest/docs/react/devtools)** - 쿼리 디버깅
+- **[React Query Devtools 5.89.0](https://tanstack.com/query/latest/docs/react/devtools)** - 쿼리 디버깅
 - **[React Toastify 11.0.5](https://fkhadra.github.io/react-toastify/)** - 토스트 알림
+- **[PostCSS 8.5.6](https://postcss.org/)** - CSS 변환 도구
+- **[Autoprefixer 10.4.21](https://github.com/postcss/autoprefixer)** - CSS 자동 벤더 프리픽스
 
 ### Markdown & Rich Text
 - **[React Markdown 10.1.0](https://remarkjs.github.io/react-markdown/)** - 마크다운 렌더링
@@ -149,14 +155,11 @@
 ```
 src/
 ├── app/                          # 앱 설정 및 레이아웃
-│   ├── config/                  # 앱 전역 설정
 │   ├── layouts/                 # 공통 레이아웃 컴포넌트
 │   │   ├── HeaderLayout.tsx    # 헤더 및 사이드바 레이아웃
-│   │   └── SidebarLayout.tsx   # 사이드바 전용 레이아웃
+│   │   └── index.ts            # 레이아웃 export
 │   └── providers/               # 전역 프로바이더
-│       ├── AuthBootstrap.tsx   # 인증 초기화
-│       ├── AuthInitializer/    # 인증 상태 관리
-│       ├── DataBootstrap.tsx   # 데이터 초기화
+│       ├── AuthBootstrap.tsx   # 인증 초기화 및 OAuth 처리
 │       └── PrivateRoute.tsx    # 권한 기반 라우트 보호
 │
 ├── features/                     # 기능별 모듈 (Feature-Sliced Design)
@@ -186,15 +189,13 @@ src/
 │   ├── diary/                   # 다이어리 관련
 │   │   ├── api.ts              # 다이어리 API
 │   │   ├── components/         # 다이어리 UI 컴포넌트
-│   │   ├── hooks/              # 다이어리 커스텀 훅
 │   │   ├── mocks/              # 다이어리 Mock 데이터
 │   │   └── types.ts            # 다이어리 타입
 │   │
 │   ├── district/                # 지역(구) 관련
 │   │   ├── api.ts              # 지역락 API
-│   │   ├── components/         # 지역 선택 UI
-│   │   ├── mocks/              # 지역 Mock 데이터
-│   │   └── utils/              # 지역 유틸리티
+│   │   ├── components/         # 지역 선택 UI (DistrictLock.tsx)
+│   │   └── mocks/              # 지역 Mock 데이터
 │   │
 │   ├── mapbox/                  # 지도 관련
 │   │   ├── api.ts              # 지도 API
@@ -208,22 +209,21 @@ src/
 │   ├── mypage/                  # 마이페이지 관련
 │   │   ├── api.ts              # 마이페이지 API
 │   │   ├── components/         # 마이페이지 컴포넌트
-│   │   ├── hooks/              # 마이페이지 훅
-│   │   ├── mocks/              # 마이페이지 Mock 데이터
-│   │   └── types.ts            # 마이페이지 타입
+│   │   │   ├── Profile.tsx     # 프로필 섹션
+│   │   │   ├── PersonalPreferences.tsx  # 취향 설정
+│   │   │   └── CoupleHome.tsx  # 커플 정보
+│   │   ├── index.ts            # API export
+│   │   └── mocks/              # 마이페이지 Mock 데이터
 │   │
 │   ├── onboarding/              # 온보딩 관련
 │   │   ├── api.ts              # 온보딩 API
-│   │   ├── PersonalOnboarding.tsx
-│   │   └── types.ts            # 온보딩 타입
+│   │   └── PersonalOnboarding.tsx  # 온보딩 UI 컴포넌트
 │   │
-│   ├── option/                  # 옵션 설정 관련
-│   │   ├── api.ts              # 옵션 API
-│   │   ├── types.ts            # 옵션 타입
-│   │   └── utils/              # 옵션 유틸리티
-│   │
-│   └── recommend/               # 추천 관련
-│       └── utils/              # 추천 유틸리티
+│   └── option/                  # 옵션 설정 관련
+│       ├── api.ts              # 옵션 API
+│       ├── types.ts            # 옵션 타입
+│       └── utils/              # 옵션 유틸리티
+│           └── sessionStorage.ts  # 옵션 세션 관리
 │
 ├── pages/                        # 페이지 컴포넌트
 │   ├── LoginPage/               # 로그인 페이지
@@ -261,12 +261,13 @@ src/
 │   │   ├── diary.store.ts      # 다이어리 상태
 │   │   ├── district.store.ts   # 지역 상태
 │   │   ├── header.store.ts     # 헤더 상태
-│   │   ├── mapbox.store.ts     # 지도 상태
+│   │   ├── mapbox.store.ts     # 지도 상태 (마커, 장소 선택)
 │   │   ├── mypage.store.ts     # 마이페이지 상태
 │   │   ├── onboarding.store.ts # 온보딩 상태
-│   │   ├── recommend.store.ts  # 추천 상태
+│   │   ├── recommend.store.ts  # 추천 상태 (세션 관리 포함)
+│   │   ├── useRecommendStore.ts # 추천 상태
 │   │   ├── ui.store.ts         # UI 상태
-│   │   └── type.ts             # 상태 타입
+│   │   └── type.ts             # 모든 타입 통합 (단방향 의존성 보장)
 │   │
 │   ├── types/                   # 공통 타입
 │   │   └── http.ts             # HTTP 관련 타입
@@ -280,7 +281,8 @@ src/
 │   │   └── assets/             # 공통 에셋
 │   │
 │   └── utils/                   # 공통 유틸리티
-│       └── authRedirect.ts     # 인증 리다이렉트 로직
+│       ├── authRedirect.ts     # 인증 리다이렉트 로직
+│       └── sessionStorage.ts   # 추천 코스 세션 관리
 │
 ├── mocks/                        # MSW 모킹
 │   ├── browser.ts              # MSW 브라우저 설정
