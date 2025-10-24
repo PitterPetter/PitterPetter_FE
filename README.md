@@ -11,7 +11,7 @@
 
 </div>
 
-<img src="/loginPage.png" />
+![페이지 화면](./public/loginPage.png)
 
 ---
 
@@ -128,16 +128,12 @@
 
 ### Maps & Location
 - **[Mapbox GL JS 3.15.0](https://docs.mapbox.com/mapbox-gl-js/)** - 인터랙티브 지도
-- **[React Map GL 8.0.4](https://visgl.github.io/react-map-gl/)** - React Mapbox 래퍼
-- **[Turf.js](https://turfjs.org/)** - 지리공간 분석
 
 ### Data & Forms
 - **[Axios 1.12.2](https://axios-http.com/)** - HTTP 클라이언트
 - **[Date-fns 4.1.0](https://date-fns.org/)** - 날짜 처리
-- **[Day.js 1.11.18](https://day.js.org/)** - 경량 날짜 라이브러리
 
 ### Developer Experience
-- **[ESLint 9.33.0](https://eslint.org/)** - 코드 품질 관리
 - **[MSW 2.11.3](https://mswjs.io/)** - API 모킹
 - **[React Query Devtools](https://tanstack.com/query/latest/docs/react/devtools)** - 쿼리 디버깅
 - **[React Toastify 11.0.5](https://fkhadra.github.io/react-toastify/)** - 토스트 알림
@@ -649,12 +645,6 @@ interface AuthStore {
 - Mock Store: 메모리 기반 데이터 저장소
 
 MSW는 `main.tsx`에서 자동으로 시작됩니다 (DEV 환경만).
-
-### ESLint
-
-```bash
-npm run lint
-```
 
 ### Tailwind CSS
 

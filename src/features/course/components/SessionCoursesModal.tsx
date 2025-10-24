@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Place } from '../../../shared/store/type';
-import { loadRecommendFromSession } from '../../recommend/utils/sessionStorage';
+import { loadRecommendFromSession } from '../../../shared/utils/sessionStorage';
 import { loadOptionFromSession } from '../../option/utils/sessionStorage';
 import { SessionCoursesModalProps } from '../types';
 import { rerecommendCourseApi } from '../api';
