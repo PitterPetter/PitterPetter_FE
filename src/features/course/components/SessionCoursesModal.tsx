@@ -90,6 +90,7 @@ export const SessionCoursesModal: React.FC<SessionCoursesModalProps> = ({ isOpen
           onClick={(e) => e.stopPropagation()}
         >
           <Spinner />
+          <span className="text-gray-700 text-sm">재추천 받는 중...</span>
         </div>
       )}
       <div 
