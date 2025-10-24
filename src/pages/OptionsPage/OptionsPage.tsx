@@ -105,6 +105,7 @@ export const OptionsPage = () => {
       {isLoading && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/70 backdrop-blur-sm">
           <Spinner />
+          <span className="text-gray-700 text-sm">추천 받는 중...</span>
         </div>
       )}
       <div className="flex flex-col gap-8 items-center justify-start py-6 md:py-10 bg-primary/5 w-full h-full min-h-screen px-4 lg:px-8 xl:px-12 2xl:px-20">
