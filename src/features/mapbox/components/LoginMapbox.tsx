@@ -63,18 +63,12 @@ const Mapbox: React.FC<MapboxProps> = ({
     map.once('load', () => {
       setMapReady(true);
 
-      let dir = 1;
-      let currentCenter = [...center] as [number, number];
+      let currentCenter = [127.1, 37.721] as [number, number];
 
       moveInterval = setInterval(() => {
-        const offset = 0.00003;
-        if (currentCenter[1] > 37.521) dir = -1;
-        if (currentCenter[1] < 37.505) dir = 1;
-        currentCenter = [currentCenter[0], currentCenter[1] + dir * offset];
-
         map.easeTo({
           center: currentCenter,
-          duration: 100
+          duration: 400000
         });
       }, 100);
     })
