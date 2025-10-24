@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { Onboarding, DrinkingList, ActiveList, AtmosphereList, FoodList, CostList } from "../../features/onboarding/types";
+import { Onboarding, DrinkingList, ActiveList, AtmosphereList, FoodList, CostList } from "./type";
 
 export const useOnboardingStore = create<Onboarding>((set) => ({
   alcoholPreference: 0,

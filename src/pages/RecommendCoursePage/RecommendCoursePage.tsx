@@ -10,7 +10,7 @@ import { useUIStore } from '../../shared/store/ui.store';
 import { useHeaderStore } from '../../shared/store/header.store';
 import { saveCourseApi, postTicketApi } from "../../features/course/api";
 import { toast } from 'react-toastify';
-import { saveRecommendToSession } from "../../features/recommend/utils/sessionStorage";
+import { saveRecommendToSession } from "../../shared/utils/sessionStorage";
 import { COURSE_STORAGE_KEY } from "../../features/course/utils/normalizeCourse";
 import { RecommendStop } from "./type";
 import { Link } from "react-router-dom";

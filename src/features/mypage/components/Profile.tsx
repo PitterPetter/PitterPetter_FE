@@ -10,8 +10,7 @@ import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { TextField } from "@mui/material";
 import { toast } from 'react-toastify';
 import { ko } from "date-fns/locale";
-import dayjs from "dayjs";
-import "dayjs/locale/ko";
+import { format } from "date-fns";
 
 export const Profile = () => {
   const { isProfileLoading, isProfileError, name, nickname, setNickname, email, birthdate, setBirthdate } = useMypageStore();
@@ -22,7 +21,7 @@ export const Profile = () => {
   
   const formattedBirthdateLabel = useMemo(() => {
     if (!birthdate) return "등록되지 않음";
-    return dayjs(birthdate).locale("ko").format("YYYY년 M월 D일");
+    return format(new Date(birthdate), "yyyy년 M월 d일", { locale: ko });
   }, [birthdate]);
 
   const convertCostPreference = (cost: string) => {
@@ -81,7 +80,7 @@ export const Profile = () => {
 
   const handleBirthdateChange = (date: Date | null) => {
     if (!date) return;
-    const formattedDate = dayjs(date).format("YYYY-MM-DD");
+    const formattedDate = format(date, "yyyy-MM-dd");
     if (formattedDate === originalBirthdate.current) return;
 
     originalBirthdate.current = formattedDate;

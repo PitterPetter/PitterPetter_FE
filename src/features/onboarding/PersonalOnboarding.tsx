@@ -1,18 +1,16 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck } from '@fortawesome/free-solid-svg-icons';
-import { FoodList, CostList } from "./types";
-import { useOnboardingStore } from "../../shared/store/onboarding.store";
+import { FoodList, CostList } from "../../shared/store/type";
 import { useEffect } from "react";
 import { Input } from "../../shared/ui/input";
-
-const FOOD_CATEGORIES = ['한식', '중식', '양식', '일식', '분식'];
-const COST_PREFERENCE = ['1만원 이하', '1 ~ 3만원', '3 ~ 5만원', '5 ~ 8만원', '8만원 이상'];
+import { useOnboardingStore } from "../../shared/store/onboarding.store";
 
 export const PersonalOnboarding = () => {
   const { alcoholPreference, activeBound, dateCostPreference, favoriteFoodCategories, atmosphere, setAlcoholPreference, setActiveBound, setDateCostPreference, setFavoriteFoodCategories, setAtmosphere, setAnsweredCount } = useOnboardingStore();
   const circleStyle = "group cursor-pointer border border-gray-300 rounded-full transition-all duration-250 flex justify-center items-center";
   const boxStyle = "w-full h-12 rounded-md transition-all duration-250 flex justify-center items-center border border-gray-300 hover:border-[#93000A]/70";
-  
+  const FOOD_CATEGORIES = ['한식', '중식', '양식', '일식', '분식'];
+  const COST_PREFERENCE = ['1만원 이하', '1 ~ 3만원', '3 ~ 5만원', '5 ~ 8만원', '8만원 이상'];
   const getAnsweredQuestionsCount = () => {
     let count = 0;
     if (alcoholPreference !== 0) count++;

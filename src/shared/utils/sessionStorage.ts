@@ -1,4 +1,4 @@
-import { Place } from '../../../shared/store/type';
+import { Place } from '../store/type';
 
 const RECOMMEND_SESSION_KEY = 'pitterpetter_recommend_data';
 

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { RecommendStore, start, Place } from "./type";
-import { saveRecommendToSession, loadRecommendFromSession, clearRecommendFromSession } from "../../features/recommend/utils/sessionStorage";
+import { saveRecommendToSession, loadRecommendFromSession, clearRecommendFromSession } from "../utils/sessionStorage";
 
 export const useStartStore = create<start>((set) => ({
   lat: 0,

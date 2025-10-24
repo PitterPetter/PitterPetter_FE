@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import { DistrictInfo } from '../../features/mypage/types';
+import { DistrictInfo } from './type';
 
 interface DistrictStore {
   selectedDistrict: DistrictInfo | null;

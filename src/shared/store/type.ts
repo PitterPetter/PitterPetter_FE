@@ -1,5 +1,3 @@
-import { DistrictInfo } from "../../features/mypage/types";
-
 // MarkerStore
 export interface MarkerStore {
   isMarkers: boolean;
@@ -141,3 +139,47 @@ export type AuthStore = {
   permissionLevel: "ONBOARDING_REQUIRED" | "COUPLE_MATCHING_REQUIRED" | "ROCK_REQUIRED" | "COMPLETED" | '' | null;
   setPermissionLevel: (permissionLevel: "ONBOARDING_REQUIRED" | "COUPLE_MATCHING_REQUIRED" | "ROCK_REQUIRED" | "COMPLETED" | '' | null) => void;
 };
+
+export interface DistrictInfo {
+  id: number | string;
+  name: string;
+  locked: boolean;
+  description?: string;
+  lat?: number;
+  lng?: number;
+}
+
+export interface CityData {
+  cityName: string;
+  totalDistricts: number;
+  lockedDistricts: number;
+  unlockedDistricts: number;
+  districts: DistrictInfo[];
+}
+
+export interface DistrictLockData {
+  totalKeys: number;
+  cities: CityData[];
+}
+
+// OnboardingStore
+export type Onboarding = {
+  alcoholPreference: DrinkingList;
+  activeBound: ActiveList;
+  dateCostPreference: CostList;
+  favoriteFoodCategories: FoodList[];
+  atmosphere: AtmosphereList;
+  answeredCount: number;
+  setAnsweredCount: (value: number) => void;
+  setAlcoholPreference: (value: DrinkingList) => void;
+  setActiveBound: (value: ActiveList) => void;
+  setDateCostPreference: (value: CostList) => void;
+  setFavoriteFoodCategories: (value: FoodList[] | ((prev: FoodList[]) => FoodList[])) => void;
+  setAtmosphere: (value: AtmosphereList) => void;
+};
+
+export type DrinkingList = 0 | 1 | 2 | 3 | 4 | 5; // drinking category
+export type ActiveList = 0 | 1 | 2 | 3 | 4 | 5; // active category
+export type FoodList = '한식' | '중식' | '양식' | '일식' | '분식'; // food category
+export type CostList = '' | '1만원 이하' | '1 ~ 3만원' | '3 ~ 5만원' | '5 ~ 8만원' | '8만원 이상'; // cost category
+export type AtmosphereList = string; // atmosphere category
